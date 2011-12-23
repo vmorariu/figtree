@@ -1,0 +1,2 @@
+LIBRARY figtreeEvaluateIfgtTree.dll
+EXPORTS mexFunction          

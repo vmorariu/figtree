@@ -1,0 +1,2 @@
+LIBRARY figtreeKCenterClustering.dll
+EXPORTS mexFunction          

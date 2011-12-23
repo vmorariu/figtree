@@ -1,0 +1,2 @@
+LIBRARY  figtreeChooseTruncationNumber.dll
+EXPORTS mexFunction          

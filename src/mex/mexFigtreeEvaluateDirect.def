@@ -1,0 +1,2 @@
+LIBRARY  figtreeEvaluateDirect.dll
+EXPORTS mexFunction          
