@@ -27,6 +27,8 @@
 // Author  : Vlad I. Morariu       morariu(at)cs(.)umd(.)edu
 // Date    : 2007-06-25
 // Modified: 2008-01-23 to add comments and make the sample clearer
+// Modified: 2010-05-12 to add the automatic method selection function call
+//             example.  
 //------------------------------------------------------------------------------
 
 #include <stdio.h>
@@ -129,6 +131,7 @@ int main()
   // target sample.  The first M elements will correspond to the Gauss Transform computed
   // with the first set of weights, second M elements will correspond to the G.T. computed
   // with the second set of weights, etc.
+  double * g_auto = new double[W*M];
   double * g_sf = new double[W*M];
   double * g_sf_tree = new double[W*M];
   double * g_ifgt_u = new double[W*M];
@@ -137,13 +140,34 @@ int main()
   double * g_ifgt_tree_nu = new double[W*M];
   
   // initialize all output arrays to zero
-  memset( g_sf         , 0, sizeof(double)*W*M );
+  memset( g_auto        , 0, sizeof(double)*W*M );
+  memset( g_sf          , 0, sizeof(double)*W*M );
   memset( g_sf_tree     , 0, sizeof(double)*W*M );
-  memset( g_ifgt_u     , 0, sizeof(double)*W*M );
+  memset( g_ifgt_u      , 0, sizeof(double)*W*M );
   memset( g_ifgt_tree_u , 0, sizeof(double)*W*M );
-  memset( g_ifgt_nu    , 0, sizeof(double)*W*M );
+  memset( g_ifgt_nu     , 0, sizeof(double)*W*M );
   memset( g_ifgt_tree_nu, 0, sizeof(double)*W*M );
 
+  // 
+  // RECOMMENDED way to call figtree().
+  // 
+  // Evaluates the Gauss transform using automatic method selection (the automatic
+  // method selection function analyzes the inputs -- including source/target
+  // points, weights, bandwidth, and error tolerance -- to automatically choose 
+  // between FIGTREE_EVAL_DIRECT, FIGTREE_EVAL_DIRECT_TREE, FIGTREE_EVAL_IFGT,
+  // FIGTREE_EVAL_IFGT_TREE.
+  // This function call makes use of the default parameters for the eval method
+  // and param method, and is equivalent to
+  // figtree( d, N, M, W, x, h, q, y, epsilon, g_auto, FIGTREE_EVAL_AUTO, FIGTREE_PARAM_NON_UNIFORM ).
+  figtree( d, N, M, W, x, h, q, y, epsilon, g_auto );
+
+  //
+  // MANUAL EVALUATION METHOD and PARAMETER METHOD selection.  If chosen 
+  // incorrectly, this could cause run times to be several orders of 
+  // magnitudes longer or to require several orders of magnitude more
+  // memory (resulting in crashes).  The recommended way to call figtree
+  // is using the automatic method selection, as shown above.
+  //
   // evaluate gauss transform using direct (slow) method
   figtree( d, N, M, W, x, h, q, y, epsilon, g_sf, FIGTREE_EVAL_DIRECT );
 
@@ -163,6 +187,7 @@ int main()
   // compute absolute error of the Gauss Transform at each target and for all sets of weights.
   for( int i = 0; i < W*M; i++)
   {
+    g_auto[i]         = fabs(g_auto[i]        -g_sf[i]);
     g_sf_tree[i]      = fabs(g_sf_tree[i]     -g_sf[i]);
     g_ifgt_u[i]       = fabs(g_ifgt_u[i]      -g_sf[i]);
     g_ifgt_nu[i]      = fabs(g_ifgt_nu[i]     -g_sf[i]);
@@ -171,13 +196,15 @@ int main()
   }
 
   // print out results for all six ways to evaluate
-  printf("Errors for all methods:\n");
+  printf("Results:\n");
+  printf("Direct result auto error    sf-tree error ifgt-u error  ifgt-nu error  ifgt-tree-u e ifgt-tree-nu error\n");
   for( int i = 0; i < W*M; i++ )
-    printf("%6.4f %6.4e %6.4e %6.4e %6.4e %6.4e\n", 
-           g_sf[i], g_sf_tree[i], g_ifgt_u[i], g_ifgt_nu[i], g_ifgt_tree_u[i], g_ifgt_tree_nu[i] );
+    printf("%13.4f %13.4e %13.4e %13.4e %13.4e %13.4e %13.4e\n", 
+           g_sf[i], g_auto[i], g_sf_tree[i], g_ifgt_u[i], g_ifgt_nu[i], g_ifgt_tree_u[i], g_ifgt_tree_nu[i] );
   printf("\n");
 
   // deallocate memory
+  delete [] g_auto;
   delete [] g_sf;
   delete [] g_sf_tree;
   delete [] g_ifgt_u;

@@ -24,6 +24,10 @@
 //		Changed dump file suffix from .ann to .dmp.
 //	Revision 1.1  05/03/05
 //		Fixed usage output string.
+//      Revision      2010/05/12 by Vlad Morariu
+//              Added stdlib.h and string.h includes to for exit() and 
+//                strcmp() (they used to be implicitly included by 
+//                gcc headers, but they are not anymore).
 //----------------------------------------------------------------------
 //	This program inputs an ann dump file of a search structure
 //	perhaps along with point coordinates, and outputs a fig (Ver 3.1)
@@ -44,6 +48,8 @@
 #include <fstream>						// file I/O
 #include <string>						// string manipulation
 #include <ANN/ANNx.h>					// all ANN includes
+#include <stdlib.h>                                             // Added by Vlad 2010/05/12 for exit()
+#include <string.h>                                             // Added by Vlad 2010/05/12 for strcmp()
 
 using namespace std;					// make std:: accessible
 

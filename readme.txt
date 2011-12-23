@@ -1,7 +1,7 @@
 Author: Vlad I. Morariu
 E-mail: morariu(at)umd(.)edu
 Date:     2007-06-26
-Modified: 2008-12-05
+Modified: 2010-05-12
 
 FIGTree is a library that provides a C/C++ and MATLAB interface
 for speeding up the computation of the Gauss Transform.  Its  
@@ -200,6 +200,17 @@ Todo List for Future versions
 Change Log
 
 -----------------------------------------------------------------------
+
+-----------------------------------------------------------------------
+figtree-0.9.3  2010-05-12  (Changes made by Vlad Morariu)
+-----------------------------------------------------------------------
+
+- Added stdlib.h and string.h includes to for exit(), strcmp(),
+    memset() (they used to be implicitly included by gcc headers, but
+    they are not anymore).
+- Modified sample.cpp to show the recommended default way to call 
+    figtree, which uses the automatic method and parameter selection
+    approach described in the NIPS 08 paper.
 
 -----------------------------------------------------------------------
 figtree-0.9.2  2008-12-05  (Changes made by Vlad Morariu)  

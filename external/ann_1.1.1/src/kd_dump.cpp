@@ -23,6 +23,10 @@
 //	Revision 1.0  04/01/05
 //		Moved dump out of kd_tree.cc into this file.
 //		Added kd-tree load constructor.
+//      Revision      2010/05/12 by Vlad Morariu
+//              Added stdlib.h and string.h includes to for exit() and 
+//                strcmp() (they used to be implicitly included by
+//                gcc headers, but they are not anymore).
 //----------------------------------------------------------------------
 // This file contains routines for dumping kd-trees and bd-trees and
 // reloading them. (It is an abuse of policy to include both kd- and
@@ -33,6 +37,8 @@
 
 #include "kd_tree.h"					// kd-tree declarations
 #include "bd_tree.h"					// bd-tree declarations
+#include <stdlib.h>                                     // Added by Vlad 2010/05/12 for exit()
+#include <string.h>                                     // Added by Vlad 2010/05/12 for strcmp()
 
 using namespace std;					// make std:: available
 

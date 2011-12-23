@@ -111,6 +111,11 @@
 //   5) Changed floating op estimation functions to reflect revised versions 
 //      of code
 //
+// Modified: 2010/05/12 by Vlad Morariu
+//   Added stdlib.h and string.h includes to for exit(), strcmp(), memset(), etc.
+//   (they used to be implicitly included by gcc headers, but they are not anymore).
+//
+//
 //------------------------------------------------------------------------------
 // The code was written by Vlad Morariu, Vikas Raykar, and Changjiang Yang 
 // and is copyrighted under the Lesser GPL: 
@@ -167,6 +172,7 @@
 #include <stddef.h>            // for definition of NULL
 #include <math.h>              // for rounding (floor)
 #include <stdio.h>             // for printf
+#include <string.h>            // for memset()
 
 #include <algorithm>           // for lower_bound and random_sample
 #include <functional>          // for greater<double>

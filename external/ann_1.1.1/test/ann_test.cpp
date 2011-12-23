@@ -32,6 +32,9 @@
 //		Added fixed radius kNN search
 //	Revision 1.1.1 08/04/06
 //		Added planted distribution
+//      Revision      2010/05/12 by Vlad Morariu
+//              Added string.h includes to for strcmp() (they used to be
+//                implicitly included by gcc headers).
 //----------------------------------------------------------------------
 
 #include <ctime>						// clock
@@ -44,6 +47,7 @@
 #include <ANN/ANNperf.h>				// performance evaluation
 
 #include "rand.h"						// random point generation
+#include <string.h>
 
 #ifndef CLOCKS_PER_SEC					// define clocks-per-second if needed
   #define CLOCKS_PER_SEC 1000000

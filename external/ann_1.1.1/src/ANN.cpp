@@ -22,10 +22,13 @@
 //		Initial release
 //	Revision 1.0  04/01/05
 //		Added performance counting to annDist()
+//      Revision      2010/05/12 by Vlad Morariu
+//              Added stdlib.h and string.h includes to for exit().
 //----------------------------------------------------------------------
 
 #include <ANN/ANNx.h>					// all ANN includes
 #include <ANN/ANNperf.h>				// ANN performance 
+#include <stdlib.h>                                     // added by Vlad 2010/05/12 for exit()
 
 using namespace std;					// make std:: accessible
 
