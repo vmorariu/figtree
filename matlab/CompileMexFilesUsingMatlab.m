@@ -1,5 +1,5 @@
 function CompileMexFilesUsingMatlab( use_ann, ann_header_dir, ann_lib_dir )
-% Compiles the Mex files for using the FIGTREE in Matlab.  If no inputs
+% Compiles the Mex files for using the FIGTree in Matlab.  If no inputs
 % are supplied, default values are assumed (see below).
 %
 % Before running this file, run 'mex -setup' and make sure that gcc or g++
@@ -46,15 +46,15 @@ end;
 
 if( use_ann == 0 )
     fprintf('Compiling mex files without ANN support\n');
-    mex('-v','-O','-I../src','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtree.cpp','-output','figtree');
-    mex('-v','-O','-I../src','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseParametersNonUniform.cpp','-output','figtreeChooseParametersNonUniform');
-    mex('-v','-O','-I../src','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseParametersUniform.cpp','-output','figtreeChooseParametersUniform');
-    mex('-v','-O','-I../src','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseTruncationNumber.cpp','-output','figtreeChooseTruncationNumber');
-    mex('-v','-O','-I../src','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateDirect.cpp','-output','figtreeEvaluateDirect');
-    mex('-v','-O','-I../src','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateDirectTree.cpp','-output','figtreeEvaluateDirectTree');
-    mex('-v','-O','-I../src','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateIfgt.cpp','-output','figtreeEvaluateIfgt');
-    mex('-v','-O','-I../src','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateIfgtTree.cpp','-output','figtreeEvaluateIfgtTree');
-    mex('-v','-O','-I../src','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeKCenterClustering.cpp','-output','figtreeKCenterClustering');
+    mex('-v','-O','-I../include','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtree.cpp','-output','figtree');
+    mex('-v','-O','-I../include','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseParametersNonUniform.cpp','-output','figtreeChooseParametersNonUniform');
+    mex('-v','-O','-I../include','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseParametersUniform.cpp','-output','figtreeChooseParametersUniform');
+    mex('-v','-O','-I../include','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseTruncationNumber.cpp','-output','figtreeChooseTruncationNumber');
+    mex('-v','-O','-I../include','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateDirect.cpp','-output','figtreeEvaluateDirect');
+    mex('-v','-O','-I../include','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateDirectTree.cpp','-output','figtreeEvaluateDirectTree');
+    mex('-v','-O','-I../include','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateIfgt.cpp','-output','figtreeEvaluateIfgt');
+    mex('-v','-O','-I../include','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateIfgtTree.cpp','-output','figtreeEvaluateIfgtTree');
+    mex('-v','-O','-I../include','-DFIGTREE_NO_ANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeKCenterClustering.cpp','-output','figtreeKCenterClustering');
 else
     fprintf('Compiling mex files with ANN support\n');
     if( ~exist('ann_header_dir'))
@@ -68,13 +68,13 @@ else
         fprintf('ann_lib_dir=%s\n', ann_lib_dir);
     end;
 
-    mex('-v','-O','-I../src',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtree.cpp','-output','figtree');
-    mex('-v','-O','-I../src',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseParametersNonUniform.cpp','-output','figtreeChooseParametersNonUniform');
-    mex('-v','-O','-I../src',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseParametersUniform.cpp','-output','figtreeChooseParametersUniform');
-    mex('-v','-O','-I../src',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseTruncationNumber.cpp','-output','figtreeChooseTruncationNumber');
-    mex('-v','-O','-I../src',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateDirect.cpp','-output','figtreeEvaluateDirect');
-    mex('-v','-O','-I../src',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateDirectTree.cpp','-output','figtreeEvaluateDirectTree');
-    mex('-v','-O','-I../src',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateIfgt.cpp','-output','figtreeEvaluateIfgt');
-    mex('-v','-O','-I../src',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateIfgtTree.cpp','-output','figtreeEvaluateIfgtTree');
-    mex('-v','-O','-I../src',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeKCenterClustering.cpp','-output','figtreeKCenterClustering');
+    mex('-v','-O','-I../include',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtree.cpp','-output','figtree');
+    mex('-v','-O','-I../include',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseParametersNonUniform.cpp','-output','figtreeChooseParametersNonUniform');
+    mex('-v','-O','-I../include',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseParametersUniform.cpp','-output','figtreeChooseParametersUniform');
+    mex('-v','-O','-I../include',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeChooseTruncationNumber.cpp','-output','figtreeChooseTruncationNumber');
+    mex('-v','-O','-I../include',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateDirect.cpp','-output','figtreeEvaluateDirect');
+    mex('-v','-O','-I../include',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateDirectTree.cpp','-output','figtreeEvaluateDirectTree');
+    mex('-v','-O','-I../include',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateIfgt.cpp','-output','figtreeEvaluateIfgt');
+    mex('-v','-O','-I../include',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeEvaluateIfgtTree.cpp','-output','figtreeEvaluateIfgtTree');
+    mex('-v','-O','-I../include',sprintf('-I%s',ann_header_dir),sprintf('-L%s',ann_lib_dir),'-lANN','-DFIGTREE_USE_MATLAB_MEX','../src/figtree.cpp','../src/KCenterClustering.cpp','../src/mex/mexFigtreeKCenterClustering.cpp','-output','figtreeKCenterClustering');
 end;

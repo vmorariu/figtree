@@ -18,11 +18,11 @@ disp(sprintf('Examples to demonstrate the use of FIGTree'));
 disp('---------------------------------------------');
 
 % the number of sources
-N = 5000;
+N = 2500;
 disp(sprintf('Number of source points N=%d',N));
 
 % the number of targets
-M = 5000;
+M = 2500;
 disp(sprintf('Number of target points M=%d',M));
 
 % the desired error
@@ -195,6 +195,7 @@ for i = 1:4
         tic; 
         [ g_direct           ] = figtree( d, N, M, 1, X, h, q, Y, epsilon, 0, 0 ); 
         t_direct(j) = toc;
+        fprintf('.');
 
         % direct evaluation with approximate nearest neighbor structure 
         % (parameter selection not relevant, so it can be anything) - 
@@ -203,12 +204,14 @@ for i = 1:4
         tic;
         [ g_direct_tree       ] = figtree( d, N, M, 1, X, h, q, Y, epsilon, 2, 0 );
         t_direct_tree(j) = toc;
+        fprintf('.');
 
         % truncated series, uniform parameter selection - implemented exactly
         % as described in IFGT paper (Raykar et al, 2005).
         tic; 
         [ g_ifgt_u      ] = figtree( d, N, M, 1, X, h, q, Y, epsilon, 1, 0 ); 
         t_ifgt_u(j) = toc;
+        fprintf('.');
 
         % truncated series, with nonuniform parameter selection - the
         % default method when calling function without last two arguments
@@ -217,6 +220,7 @@ for i = 1:4
         tic; 
         [ g_ifgt_nu     ] = figtree( d, N, M, 1, X, h, q, Y, epsilon, 1, 1 );
         t_ifgt_nu(j) = toc;
+        fprintf('.');
 
         % truncated series with approximate nearest neighbor structure,
         % with uniform parameter selection - implemented as in the FIGTree
@@ -224,6 +228,7 @@ for i = 1:4
         tic;
         [ g_ifgt_tree_u  ] = figtree( d, N, M, 1, X, h, q, Y, epsilon, 3, 0 );
         t_ifgt_tree_u(j) = toc;
+        fprintf('.');
 
         % truncated series, with non-uniform parameter selection.  Is faster 
         % than ifgt-nu if targets are not identically distributed to 
@@ -231,6 +236,7 @@ for i = 1:4
         tic;
         [ g_ifgt_tree_nu ] = figtree( d, N, M, 1, X, h, q, Y, epsilon, 3, 1 );
         t_ifgt_tree_nu(j) = toc;
+        fprintf('.');
 
         % show errors
         e_direct_tree(j)       = max(abs(g_direct-g_direct_tree))/sum(q);
@@ -244,7 +250,9 @@ for i = 1:4
         X = new_scale*X+new_shift;
         Y = new_scale*Y+new_shift;
         h = new_scale*h;
+        
     end;
+    fprintf('\n');
     
     % show times and errors
     fprintf('direct       : %3.2e seconds\n', t_direct );
@@ -259,4 +267,15 @@ for i = 1:4
     fprintf('ifgt-nu      : %3.2e\n', e_ifgt_nu );
     fprintf('ifgt-tree-u  : %3.2e\n', e_ifgt_tree_u );
     fprintf('ifgt-tree-nu : %3.2e\n', e_ifgt_tree_nu );
+      
+    if( (max(e_direct_tree(:)) < epsilon) && ...
+        (max(e_ifgt_u(:)) < epsilon) && ...
+        (max(e_ifgt_nu(:)) < epsilon) && ...
+        (max(e_ifgt_tree_u(:)) < epsilon) && ...
+        (max(e_ifgt_tree_nu(:)) < epsilon) )
+        fprintf('\nDesired error (%e) satisfied.\n', epsilon);
+    else
+        fprintf('\nDesired error (%e) NOT satisfied!\n', epsilon);
+    end;
+
 end;

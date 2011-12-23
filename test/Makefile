@@ -43,9 +43,9 @@ ifneq ($(FIGTREE_NO_ANN),true)
 LDFLAGS+= -L$(ANNLIBDIR) -lANN
 endif
 
-SOURCES=sample.cpp
+SOURCES=test.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-TARGET=$(BINDIR)/sample
+TARGET=$(BINDIR)/test
 
 
 #-----------------------------------------------------------------------------

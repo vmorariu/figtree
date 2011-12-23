@@ -18,13 +18,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeChooseTruncationN
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateDirect", "mexFigtreeEvaluateDirect.vcproj", "{60723094-EA37-4A5F-9E63-3EEE54564F6E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateDirectAnn", "mexFigtreeEvaluateDirectAnn.vcproj", "{0552D563-5EDA-4BA0-894B-F694BC9D93E3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateDirectTree", "mexFigtreeEvaluateDirectAnn.vcproj", "{0552D563-5EDA-4BA0-894B-F694BC9D93E3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateTruncated", "mexFigtreeEvaluateTruncated.vcproj", "{B0C622D9-EFC1-4D70-A6D0-745B10B3CCC5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateIfgt", "mexFigtreeEvaluateTruncated.vcproj", "{B0C622D9-EFC1-4D70-A6D0-745B10B3CCC5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateTruncatedAnn", "mexFigtreeEvaluateTruncatedAnn.vcproj", "{0C87BC6A-B6A9-4A9C-BE0D-E77A1933FD63}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateIfgtTree", "mexFigtreeEvaluateTruncatedAnn.vcproj", "{0C87BC6A-B6A9-4A9C-BE0D-E77A1933FD63}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeKCenterClustering", "mexFigtreeKCenterClustering.vcproj", "{DDBFFD46-9534-4B93-A240-6A4F4F4D6583}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test.vcproj", "{B35FF5AD-7996-447E-A1AA-911E0B743253}"
+	ProjectSection(ProjectDependencies) = postProject
+		{408082FC-005E-4574-959E-CBBDA44A703C} = {408082FC-005E-4574-959E-CBBDA44A703C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +81,10 @@ Global
 		{DDBFFD46-9534-4B93-A240-6A4F4F4D6583}.Debug|Win32.Build.0 = Debug|Win32
 		{DDBFFD46-9534-4B93-A240-6A4F4F4D6583}.Release|Win32.ActiveCfg = Release|Win32
 		{DDBFFD46-9534-4B93-A240-6A4F4F4D6583}.Release|Win32.Build.0 = Release|Win32
+		{B35FF5AD-7996-447E-A1AA-911E0B743253}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B35FF5AD-7996-447E-A1AA-911E0B743253}.Debug|Win32.Build.0 = Debug|Win32
+		{B35FF5AD-7996-447E-A1AA-911E0B743253}.Release|Win32.ActiveCfg = Release|Win32
+		{B35FF5AD-7996-447E-A1AA-911E0B743253}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,5 @@
-% Script the demonstrate the use of IFGT.  Note, only 
-% (IFGT-DIRECTORY)/matlab/Ifgt.dll is needed for the Ifgt() function to 
+% Script the demonstrate the use of FIGTree.  Note, only 
+% (FIGTREE-DIRECTORY)/matlab/figtree.dll is needed for the figtree() function to 
 % function.  All other mex files are provided in case users require
 % advanced control over parameter selection and clustering processes.  See
 % sample2.m for example of how to use the additional mex files provided.
@@ -8,7 +8,7 @@ close all;
 clear functions;
 clc;
 
-% the MEX binaries for the IFGT library reside in ../matlab
+% the MEX binaries for the FIGTree library reside in ../matlab
 % we assume that the script is run from the figtree/samples/ directory,
 % otherwise the correct path for the mex files must be set.
 addpath('../matlab');
@@ -225,11 +225,28 @@ for i = 1:4
     t_ifgt_tree_nu = toc;
     fprintf('ifgt-tree-nu : %3.2e seconds, speedup = %3.2f\n', t_ifgt_tree_nu, t_direct/t_ifgt_tree_nu );
    
+    err_direct_tree = max(abs(g_direct-g_direct_tree))/sum(q);
+    err_ifgt_u = max(abs(g_direct-g_ifgt_u))/sum(q);
+    err_ifgt_nu = max(abs(g_direct-g_ifgt_nu))/sum(q);
+    err_ifgt_tree_u = max(abs(g_direct-g_ifgt_tree_u))/sum(q);
+    err_ifgt_tree_nu = max(abs(g_direct-g_ifgt_tree_nu))/sum(q);
+        
     % show errors
     fprintf('\nMaximum absolute error from direct (exact) method:\n');
-    fprintf('direct-tree  : %3.2e\n', max(abs(g_direct-g_direct_tree))/sum(q));
-    fprintf('ifgt-u       : %3.2e\n', max(abs(g_direct-g_ifgt_u))/sum(q));
-    fprintf('ifgt-nu      : %3.2e\n', max(abs(g_direct-g_ifgt_nu))/sum(q));
-    fprintf('ifgt-tree-u  : %3.2e\n', max(abs(g_direct-g_ifgt_tree_u))/sum(q));
-    fprintf('ifgt-tree-nu : %3.2e\n', max(abs(g_direct-g_ifgt_tree_nu))/sum(q));
+    fprintf('direct-tree  : %3.2e\n', err_direct_tree);
+    fprintf('ifgt-u       : %3.2e\n', err_ifgt_u);
+    fprintf('ifgt-nu      : %3.2e\n', err_ifgt_nu);
+    fprintf('ifgt-tree-u  : %3.2e\n', err_ifgt_tree_u);
+    fprintf('ifgt-tree-nu : %3.2e\n', err_ifgt_tree_nu);
+    
+    if( (err_direct_tree < epsilon) && ...
+        (err_ifgt_u < epsilon) && ...
+        (err_ifgt_nu < epsilon) && ...
+        (err_ifgt_tree_u < epsilon) && ...
+        (err_ifgt_tree_nu < epsilon) )
+        fprintf('\nDesired error (%e) satisfied.\n', epsilon);
+    else
+        fprintf('\nDesired error (%e) NOT satisfied!\n', epsilon);
+    end;
+    
 end;

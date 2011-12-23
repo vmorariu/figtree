@@ -48,6 +48,20 @@
 //   Rename library to FIGTree (and some
 //   other function remanimg)
 //
+// Modified: 02-20-08 by Vlad Morariu
+//   Added nchoosek_double function to use 'double' instead of 'int' to prevent
+//   overflow issues.  The overflow would cause incorrect parameter estimation
+//   which then resulted in out of memory errors.
+//
+// Modified: 02-21-08 by Vlad Morariu
+//   Allow rx to be zero (each pt has a cluster center on it), and allow
+//   figtreeChooseParametersNonUniform to choose a value of K that gives rx=0. 
+//   In some cases in higher dimensions, it is significantly cheaper to have
+//   a center at each pt (i.e. rx=0) than having even one cluster with nonzero
+//   radius (since the radius might require excessively high pMax).
+//   Also added FIGTREE_CHECK_POS_DOUBLE macro to allow rx to be zero when 
+//   checking input parameters.
+//
 
 //------------------------------------------------------------------------------
 // The code was written by Vlad Morariu, Vikas Raykar, and Changjiang Yang 
@@ -137,6 +151,13 @@ void operator delete (void *p)
     return -1;                                                       \
   }
 
+#define FIGTREE_CHECK_POS_DOUBLE( VAR, FCN )                         \
+  if( (VAR) < 0.0 )                                                 \
+  {                                                                  \
+    printf( #FCN ": Input '" #VAR "' must be a positive number.\n"); \
+    return -1;                                                       \
+  }
+
 #define FIGTREE_CHECK_POS_NONZERO_INT( VAR, FCN )                    \
   if( (VAR) <= 0.0 )                                                 \
   {                                                                  \
@@ -171,7 +192,33 @@ int nchoosek(int n, int k)
     n_k = n - k;
   }
 
-  int  nchsk = 1; 
+  int nchsk = 1; 
+  for ( int i = 1; i <= n_k; i++)
+  {
+    nchsk *= (++k);
+    nchsk /= i;
+  }
+
+  return nchsk;
+}
+
+//------------------------------------------------------------------------------
+// Compute the combinatorial number nchoosek, using double precision.
+// This prevents some overflow issues for large n.
+//
+// Created by Vlad Morariu on 2008-02-20.
+//------------------------------------------------------------------------------
+double nchoosek_double(int n, int k)
+{
+  int n_k = n - k;
+  
+  if (k < n_k)
+  {
+    k = n_k;
+    n_k = n - k;
+  }
+
+  double nchsk = 1; 
   for ( int i = 1; i <= n_k; i++)
   {
     nchsk *= (++k);
@@ -430,17 +477,13 @@ int figtree( int d, int N, int M, int W, double * x, double h,
                                  clusterCenters, numPoints, clusterRadii );
     if( ret >= 0 )
     {
-      // make sure rx is nonzero
-      if( rx < MIN(1e-6, epsilon) )
-        rx = MIN(1e-6, epsilon);
-
       // choose truncation number again now that clustering is done
       ret = figtreeChooseTruncationNumber( d, h, epsilon, rx, maxRange, &pMax );
       if( ret >= 0 )
       {
         // evaluate IFGT
-        verbose && printf( "Eval IFGT(h= %f, pMax= %i, K= %i, r= %f, epsilon= %f)\n", 
-                           h, pMax, K, r, epsilon);
+        verbose && printf( "Eval IFGT(h= %f, pMax= %i, K= %i, r= %f, rx= %e, epsilon= %f)\n", 
+                           h, pMax, K, r, rx, epsilon);
         if( evalMethod == FIGTREE_EVAL_IFGT_TREE  )
         {
           ret = figtreeEvaluateIfgtTree( d, N, M, W, x, h, q, y, pMax, K, clusterIndex, 
@@ -497,7 +540,7 @@ int figtreeChooseTruncationNumber( int d, double h, double epsilon,
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeChooseTruncationNumber );
   FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeChooseTruncationNumber );
   FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeChooseTruncationNumber );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( rx, figtreeChooseTruncationNumber );
+  FIGTREE_CHECK_POS_DOUBLE( rx, figtreeChooseTruncationNumber );
   FIGTREE_CHECK_POS_NONZERO_DOUBLE( maxRange, figtreeChooseTruncationNumber );
   FIGTREE_CHECK_NONNULL_PTR( pMax, figtreeChooseTruncationNumber );
 
@@ -579,7 +622,7 @@ int figtreeChooseParametersUniform( int d, double h, double epsilon,
       temp = temp*(((2*rx*b)/hSquare)/p);
       error = temp*(exp(-(c*c)/hSquare));      
     }  
-    double complexity = (i + 1) + log((double)i + 1) + ((1 + n)*nchoosek(p - 1 + d, d));
+    double complexity = (i + 1) + log((double)i + 1) + ((1 + n)*nchoosek_double(p - 1 + d, d));
 
      //printf("d=%d r=%f K=%d rx=%f n=%f p=%d terms=%d c=%f\n",d,r,i+1,rx,n,p,nchoosek(p-1+d,d),complexity);
     
@@ -624,6 +667,9 @@ int figtreeChooseParametersUniform( int d, double h, double epsilon,
 // Modified by Vlad Morariu on 2007-10-03 - pass R (the max distance between
 //     any source and target) as argument instead of assuming that data fits
 //     in unit hypercube
+// Modified by Vlad Morariu on 2008-02-21 - allow rx to be zero.  In some cases,
+//     if there isn't a center at each source pt to give rx=0, an excessively
+//     large pMax is needed, and it is faster to just have a center at each pt.
 //------------------------------------------------------------------------------
 int figtreeChooseParametersNonUniform( int d, int N, double * x, 
                                     double h, double epsilon, int kLimit, double maxRange,
@@ -673,7 +719,7 @@ int figtreeChooseParametersNonUniform( int d, int N, double * x,
       temp = temp*(((2*rx*b)/hSquare)/p);
       error = temp*(exp(-(c*c)/hSquare));      
     }  
-    double complexity = (i + 1) + log((double)i + 1) + ((1 + n)*nchoosek(p - 1 + d, d));
+    double complexity = (i + 1) + log((double)i + 1) + ((1 + n)*nchoosek_double(p - 1 + d, d));
     //printf("d=%d r=%f K=%d rx=%f n=%f p=%d terms=%d c=%f\n",d,r,i+1,rx,n,p,nchoosek(p-1+d,d),complexity);
     
     if ( (complexity < complexityMin) && (error <= epsilon))
@@ -683,10 +729,6 @@ int figtreeChooseParametersNonUniform( int d, int N, double * x,
       pMaxTemp = p;    
     }
     
-    // add another cluster center, and get new max cluster radius
-    double rxOld = rx;
-    kcc->ClusterIncrement( &numClusters, &rx );
-
     // try to guess if we have gone past the minimum (the complexity function
     // zigzags as we try different number of clusters, but if it goes up enough,
     // we'll assume we've passed the global minimum).
@@ -694,6 +736,10 @@ int figtreeChooseParametersNonUniform( int d, int N, double * x,
     // clusters are reached (rx = 0).
     if( (p == 1) || (rx <= 0) || (complexity > 1.5*complexityMin ) )
       break;    
+
+    // add another cluster center, and get new max cluster radius
+    double rxOld = rx;
+    kcc->ClusterIncrement( &numClusters, &rx );
   }  
 
   // copy results 
@@ -774,7 +820,7 @@ int figtreeEvaluateDirect( int d, int N, int M, double * x, double h,
         double temp = x[(d*i) + k] - y[(d*j) + k];
         norm = norm + (temp*temp);
       }
-      g[j] = g[j] + (q[i]*exp(-norm/hSquare));      
+      g[j] = g[j] + (q[i]*exp(-norm/hSquare));
     }
   }
 

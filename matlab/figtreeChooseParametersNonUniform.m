@@ -10,7 +10,7 @@ function [K, pMax, r] = figtreeChooseParametersNonUniform(d, h, epsilon, Klimit,
 %  not uniformly distributed can be large (as much as 10 times faster) because
 %  optimal parameters are much more accurately estimated.  Even when sources are
 %  uniformly distributed, the slowdown is often small compared to 
-%  ifgtChooseParametersUniform (however, there are cases where this is slower).
+%  figtreeChooseParametersUniform (however, there are cases where this is slower).
 %
 %
 %% Input

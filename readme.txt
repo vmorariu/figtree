@@ -3,10 +3,10 @@ E-mail: morariu(at)umd(.)edu
 Date:     2007-06-26
 Modified: 2008-01-29
 
-This is a new version of the IFGT library that is based on the original
-IFGT library and FIGTree code by Vikas C. Raykar and Changjiang Yang.
-Improvements include bug fixes, a new parameter selection algorithm, 
-the addition of the tree-based data structure, and a C interface.
+FIGTree is based on the original IFGT library and FIGTree code by 
+Vikas C. Raykar and Changjiang Yang. Improvements include bug fixes, 
+a new parameter selection algorithm, the addition of the tree-based 
+data structure, and a C/C++ interface.
 
 The library can be compiled both as a set MEX DLL files to provide a
 Matlab interface and also as a DLL that provides a C interface.  The
@@ -66,10 +66,10 @@ Using Precompiled WIN32 matlab MEX files
 
 Because the MEX files are dynamically linked against ANN.dll, ANN.dll
 needs to be present in the system executable path.  If ANN.dll is not
-in the path, then calling any of the MEX files in MATLAB will give an
+in the path, then calling any of the MEX files in Matlab will give an
 'Invalid MEX file' message.  
 
-NOTE: using addpath() seems to work only for telling MATLAB where to find 
+NOTE: using addpath() seems to work only for telling Matlab where to find 
 the MEX file, but not where to find its dependencies (in our case ANN.dll).
 One way to fix this issue is to add the location of ANN.dll to the PATH
 environment variable.  For example, assume the ANN.dll is located in 

@@ -1,4 +1,4 @@
-% Script the demonstrate the use of FIGTREE without the wrapper function 'figtree'
+% Script the demonstrate the use of FIGTree without the wrapper function 'figtree'
 % (i.e. by manually calling figtreeChooseParameters*(), KCenterClustering(),
 % etc).  Manually calling these functions instead of letting figtree() do it
 % allows the user to change parameters (such as number of clusters,
@@ -8,7 +8,7 @@ close all;
 clear functions;
 clc;
 
-% the MEX binaries for the FIGTREE library reside in ../matlab
+% the MEX binaries for the FIGTree library reside in ../matlab
 % we assume that the script is run from the figtree/samples/ directory,
 % otherwise the correct path for the mex files must be set.
 addpath('../matlab');

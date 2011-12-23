@@ -1,4 +1,4 @@
-function [G] = figtree(d, N, M, W, x, h, q, y, epsilon)
+function [G] = figtree(d, N, M, W, x, h, q, y, epsilon, evalMethod, paramMethod, verbose, forceK)
 %
 %     Fast computation of the Gauss Transform.
 %
@@ -28,12 +28,12 @@ function [G] = figtree(d, N, M, W, x, h, q, y, epsilon)
 %    * y --> d x M matrix of M target points in d dimensions.
 %    * epsilon --> desired error
 %    * evalMethod --> (optional, default = 1) the evaluation method to use in evaluating gauss 
-%            transform. Can be 0, 1, 2, or 3 for DIRECT, TRUNCATED, DIRECT_ANN,
-%            TRUNCATED_ANN evaluation, respectively. epsilon is needed for all but 
-%            DIRECT method.  Parameter selection is done only in the TRUNCATED
-%            or TRUNCATED_ANN case.  
+%            transform. Can be 0, 1, 2, or 3 for DIRECT, IFGT, DIRECT_TREE,
+%            IFGT_TREE evaluation, respectively. epsilon is needed for all but 
+%            DIRECT method.  Parameter selection is done only in the IFGT
+%            or IFGT_TREE case.  
 %    * paramMethod --> (optional, default = 1) the method to use for determining parameters.
-%            Can be 0 (IFGT_PARAM_UNIFORM) or 1 (IFGT_PARAM_NON_UNIFORM).  
+%            Can be 0 (FIGTREE_PARAM_UNIFORM) or 1 (FIGTREE_PARAM_NON_UNIFORM).  
 %    * verbose --> (optional, default = 0) if nonzero, prints parameters chosen for evaluation
 %    * forceK --> (optional, default = 0) if zero, the number of clusters(K) is determined by parameter
 %            selection.  If nonzero, forceK overrides the K chosen by
@@ -54,7 +54,7 @@ function [G] = figtree(d, N, M, W, x, h, q, y, epsilon)
 %
 %% See also
 %
-%  IfgtChooseParametersUniform, IfgtChooseParametersNonUniform,
-%  IfgtChooseTruncationNumber, IfgtEvaluateDirect, IfgtEvaluateDirectAnn,
-%  IfgtEvaluateTruncated, IfgtEvaluateTruncatedAnn, IfgtKCenterClustering
+%  figtreeChooseParametersUniform, figtreeChooseParametersNonUniform,
+%  figtreeChooseTruncationNumber, figtreeEvaluateDirect, figtreeEvaluateDirectAnn,
+%  figtreeEvaluateTruncated, figtreeEvaluateTruncatedAnn, figtreeKCenterClustering
 %
