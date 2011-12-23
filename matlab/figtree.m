@@ -1,4 +1,4 @@
-function [G] = figtree(d, N, M, W, x, h, q, y, epsilon, evalMethod, paramMethod, verbose, forceK)
+function [G] = figtree( x, h, q, y, epsilon, evalMethod, ifgtParamMethod, ifgtTruncMethod, verbose )
 %
 %     Fast computation of the Gauss Transform.
 %
@@ -7,54 +7,58 @@ function [G] = figtree(d, N, M, W, x, h, q, y, epsilon, evalMethod, paramMethod,
 %     $$|\hat{G}(y_j)-G(y_j)| \leq Q \epsilon$$ , where
 %     $$Q=\sum_{i=1}^{N}q_i$$.
 %
-%     C++ Implementation.
+%     C++ Implementation of algorithms described in the following publication:
 %
+%     Vlad I. Morariu, Balaji Vasan Srinivasan, Vikas C. Raykar, Ramani Duraiswami, and Larry S. Davis. 
+%     Automatic online tuning for fast Gaussian summation. Advances in Neural Information Processing 
+%     Systems (NIPS), 2008.
 %
 %% Input
 %
-%    * d --> data dimensionality.
-%    * N --> number of source points.
-%    * M --> number of target points.
-%    * W --> number of weights that will be used for each source point. 
+%
+%    * x --> d x N matrix of N source points in d dimensions.
+%    * h --> the source scale or bandwidth.
+%    * q --> N x W matrix of the source strengths (one set of weights is a column vector).
+%            Here W is the number of weights that will be used for each source point. 
 %            This is useful if one needs multiple gauss transforms that have
 %            the same sources, targets, and bandwidth, but different
 %            weights/strengths (q). By computing coefficients for all W weight
 %            sets at once, we avoid duplicating much of the overhead.  However,
 %            more memory is needed to store a set of coefficients for each set
 %            of weights.
-%    * x --> d x N matrix of N source points in d dimensions.
-%    * h --> the source scale or bandwidth.
-%    * q --> N x W matrix of the source strengths (one set of weights is a column vector).
 %    * y --> d x M matrix of M target points in d dimensions.
 %    * epsilon --> desired error
-%    * evalMethod --> (optional, default = 1) the evaluation method to use in evaluating gauss 
-%            transform. Can be 0, 1, 2, or 3 for DIRECT, IFGT, DIRECT_TREE,
-%            IFGT_TREE evaluation, respectively. epsilon is needed for all but 
-%            DIRECT method.  Parameter selection is done only in the IFGT
-%            or IFGT_TREE case.  
-%    * paramMethod --> (optional, default = 1) the method to use for determining parameters.
-%            Can be 0 (FIGTREE_PARAM_UNIFORM) or 1 (FIGTREE_PARAM_NON_UNIFORM).  
+%    * evalMethod --> (optional, default = 4) the evaluation method to use in evaluating gauss 
+%            transform. Can be the following:
+%                 0 - DIRECT
+%                 1 - IFGT
+%                 2 - DIRECT_TREE
+%                 3 - IFGT_TREE
+%                 4 - AUTO (automatically chooses between 0-3 based on data and parameters)
+%            epsilon is needed for all but 'direct' method.  Parameter selection is done only 
+%            in the ifgt-based methods. Setting to 4 (AUTO) allows figtree to estimate which 
+%            method is likely to be faster based on source and target distributions (NOTE: the 
+%            best method to run changes with bandwidth, epsilon and source/target distributions).
+%    * ifgtParamMethod --> (optional, default = 1) the method to use for determining parameters.
+%            Can be 0 (UNIFORM) or 1 (NON_UNIFORM).  The first assumes that points are
+%            uniformly distributed, and the second adapts to whatever distribution is given when
+%            choosing IFGT parameters K (number of clusters) and p_max (max truncation number).
+%            NOTE: NON_UNIFORM is recommended if data is not uniformly distributed.
+%    * ifgtTruncMethod -> (optional, default = 2) the method to use for computing truncation numbers.
+%                 0 - MAX, use max truncation number for all points
+%                 1 - POINT, point-wise truncation
+%                 2 - CLUSTER, cluster-wise truncation
 %    * verbose --> (optional, default = 0) if nonzero, prints parameters chosen for evaluation
-%    * forceK --> (optional, default = 0) if zero, the number of clusters(K) is determined by parameter
-%            selection.  If nonzero, forceK overrides the K chosen by
-%            parameter selection.
 %
 %% Ouput
 %
-%    * g --> W x M vector of the Gauss Transform evaluated at each target point. 
+%    * g --> M x W vector of the Gauss Transform evaluated at each target point. 
 %            The ith column is the result of the transform using the ith set of 
 %            weights (ith column of q).
 %
 %% Signature
 %
 % Author: Vlad I Morariu 
-%         (original implementation by Vikas C. Raykar, vikas@cs.umd.edu)
 % E-Mail: morariu@cs.umd.edu
-% Date:  2007-06-26
-%
-%% See also
-%
-%  figtreeChooseParametersUniform, figtreeChooseParametersNonUniform,
-%  figtreeChooseTruncationNumber, figtreeEvaluateDirect, figtreeEvaluateDirectAnn,
-%  figtreeEvaluateTruncated, figtreeEvaluateTruncatedAnn, figtreeKCenterClustering
+% Date:  2008-12-05
 %

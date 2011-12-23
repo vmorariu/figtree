@@ -10,13 +10,6 @@ LIBDIR	= $(BASEDIR)/lib
 BINDIR      = $(BASEDIR)/bin
 
 #-----------------------------------------------------------------------------
-# Default locations for the Approximate Nearest Neighbor (ANN) library.
-# For other locations, modify the paths in this makefile, or set them on the
-# command line.  For example, if the ANN library resides in your_ann_path,
-# you can either modify the variables below, or call 'make' as below:
-#
-#    make "ANNLIBDIR=your_ann_path/lib" "ANNINCDIR=your_ann_path/include"
-#
 # If you do not have the ANN library on your system or wish to compile 
 # the IFGT library without ANN support, either uncomment the line
 # that defines "FIGTREE_NO_ANN=true" or set it on the command line:
@@ -24,8 +17,8 @@ BINDIR      = $(BASEDIR)/bin
 #    make "FIGTREE_NO_ANN=true"
 #
 #-----------------------------------------------------------------------------
-ANNLIBDIR   = $(BASEDIR)/../ann_1.1.1/lib
-ANNINCDIR   = $(BASEDIR)/../ann_1.1.1/include
+ANNLIBDIR   = $(BASEDIR)/lib
+ANNINCDIR   = $(BASEDIR)/external/ann_1.1.1/include
 
 # uncomment this line to compile the library without ANN support
 #FIGTREE_NO_ANN=true
@@ -61,7 +54,7 @@ CFLAGS+= -DFIGTREE_NO_ANN
 else
 CFLAGS+= -I$(ANNINCDIR)
 ifneq ($(FIGTREE_LIB_TYPE),static)
-LDFLAGS= -L$(ANNLIBDIR) -lANN
+LDFLAGS= -L$(ANNLIBDIR) -lann_figtree_version
 endif
 endif
 

@@ -23,8 +23,8 @@ BINDIR      = $(BASEDIR)/bin
 #    make "FIGTREE_NO_ANN=true"
 #
 #-----------------------------------------------------------------------------
-ANNLIBDIR   = $(BASEDIR)/../ann_1.1.1/lib
-ANNINCDIR   = $(BASEDIR)/../ann_1.1.1/include
+ANNLIBDIR   = $(BASEDIR)/lib
+ANNINCDIR   = $(BASEDIR)/external/ann_1.1.1/include
 
 # uncomment this line to compile the library without ANN support
 #FIGTREE_NO_ANN=true
@@ -40,7 +40,7 @@ LDFLAGS=-L$(LIBDIR) -lfigtree
 # (this is really necessary only if ANN and FIGTree are compiled as static libs,
 # but doesn't hurt in the other cases)
 ifneq ($(FIGTREE_NO_ANN),true)
-LDFLAGS+= -L$(ANNLIBDIR) -lANN
+LDFLAGS+= -L$(ANNLIBDIR) -lann_figtree_version
 endif
 
 SOURCES=test.cpp

@@ -45,9 +45,52 @@
 //   maxRange parameter to figtreeChoose* functions.
 //
 // Modified: 01-22-08 by Vlad Morariu 
-//   Rename library to FIGTree (and some
-//   other function remanimg)
+//   Rename library to FIGTree (and some other function renamimg)
 //
+// Modified: 05-03-08 by Vlad Morariu 
+//   Add initial version of method selection code.
+//
+// Modified: 05-27-08 by Vlad Morariu 
+//   Change figtreeChooseParameters* and figtreeChooseTruncationNumber functions
+//   to return the predicted errorBound.  This can then be used to check if
+//   the parameters chosen will satisfy the desired error bound (they may not 
+//   since we enforce a limit on pMax (the truncation number).
+//
+// Modified: 05-29-08 to 06-10-08 by Vlad Morariu
+//   Make changes for 'Automatic online tuning for fast Gaussian summation,' by
+//   Morariu et al, NIPS 2008.  Changes include automatic parameter selection 
+//   improvements, point-wise and cluster-wise truncation number selection, and
+//   automatic method selection.  These changes make this approach much easier
+//   to use since the user does not need to choose parameters.
+//   1) Added code to choose individual truncation numbers for both targets and sources
+//       using pointwise error bounds. 
+//   2) Added code to choose individual truncation numbers for targets and sources
+//       using clusterwise error bounds.
+//   3) Reuse K-center clustering computed during method selection if 
+//       FIGTREE_EVAL_AUTO is chosen.
+//   4) Changed ANN code to compute unordered nearest neighbors, saving time
+//       by not using a priority queue and also because now the fixed radius 
+//       nearest neighbor computation and retrieval is done in one step, 
+//       instead of first finding # of nn's and then doing the search again to
+//       retrieve the nn's.  This really speeds up direct+tree since the ANN
+//       priority queue was implemented using insertion sort.
+// 
+// Modified: 11-02-08, 12-01-08 to 12-05-08 by Vlad Morariu
+//   Made some revisions before posting new version online.  
+//   1) Changed interface of figtree so users can choose truncation method
+//      (also changed figtree() to automatically revert to the simplest 
+//      truncation method in cases where the two more complex methods 
+//      cannot give a speedup).
+//   2) Revised some comments
+//   3) Found all parameters used throughout code and defined constants for them
+//      so that users can change them and recompile.  In future releases, 
+//      these should only be defaults, and users should be able to modify them
+//      at runtime.
+//   4) Removed most helper functions from figtree.h (all but figtree(), 
+//      figtreeChooseEvaluationMethod(), and figtreeKCenterClustering() ) and 
+//      placed them in figtree_internal.h.
+//   5) Changed floating op estimation functions to reflect revised versions 
+//      of code
 
 //------------------------------------------------------------------------------
 // The code was written by Vlad Morariu, Vikas Raykar, and Changjiang Yang 
@@ -103,20 +146,46 @@
 extern "C" {
 #endif
 
+
+
+
 //------------------------------------------------------------------------------
+//
 // Some useful constants for the figtree() function call
+//
+//------------------------------------------------------------------------------
+
+// Constants for choosing evaluation method
 #define FIGTREE_EVAL_DIRECT        0  // direct evaluation of gauss transform
 #define FIGTREE_EVAL_IFGT          1  // truncated taylor series evaluation
-#define FIGTREE_EVAL_DIRECT_TREE   2  // direct evaluation, with tree on sources
-#define FIGTREE_EVAL_IFGT_TREE     3  // truncated taylor series, with tree on 
-                                      //   cluster centers
+#define FIGTREE_EVAL_DIRECT_TREE   2  // direct evaluation
+#define FIGTREE_EVAL_IFGT_TREE     3  // ifgt+tree
+#define FIGTREE_EVAL_AUTO          4  // automatically chooses one of the four
+#define FIGTREE_EVAL_SIZE          5  // total number of eval methods
 
+// Constants for choosing parameter selection method for IFGT
 #define FIGTREE_PARAM_UNIFORM      0  // estimate params assuming sources are 
-                                      //   uniformly distributed
+                                      //   uniformly distributed (not recommended 
+                                      //   for non-uniform data)
 #define FIGTREE_PARAM_NON_UNIFORM  1  // estimate params by using actual source 
                                       //   distribution (runs k-center clustering 
                                       //   twice, but speedup during evaluation
                                       //   more than makes up for it in general)
+#define FIGTREE_PARAM_SIZE         2  // total number of param estimation methods
+
+// Constants for choosing truncation selection method for IFGT
+#define FIGTREE_TRUNC_MAX          0  // use worst case truncation number for all pts
+#define FIGTREE_TRUNC_POINT        1  // use point-wise error bounds for individual truncations
+#define FIGTREE_TRUNC_CLUSTER      2  // use cluster-wise error bounds for individual truncations
+#define FIGTREE_TRUNC_SIZE         3  // total number of truncation selection methods
+
+//------------------------------------------------------------------------------
+//
+// Main functions exported by the library.  For more control over internal
+//   workings of figtree, see figtree_internal.h and figtree.cpp.
+//
+//------------------------------------------------------------------------------
+
 
 // Note: All matrix pointers are assumed to point to a contiguous one 
 //   dimensional array containing the entries of the matrx in row major format.
@@ -124,11 +193,7 @@ extern "C" {
 //   ptr[0] ... ptr[N-1] contains the first row of the matrix, and so on. 
 
 // Evaluates gauss transform in one shot (chooses parameters and does clustering
-// if necessary, and evaluates). This is the main function since it calls all 
-// the functions provided below.  If more flexibility is required than this 
-// function allows, use the functions provided below (eg. it is possible that 
-// clustering needs to be done only once for a set of sources and then multiple 
-// evaluations are done using same parameters and clustering).  
+// if necessary, and evaluates).
 //
 // Input
 //    * d --> data dimensionality.
@@ -151,12 +216,12 @@ extern "C" {
 //            IFGT_TREE], defined above. epsilon is needed for all but 
 //            DIRECT method.  Parameter selection is done only in the IFGT
 //            or IFGT_TREE case.  
-//    * paramMethod --> the method to use for determining parameters.
-//            Can be FIGTREE_PARAM_UNIFORM or FIGTREE_PARAM_NON_UNIFORM.  
+//    * ifgtParamMethod --> the method to use for determining parameters.
+//            Can be FIGTREE_PARAM_UNIFORM or FIGTREE_PARAM_NON_UNIFORM. 
+//    * ifgtTruncMethod --> the method to use for determining where to truncate
+//            Taylor series for each source and target point.  Can be
+//            FIGTREE_TRUNC_MAX, FIGTREE_TRUNC_POINT, and FIGTREE_TRUNC_CLUSTER
 //    * verbose --> if nonzero, prints parameters chosen for evaluation
-//    * forceK --> if zero, the number of clusters(K) is determined by parameter
-//            selection.  If nonzero, forceK overrides the K chosen by
-//            parameter selection.
 //
 // Output
 //    * g --> W x M vector of the Gauss Transform evaluated at each target point. 
@@ -165,85 +230,52 @@ extern "C" {
 FIGTREE_DLL_API 
 int figtree( int d, int N, int M, int W, double * x, double h, 
              double * q, double * y, double epsilon, double * g,
-             int evalMethod = FIGTREE_EVAL_IFGT,
-             int paramMethod = FIGTREE_PARAM_NON_UNIFORM, 
-             int verbose = 0, int forceK = 0 );
+             int evalMethod = FIGTREE_EVAL_AUTO,
+             int ifgtParamMethod = FIGTREE_PARAM_NON_UNIFORM, 
+             int ifgtTruncMethod = FIGTREE_TRUNC_CLUSTER,
+             int verbose = 0 );
 
-// Given the maximum cluster radius, this function computes the maximum 
-// truncation number that guarantees results within the desired error bound.
-//Input
-//    * d --> dimension of the points.
-//    * h --> the source bandwidth.
-//    * epsilon --> the desired error.
-//    * rx --> maximum cluster radius
-//    * maxRange --> max dimension range.  The range along a dimension is 
-//          the difference between the max and min values that can ever
-//          occur along that dimension.  The max dimension range is the 
-//          maximum range among all dimensions.  For example, if all 
-//          points lie in unit hypercube, then maxRange = 1.
-//
-//Output
-//    * pMax --> maximum truncation number for the Taylor series.
-FIGTREE_DLL_API 
-int figtreeChooseTruncationNumber( int d, double h, double epsilon, 
-                                   double rx, double maxRange, int * pMax );
-
-// Chooses parameters for IFGT and FIGTree by assuming that sources are
-//   uniformly distributed in a unit cube.
-//Input
-//    * d --> dimension of the points.
-//    * h --> the source bandwidth.
-//    * epsilon --> the desired error.
-//    * kLimit --> upper limit on the number of clusters, kLimit.
-//    * maxRange --> max dimension range.  The range along a dimension is 
-//          the difference between the max and min values that can ever
-//          occur along that dimension.  The max dimension range is the 
-//          maximum range among all dimensions.  For example, if all 
-//          points lie in unit hypercube, then maxRange = 1.
-//
-//Note : [ Use roughly kLimit=round(40*sqrt(d)/h) ]
-//Output
-//    * K --> number of clusters.
-//    * pMax --> maximum truncation number for the Taylor series.
-//    * r --> source cutoff radius.
-FIGTREE_DLL_API 
-int figtreeChooseParametersUniform( int d, double h, double epsilon, 
-                                    int kLimit, double maxRange,
-                                    int * K, int * pMax, double * r );
-
-// Chooses parameters for IFGT and FIGTree without assumption that sources are
-// uniformly distributed.  In this case, k-center clustering is done as part
-// of the parameter selection so that the radius of each cluster is not 
-// estimated but computed directly for the sources.  This results in an 
-// additional k-center clustering operation, but the speedup when sources are
-// not uniformly distributed can be large because
-// optimal parameters are much more accurately estimated.  Even when sources are
-// uniformly distributed, the slowdown is often small compared to 
-// figtreeChooseParametersUniform.
-// 
+// Chooses between evaluation methods
 // Input
-//    * d --> dimension of the points.
+//    * d --> data dimensionality.
 //    * N --> number of source points.
+//    * M --> number of target points.
+//    * W --> number of weights that will be used for each source point. 
+//            This is useful if one needs multiple gauss transforms that have
+//            the same sources, targets, and bandwidth, but different
+//            weights/strengths (q). By computing coefficients for all W weight
+//            sets at once, we avoid duplicating much of the overhead.  However,
+//            more memory is needed to store a set of coefficients for each set
+//            of weights.
 //    * x --> N x d matrix of N source points in d dimensions.
-//    * h --> the source bandwidth.
-//    * epsilon --> the desired error.
-//    * kLimit --> upper limit on the number of clusters, K.
-// Note : Use kLimit=N to allow for optimal param estimation.
-//    * maxRange --> max dimension range.  The range along a dimension is 
-//          the difference between the max and min values that can ever
-//          occur along that dimension.  The max dimension range is the 
-//          maximum range among all dimensions.  For example, if all 
-//          points lie in unit hypercube, then maxRange = 1.
+//    * h --> the source scale or bandwidth.
+//    * y --> M x d matrix of M target points in d dimensions.
+//    * epsilon --> desired error
+//    * paramMethod --> the method to use for determining parameters.
+//            Can be FIGTREE_PARAM_UNIFORM or FIGTREE_PARAM_NON_UNIFORM.
+//    * verbose --> if nonzero, prints parameters chosen for evaluation
+//
 // Output
-//    * K --> number of clusters.
-//    * pMax --> maximum truncation number for the Taylor series.
-//    * r --> source cutoff radius.
-FIGTREE_DLL_API 
-int figtreeChooseParametersNonUniform( int d, int N, double * x, 
-                                       double h, double epsilon, int kLimit, double maxRange,
-                                       int * K, int * pMax, double * r );
+//    * bestEvalMethod --> if non-NULL, the evaluation method to use in evaluating gauss 
+//            transform. Can be FIGTREE_EVAL_[DIRECT,IFGT,DIRECT_TREE,
+//            IFGT_TREE], defined above. 
+//
+//    * flops --> if non-NULL, a double array of size FIGTREE_EVAL_SIZE, indexed by eval method
+//                type where flops[evalMethod] = estimated number of flops if we use this method.
+//                For evalMethod=FIGTREE_EVAL_IFGT or evalMethod=FIGTREE_EVAL_IFGT_TREE,
+//                it is possible that flops[.] = -1 in the case that it is decided early (before
+//                finishing the estimation) that these two methods will be slower than
+//                FIGTREE_EVAL_DIRECT or FIGTREE_EVAL_DIRECT_TREE
+//    * data_struct --> a structure that keeps some structures (k-center clustering, other params)
+//                that were computed during method selection that can be reused 
+//
+FIGTREE_DLL_API
+int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, double h,
+                                 double * y, double epsilon, int paramMethod=FIGTREE_PARAM_NON_UNIFORM, int verbose=0,
+                                 int * bestEvalMethod=0, double * flops=0, void * data_struct=0 );
 
-// Gonzalez's farthest-point clustering algorithm. O(N log K) version.
+
+// Gonzalez's farthest-point clustering algorithm.
 //
 // Input
 //    * d --> data dimensionality.
@@ -266,149 +298,6 @@ FIGTREE_DLL_API
 int figtreeKCenterClustering( int d, int N, double * x, int kMax, int * K,
                               double * rx, int * clusterIndex, double * clusterCenters, 
                               int * numPoints, double * clusterRadii );
-
-// Computes exact gauss transform (within machine precision) using direct 
-// evaluation. Provided for time/error comparison.
-//
-// Input
-//    * d --> data dimensionality.
-//    * N --> number of source points.
-//    * M --> number of target points.
-//    * x --> N x d matrix of N source points in d dimensions.
-//    * h --> the source scale or bandwidth.
-//    * q --> 1 x N or N x 1 vector of the source strengths.
-//    * y --> M x d matrix of M target points in d dimensions.
-//
-// Output
-//    * g --> 1 x M vector of the Gauss Transform evaluated at each target
-//            point. 
-FIGTREE_DLL_API 
-int figtreeEvaluateDirect( int d, int N, int M, double * x, double h, 
-                           double * q, double * y, double * g );
-
-// Computes an approximation to Gauss Transform.  Implementation based on:
-// Fast computation of sums of Gaussians in high dimensions. Vikas C. Raykar, 
-//   C. Yang, R. Duraiswami, and N. Gumerov, CS-TR-4767, Department of computer
-//   science, University of Maryland, College Park.
-//
-// Input
-//    * d --> data dimensionality.
-//    * N --> number of source points.
-//    * M --> number of target points.
-//    * W --> number of weights that will be used for each source point. 
-//            This really does multiple transforms, with different weights each
-//            time but with same sources and targets.  This saves a lot of time
-//            since most of the work is not duplicated.  However, it requires 
-//            more memory to store the coefficients for each set of weights.
-//    * x --> N x d matrix of N source points in d dimensions.
-//    * h --> the source scale or bandwidth.
-//    * q --> W x N vector of the source strengths.
-//    * y --> M x d matrix of M target points in d dimensions.
-//    * pMax --> maximum truncation number for the Taylor series.
-//    * K --> the number of clusters.
-//    * clusterIndex --> N x 1 vector the i th element is the cluster number 
-//            to which the i th point belongs. [ ClusterIndex[i] varies between
-//            0 to K-1. ]
-//    * clusterCenter --> K x d matrix of K cluster centers.
-//    * clusterRadii  --> K x 1 matrix of the radius of each cluster.
-//    * r --> cutoff radius
-//    * epsilon --> desired error
-//
-//Output
-//    * g --> W x M vector of the Gauss Transform evaluated at each target
-//            point. Each row q is the result of the transform using the qth set
-//            of weights.
-FIGTREE_DLL_API 
-int figtreeEvaluateIfgt( int d, int N, int M, int W, double * x, 
-                         double h, double * q, double * y, 
-                         int pMax, int K, int * clusterIndex, 
-                         double * clusterCenter, double * clusterRadii,
-                         double r, double epsilon, double * g );
-
-// Computes an approximation to Gauss Transform using approximate 
-// nearest-neighbors. Same as figtreeEvaluateIfgt() but uses Approximate 
-// Nearest-Neighbors library to find source clusters which influence each target
-// (part of FIGTree). Parameters for this function can be computed using 
-// figtreeChooseParameters[Non]Uniform and figtreeKCenterClustering. 
-//
-// Input
-//    * d --> data dimensionality.
-//    * N --> number of source points.
-//    * M --> number of target points.
-//    * W --> number of weights that will be used for each source point.
-//            This really does multiple transforms, with different weights each
-//            time but with same sources and targets.  This saves a lot of time
-//            since most of the work is not duplicated.  However, it requires
-//            more memory to store the coefficients for each set of weights.
-//    * x --> N x d matrix of N source points in d dimensions.
-//    * h --> the source scale or bandwidth.
-//    * q --> W x N vector of the source strengths.
-//    * y --> M x d matrix of M target points in d dimensions.
-//    * pMax --> maximum truncation number for the Taylor series.
-//    * K --> the number of clusters.
-//    * clusterIndex --> N x 1 vector the i th element is the cluster number 
-//            to which the i th point belongs. [ ClusterIndex[i] varies between
-//            0 to K-1. ]
-//    * clusterCenter --> K x d matrix of K cluster centers.
-//    * clusterRadii  --> K x 1 matrix of the radius of each cluster.
-//    * r --> cutoff radius
-//    * epsilon --> desired error
-//
-// Output
-//    * g --> W x M vector of the Gauss Transform evaluated at each target
-//            point.  Each row of g is the result of the transform using one set
-//            of weights.
-FIGTREE_DLL_API 
-int figtreeEvaluateIfgtTree( int d, int N, int M, int W, double * x, 
-                             double h, double * q, double * y, 
-                             int pMax, int K, int * clusterIndex, 
-                             double * clusterCenter, double * clusterRadii,
-                             double r, double epsilon, double * g );
-
-// Computes an approximation to Gauss Transform using approximate 
-// nearest-neighbors.  Direct method (no taylor expansion is done), with tree 
-// directly on samples (part of FIGTree). Requires Approximate 
-// Nearest-Neighbor(ANN) library.
-//
-// Input
-//    * d --> data dimensionality.
-//    * N --> number of source points.
-//    * M --> number of target points.
-//    * x --> N x d matrix of N source points in d dimensions.
-//    * h --> the source scale or bandwidth.
-//    * q --> 1 x N vector of the source strengths.
-//    * y --> M x d matrix of M target points in d dimensions.
-//    * epsilon --> desired error
-//
-// Output
-//    * g --> 1 x M vector of the Gauss Transform evaluated at each target
-//            point.
-FIGTREE_DLL_API 
-int figtreeEvaluateDirectTree( int d, int N, int M, double * x, double h, 
-                               double * q, double * y, double epsilon, double * g );
-
-// Computes min and max values along each dimension.  Used to determine
-//   the size of the hypercube (and the max distance R that any two pts 
-//   can be from each other).
-//
-// Input
-//    * d --> data dimensionality.
-//    * n --> number of source points.
-//    * x --> n x d matrix of n source points in d dimensions.
-//    * mins --> d x 1 vector of minimum values; input values ignored if update == 0
-//    * maxs --> d x 1 vector of maximum values; input values ignored if update == 0
-//    * update --> if set to 1, then max[i] will contain 
-//          max(max of values of all samples along dimension i, max[i] input value), and 
-//          similarly for min[i].
-//
-// Output
-//    * mins --> d x 1 vector of minimum values
-//    * maxs --> d x 1 vector of maximum values
-FIGTREE_DLL_API
-int figtreeCalcMinMax( int d, int n, double * x, double * mins, double * maxs, int update=0 );
-
-FIGTREE_DLL_API
-int figtreeCalcMaxRange( double d, double * mins, double * maxs, double * R );
 
 #if defined(__cplusplus) && !defined(FIGTREE_STATIC)
 } // extern "C"

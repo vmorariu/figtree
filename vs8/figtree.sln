@@ -10,26 +10,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "figtree", "figtree.vcproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtree", "mexFigtree.vcproj", "{3106F69E-7161-44A2-ABD7-63889E215DAD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeChooseParametersNonUniform", "mexFigtreeChooseParametersNonUniform.vcproj", "{302D063B-DEE0-4244-BE99-206B8A1314AE}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeChooseParametersUniform", "mexFigtreeChooseParametersUniform.vcproj", "{705DC44F-FCB7-4C2E-8A74-03D89619C3DC}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeChooseTruncationNumber", "mexFigtreeChooseTruncationNumber.vcproj", "{3AEEF507-6FCC-47DB-8D2D-423858F977E6}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateDirect", "mexFigtreeEvaluateDirect.vcproj", "{60723094-EA37-4A5F-9E63-3EEE54564F6E}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateDirectTree", "mexFigtreeEvaluateDirectAnn.vcproj", "{0552D563-5EDA-4BA0-894B-F694BC9D93E3}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateIfgt", "mexFigtreeEvaluateTruncated.vcproj", "{B0C622D9-EFC1-4D70-A6D0-745B10B3CCC5}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeEvaluateIfgtTree", "mexFigtreeEvaluateTruncatedAnn.vcproj", "{0C87BC6A-B6A9-4A9C-BE0D-E77A1933FD63}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeKCenterClustering", "mexFigtreeKCenterClustering.vcproj", "{DDBFFD46-9534-4B93-A240-6A4F4F4D6583}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test.vcproj", "{B35FF5AD-7996-447E-A1AA-911E0B743253}"
 	ProjectSection(ProjectDependencies) = postProject
 		{408082FC-005E-4574-959E-CBBDA44A703C} = {408082FC-005E-4574-959E-CBBDA44A703C}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ann_figtree_version", "..\external\ann_1.1.1\MS_Win32\dll\dll.vcproj", "{A7D00B21-CB9C-4BBB-8DEE-51025104F867}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mexFigtreeChooseEvaluationMethod", "mexFigtreeChooseEvaluationMethod.vcproj", "{520B337B-7966-4095-8556-621B93806522}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,34 +39,6 @@ Global
 		{3106F69E-7161-44A2-ABD7-63889E215DAD}.Debug|Win32.Build.0 = Debug|Win32
 		{3106F69E-7161-44A2-ABD7-63889E215DAD}.Release|Win32.ActiveCfg = Release|Win32
 		{3106F69E-7161-44A2-ABD7-63889E215DAD}.Release|Win32.Build.0 = Release|Win32
-		{302D063B-DEE0-4244-BE99-206B8A1314AE}.Debug|Win32.ActiveCfg = Debug|Win32
-		{302D063B-DEE0-4244-BE99-206B8A1314AE}.Debug|Win32.Build.0 = Debug|Win32
-		{302D063B-DEE0-4244-BE99-206B8A1314AE}.Release|Win32.ActiveCfg = Release|Win32
-		{302D063B-DEE0-4244-BE99-206B8A1314AE}.Release|Win32.Build.0 = Release|Win32
-		{705DC44F-FCB7-4C2E-8A74-03D89619C3DC}.Debug|Win32.ActiveCfg = Debug|Win32
-		{705DC44F-FCB7-4C2E-8A74-03D89619C3DC}.Debug|Win32.Build.0 = Debug|Win32
-		{705DC44F-FCB7-4C2E-8A74-03D89619C3DC}.Release|Win32.ActiveCfg = Release|Win32
-		{705DC44F-FCB7-4C2E-8A74-03D89619C3DC}.Release|Win32.Build.0 = Release|Win32
-		{3AEEF507-6FCC-47DB-8D2D-423858F977E6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3AEEF507-6FCC-47DB-8D2D-423858F977E6}.Debug|Win32.Build.0 = Debug|Win32
-		{3AEEF507-6FCC-47DB-8D2D-423858F977E6}.Release|Win32.ActiveCfg = Release|Win32
-		{3AEEF507-6FCC-47DB-8D2D-423858F977E6}.Release|Win32.Build.0 = Release|Win32
-		{60723094-EA37-4A5F-9E63-3EEE54564F6E}.Debug|Win32.ActiveCfg = Debug|Win32
-		{60723094-EA37-4A5F-9E63-3EEE54564F6E}.Debug|Win32.Build.0 = Debug|Win32
-		{60723094-EA37-4A5F-9E63-3EEE54564F6E}.Release|Win32.ActiveCfg = Release|Win32
-		{60723094-EA37-4A5F-9E63-3EEE54564F6E}.Release|Win32.Build.0 = Release|Win32
-		{0552D563-5EDA-4BA0-894B-F694BC9D93E3}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0552D563-5EDA-4BA0-894B-F694BC9D93E3}.Debug|Win32.Build.0 = Debug|Win32
-		{0552D563-5EDA-4BA0-894B-F694BC9D93E3}.Release|Win32.ActiveCfg = Release|Win32
-		{0552D563-5EDA-4BA0-894B-F694BC9D93E3}.Release|Win32.Build.0 = Release|Win32
-		{B0C622D9-EFC1-4D70-A6D0-745B10B3CCC5}.Debug|Win32.ActiveCfg = Debug|Win32
-		{B0C622D9-EFC1-4D70-A6D0-745B10B3CCC5}.Debug|Win32.Build.0 = Debug|Win32
-		{B0C622D9-EFC1-4D70-A6D0-745B10B3CCC5}.Release|Win32.ActiveCfg = Release|Win32
-		{B0C622D9-EFC1-4D70-A6D0-745B10B3CCC5}.Release|Win32.Build.0 = Release|Win32
-		{0C87BC6A-B6A9-4A9C-BE0D-E77A1933FD63}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0C87BC6A-B6A9-4A9C-BE0D-E77A1933FD63}.Debug|Win32.Build.0 = Debug|Win32
-		{0C87BC6A-B6A9-4A9C-BE0D-E77A1933FD63}.Release|Win32.ActiveCfg = Release|Win32
-		{0C87BC6A-B6A9-4A9C-BE0D-E77A1933FD63}.Release|Win32.Build.0 = Release|Win32
 		{DDBFFD46-9534-4B93-A240-6A4F4F4D6583}.Debug|Win32.ActiveCfg = Debug|Win32
 		{DDBFFD46-9534-4B93-A240-6A4F4F4D6583}.Debug|Win32.Build.0 = Debug|Win32
 		{DDBFFD46-9534-4B93-A240-6A4F4F4D6583}.Release|Win32.ActiveCfg = Release|Win32
@@ -85,6 +47,14 @@ Global
 		{B35FF5AD-7996-447E-A1AA-911E0B743253}.Debug|Win32.Build.0 = Debug|Win32
 		{B35FF5AD-7996-447E-A1AA-911E0B743253}.Release|Win32.ActiveCfg = Release|Win32
 		{B35FF5AD-7996-447E-A1AA-911E0B743253}.Release|Win32.Build.0 = Release|Win32
+		{A7D00B21-CB9C-4BBB-8DEE-51025104F867}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A7D00B21-CB9C-4BBB-8DEE-51025104F867}.Debug|Win32.Build.0 = Debug|Win32
+		{A7D00B21-CB9C-4BBB-8DEE-51025104F867}.Release|Win32.ActiveCfg = Release|Win32
+		{A7D00B21-CB9C-4BBB-8DEE-51025104F867}.Release|Win32.Build.0 = Release|Win32
+		{520B337B-7966-4095-8556-621B93806522}.Debug|Win32.ActiveCfg = Debug|Win32
+		{520B337B-7966-4095-8556-621B93806522}.Debug|Win32.Build.0 = Debug|Win32
+		{520B337B-7966-4095-8556-621B93806522}.Release|Win32.ActiveCfg = Release|Win32
+		{520B337B-7966-4095-8556-621B93806522}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

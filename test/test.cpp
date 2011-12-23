@@ -38,9 +38,9 @@
 #ifdef WIN32
   // Link to figtree.dll if WIN32.  If not, then we assume that 
   // libfigtree.so or libfigtree.a are linked to from the Makefile.
-  // The locations of figtree.dll and ANN.dll must either be in the PATH
-  // environment variable, or in the same location from which sample.exe is
-  // is executed.
+  // The locations of figtree.dll and ann_figtree_version.dll must either be 
+  // in the PATH environment variable, or in the same location from which 
+  // sample.exe is is executed.
   #pragma comment(lib,"../lib/figtree.lib")
 #endif
 
@@ -127,72 +127,101 @@ int main()
         // target sample.  The first M elements will correspond to the Gauss Transform computed
         // with the first set of weights, second M elements will correspond to the G.T. computed
         // with the second set of weights, etc.
-        double * g_sf = new double[W*M];
-        double * g_sf_tree = new double[W*M];
-        double * g_ifgt_u = new double[W*M];
-        double * g_ifgt_tree_u = new double[W*M];
-        double * g_ifgt_nu = new double[W*M];
-        double * g_ifgt_tree_nu = new double[W*M];
+        double * g_direct               = new double[W*M];
+        double * g_direct_tree          = new double[W*M];
+        double * g_ifgt                 = new double[W*M];
+        double * g_ifgt_point           = new double[W*M];
+        double * g_ifgt_cluster         = new double[W*M];
+        double * g_ifgt_tree_point      = new double[W*M];
+        double * g_ifgt_tree_cluster    = new double[W*M];
+        double * g_ifgt_tree            = new double[W*M];
+        double * g_auto                 = new double[W*M];
     
         // initialize all output arrays to zero
-        memset( g_sf         , 0, sizeof(double)*W*M );
-        memset( g_sf_tree     , 0, sizeof(double)*W*M );
-        memset( g_ifgt_u     , 0, sizeof(double)*W*M );
-        memset( g_ifgt_tree_u , 0, sizeof(double)*W*M );
-        memset( g_ifgt_nu    , 0, sizeof(double)*W*M );
-        memset( g_ifgt_tree_nu, 0, sizeof(double)*W*M );
+        memset( g_direct                  , 0, sizeof(double)*W*M );
+        memset( g_direct_tree             , 0, sizeof(double)*W*M );
+        memset( g_ifgt                    , 0, sizeof(double)*W*M );
+        memset( g_ifgt_point              , 0, sizeof(double)*W*M );
+        memset( g_ifgt_cluster            , 0, sizeof(double)*W*M );
+        memset( g_ifgt_tree               , 0, sizeof(double)*W*M );
+        memset( g_ifgt_tree_point         , 0, sizeof(double)*W*M );
+        memset( g_ifgt_tree_cluster       , 0, sizeof(double)*W*M );
+        memset( g_auto                    , 0, sizeof(double)*W*M );
 
         // evaluate gauss transform using direct (slow) method
-        figtree( d, N, M, W, x, h, q, y, epsilon, g_sf, FIGTREE_EVAL_DIRECT );
+        figtree( d, N, M, W, x, h, q, y, epsilon, g_direct              , FIGTREE_EVAL_DIRECT );
 
         // evaluate gauss transform using direct method with approximate nearest neighbors
-        figtree( d, N, M, W, x, h, q, y, epsilon, g_sf_tree, FIGTREE_EVAL_DIRECT_TREE );
+        figtree( d, N, M, W, x, h, q, y, epsilon, g_direct_tree         , FIGTREE_EVAL_DIRECT_TREE );
 
-        // evaluate gauss transform using FIGTREE (truncated series), estimating parameters with and without
-        //   the assumption that sources are uniformly distributed
-        figtree( d, N, M, W, x, h, q, y, epsilon, g_ifgt_u, FIGTREE_EVAL_IFGT, FIGTREE_PARAM_UNIFORM, 1 );
-        figtree( d, N, M, W, x, h, q, y, epsilon, g_ifgt_nu, FIGTREE_EVAL_IFGT, FIGTREE_PARAM_NON_UNIFORM, 1 );
+        // evaluate gauss transform using ifgt
+        figtree( d, N, M, W, x, h, q, y, epsilon, g_ifgt                , FIGTREE_EVAL_IFGT, FIGTREE_PARAM_NON_UNIFORM, FIGTREE_TRUNC_MAX    , 1 );
+        figtree( d, N, M, W, x, h, q, y, epsilon, g_ifgt_point          , FIGTREE_EVAL_IFGT, FIGTREE_PARAM_NON_UNIFORM, FIGTREE_TRUNC_POINT  , 1 );
+        figtree( d, N, M, W, x, h, q, y, epsilon, g_ifgt_cluster        , FIGTREE_EVAL_IFGT, FIGTREE_PARAM_NON_UNIFORM, FIGTREE_TRUNC_CLUSTER, 1 );
 
-        // evaluate gauss transform using FIGTREE (truncated series), estimating parameters with and without
-        //   the assumption that sources are uniformly distributed
-        figtree( d, N, M, W, x, h, q, y, epsilon, g_ifgt_tree_u, FIGTREE_EVAL_IFGT_TREE, FIGTREE_PARAM_UNIFORM, 1 );
-        figtree( d, N, M, W, x, h, q, y, epsilon, g_ifgt_tree_nu, FIGTREE_EVAL_IFGT_TREE, FIGTREE_PARAM_NON_UNIFORM, 1 );
+        // evaluate gauss transform using ifgt + tree
+        figtree( d, N, M, W, x, h, q, y, epsilon, g_ifgt_tree           , FIGTREE_EVAL_IFGT, FIGTREE_PARAM_NON_UNIFORM, FIGTREE_TRUNC_MAX    , 1 );
+        figtree( d, N, M, W, x, h, q, y, epsilon, g_ifgt_tree_point     , FIGTREE_EVAL_IFGT, FIGTREE_PARAM_NON_UNIFORM, FIGTREE_TRUNC_POINT  , 1 );
+        figtree( d, N, M, W, x, h, q, y, epsilon, g_ifgt_tree_cluster   , FIGTREE_EVAL_IFGT, FIGTREE_PARAM_NON_UNIFORM, FIGTREE_TRUNC_CLUSTER, 1 );
+
+        // evaluate gauss transform using automatically picked method
+        figtree( d, N, M, W, x, h, q, y, epsilon, g_auto                , FIGTREE_EVAL_AUTO, FIGTREE_PARAM_NON_UNIFORM, FIGTREE_TRUNC_CLUSTER, 1 );
 
         // compute absolute error of the Gauss Transform at each target and for all sets of weights.
-        double err_sf_tree      = fabs(g_sf_tree[0]      - g_sf[0])/Q[0];
-        double err_ifgt_u       = fabs(g_ifgt_u[0]       - g_sf[0])/Q[0];
-        double err_ifgt_nu      = fabs(g_ifgt_nu[0]      - g_sf[0])/Q[0];
-        double err_ifgt_tree_u  = fabs(g_ifgt_tree_u[0]  - g_sf[0])/Q[0];
-        double err_ifgt_tree_nu = fabs(g_ifgt_tree_nu[0] - g_sf[0])/Q[0];
+        double err_direct_tree          = fabs(g_direct_tree[0]       - g_direct[0])/Q[0];
+        double err_ifgt                 = fabs(g_ifgt[0]              - g_direct[0])/Q[0];
+        double err_ifgt_point           = fabs(g_ifgt_point[0]        - g_direct[0])/Q[0];
+        double err_ifgt_cluster         = fabs(g_ifgt_cluster[0]      - g_direct[0])/Q[0];
+        double err_ifgt_tree            = fabs(g_ifgt_tree[0]         - g_direct[0])/Q[0];
+        double err_ifgt_tree_point      = fabs(g_ifgt_tree_point[0]   - g_direct[0])/Q[0];
+        double err_ifgt_tree_cluster    = fabs(g_ifgt_tree_cluster[0] - g_direct[0])/Q[0];
+        double err_auto                 = fabs(g_auto[0]              - g_direct[0])/Q[0];
 
         for( int i = 0; i < W; i++)
           for( int j = 0; j < M; j++ )
           {
-            err_sf_tree      = MAX(err_sf_tree,      fabs(g_sf_tree[i*M+j]     -g_sf[i*M+j])/Q[i]);
-            err_ifgt_u       = MAX(err_ifgt_u,       fabs(g_ifgt_u[i*M+j]      -g_sf[i*M+j])/Q[i]);
-            err_ifgt_nu      = MAX(err_ifgt_nu,      fabs(g_ifgt_nu[i*M+j]     -g_sf[i*M+j])/Q[i]);
-            err_ifgt_tree_u  = MAX(err_ifgt_tree_u,  fabs(g_ifgt_tree_u[i*M+j] -g_sf[i*M+j])/Q[i]);
-            err_ifgt_tree_nu = MAX(err_ifgt_tree_nu, fabs(g_ifgt_tree_nu[i*M+j]-g_sf[i*M+j])/Q[i]);
+            err_direct_tree          = MAX(err_direct_tree         , fabs(g_direct_tree[i*M+j]       - g_direct[i*M+j])/Q[i]);
+            err_ifgt                 = MAX(err_ifgt                , fabs(g_ifgt[i*M+j]              - g_direct[i*M+j])/Q[i]);
+            err_ifgt_point           = MAX(err_ifgt_point          , fabs(g_ifgt_point[i*M+j]        - g_direct[i*M+j])/Q[i]);
+            err_ifgt_cluster         = MAX(err_ifgt_cluster        , fabs(g_ifgt_cluster[i*M+j]      - g_direct[i*M+j])/Q[i]);
+            err_ifgt_tree            = MAX(err_ifgt_tree           , fabs(g_ifgt_tree[i*M+j]         - g_direct[i*M+j])/Q[i]);
+            err_ifgt_tree_point      = MAX(err_ifgt_tree_point     , fabs(g_ifgt_tree_point[i*M+j]   - g_direct[i*M+j])/Q[i]);
+            err_ifgt_tree_cluster    = MAX(err_ifgt_tree_cluster   , fabs(g_ifgt_tree_cluster[i*M+j] - g_direct[i*M+j])/Q[i]);
+            err_auto                 = MAX(err_auto                , fabs(g_auto[i*M+j]              - g_direct[i*M+j])/Q[i]);
           }
 
         // deallocate memory
-        delete [] g_sf;
-        delete [] g_sf_tree;
-        delete [] g_ifgt_u;
-        delete [] g_ifgt_nu;
-        delete [] g_ifgt_tree_u;
-        delete [] g_ifgt_tree_nu;
+        delete [] g_direct;
+        delete [] g_direct_tree;
+        delete [] g_ifgt;
+        delete [] g_ifgt_point;
+        delete [] g_ifgt_cluster;
+        delete [] g_ifgt_tree;
+        delete [] g_ifgt_tree_point;
+        delete [] g_ifgt_tree_cluster;
+        delete [] g_auto;
 
         // print out results for all six ways to evaluate
         printf("\n\n\n");
-        printf("Errors( d=%i, h=%e ):\n  sf-tree: %6.4e\n  ifgt-u: %6.4e\n  ifgt-nu: %6.4e\n  ifgt_tree_u: %6.4e\n  ifgt_tree_nu: %6.4e\n", 
-                 d, h, err_sf_tree, err_ifgt_u, err_ifgt_nu, err_ifgt_tree_u, err_ifgt_tree_nu );
-        if( (err_sf_tree < epsilon) &&
-            (err_ifgt_u < epsilon) && 
-            (err_ifgt_nu < epsilon) && 
-            (err_ifgt_tree_u < epsilon) &&
-            (err_ifgt_tree_nu < epsilon) )
-        {
+        printf("Errors( d=%i, h=%e ):\n"
+          "  direct-tree:       %6.4e\n"
+          "  ifgt:              %6.4e\n"
+          "  ifgt-point:        %6.4e\n"
+          "  ifgt-cluster:      %6.4e\n"
+          "  ifgt_tree:         %6.4e\n"
+          "  ifgt_tree_point:   %6.4e\n"
+          "  ifgt_tree_cluster: %6.4e\n"
+          "  auto:              %6.4e\n\n", 
+                 d, h, err_direct_tree, err_ifgt, err_ifgt_point, err_ifgt_cluster, err_ifgt_tree, err_ifgt_tree_point, err_ifgt_tree_cluster, err_auto );
+        if( (err_direct_tree < epsilon) &&
+            (err_ifgt    < epsilon) && 
+            (err_ifgt_point    < epsilon) && 
+            (err_ifgt_cluster    < epsilon) && 
+            (err_ifgt_tree    < epsilon) &&
+            (err_ifgt_tree_point    < epsilon) &&
+            (err_ifgt_tree_cluster    < epsilon) &&
+            (err_auto    < epsilon)       )
+        { 
           printf("\n\n\nTest Passed.\n\n\n\n");
         }
         else

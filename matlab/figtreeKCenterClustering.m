@@ -1,6 +1,6 @@
 function [K, rx, clusterIndex, clusterCenter, numPoints, clusterRadii] = figtreeKCenterClustering(d, N, x, K)
 %
-%     Gonzalez's farthest-point clustering algorithm. O(N log K) version.
+%     Gonzalez's farthest-point clustering algorithm.
 %
 %% Input
 %

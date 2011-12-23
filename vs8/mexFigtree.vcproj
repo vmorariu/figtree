@@ -40,8 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../include;../src/;../../ann_1.1.1/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MEXFIGTREE_EXPORTS;FIGTREE_STATIC;FIGTREE_USE_MATLAB_MEX"
+				AdditionalIncludeDirectories="../include;../src/;../external/ann_1.1.1/include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MEXFIGTREE_EXPORTS;FIGTREE_STATIC;FIGTREE_USE_MATLAB_MEX;DLL_EXPORTS;ANN_NO_RANDOM"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -61,10 +61,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ANN.lib libmat.lib libmx.lib libmex.lib"
+				AdditionalDependencies="libmat.lib libmx.lib libmex.lib"
 				OutputFile="$(OutDir)\figtree.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../ann_1.1.1/MS_Win32/lib"
+				AdditionalLibraryDirectories="../lib"
 				ModuleDefinitionFile="../src/mex/$(ProjectName).def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -121,8 +121,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../include;../src/;../../ann_1.1.1/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MEXFIGTREE_EXPORTS; FIGTREE_USE_MATLAB_MEX; FIGTREE_STATIC"
+				EnableIntrinsicFunctions="false"
+				FavorSizeOrSpeed="0"
+				AdditionalIncludeDirectories="../include;../src/;../external/ann_1.1.1/include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MEXFIGTREE_EXPORTS; FIGTREE_USE_MATLAB_MEX; FIGTREE_STATIC;DLL_EXPORTS;ANN_NO_RANDOM"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -140,10 +142,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ANN.lib libmat.lib libmx.lib libmex.lib"
+				AdditionalDependencies="libmat.lib libmx.lib libmex.lib"
 				OutputFile="$(OutDir)\figtree.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../ann_1.1.1/MS_Win32/lib"
+				AdditionalLibraryDirectories="../lib"
 				ModuleDefinitionFile="../src/mex/$(ProjectName).def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -209,7 +211,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\src\figtree.h"
+				RelativePath="..\include\figtree.h"
 				>
 			</File>
 			<File
@@ -222,6 +224,122 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+		</Filter>
+		<Filter
+			Name="ANN Files"
+			>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\ANN.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\bd_fix_rad_search.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\bd_pr_search.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\bd_search.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\bd_tree.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\brute.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_dump.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_fix_rad_search.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_pr_search.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_search.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_split.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_tree.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_util.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\perf.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath="..\external\ann_1.1.1\include\ANN\ANN.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\include\ANN\ANNperf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\include\ANN\ANNx.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\bd_tree.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_fix_rad_search.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_pr_search.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_search.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_split.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_tree.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\kd_util.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\pr_queue.h"
+					>
+				</File>
+				<File
+					RelativePath="..\external\ann_1.1.1\src\pr_queue_k.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

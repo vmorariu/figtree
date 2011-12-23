@@ -50,7 +50,6 @@
 // Speed up using the doubly circular list.
 // The clusters far away are trimmed. The nodes inside the neighboring
 // clusters which are within half sphere are trimmed.
-// The computational complexity is reduced to O(n log k).
 //
 //----------------------------------------------------------------------------
 //

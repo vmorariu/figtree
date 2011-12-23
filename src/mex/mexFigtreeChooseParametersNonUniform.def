@@ -1,2 +1,0 @@
-LIBRARY  figtreeChooseParametersNonUniform.dll
-EXPORTS mexFunction          
