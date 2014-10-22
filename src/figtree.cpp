@@ -821,7 +821,7 @@ void figtreeFindClusterTruncations( int d, int N, double * x, double * q, double
 
   // find out total sum of weights for each cluster
   for( int i = 0; i < N; i++ )
-    clusterWeights[ clusterIndex[i] ] += q[i];
+    clusterWeights[ clusterIndex[i] ] += fabs(q[i]);
 
   // precompute a list of points for each cluster so that we can reorganize
   //   some frequently used data in memory to make memory is accessed
@@ -848,7 +848,7 @@ void figtreeFindClusterTruncations( int d, int N, double * x, double * q, double
     int start = clusterStart[k], end = clusterEnd[k];
     for( int i = start; i < end; i++ )
     {
-      q_reordered[i] = q[ clusterMembers[i] ] / clusterWeights[k];
+      q_reordered[i] = fabs(q[clusterMembers[i]]) / clusterWeights[k];
       for( int j = 0; j < d; j++ )
       {
         double dx = clusterCenters[k*d+j] - x[clusterMembers[i]*d+j];
@@ -1103,12 +1103,14 @@ int figtree( int d, int N, int M, int W, double * x, double h,
   //   parameters, so we just run the fcns directly, once for each set of weights
   if( evalMethod == FIGTREE_EVAL_DIRECT )
   {
+    verbose && printf("figtreeEvalMethod() chose the direct method.\n");
     for( int i = 0; i < W; i++ )
       ret = figtreeEvaluateDirect( d, N, M, x, h, q+i*N, y, g+i*M );
   }
 
   if( evalMethod == FIGTREE_EVAL_DIRECT_TREE )
   {
+    verbose && printf("figtreeEvalMethod() chose direct+tree method.\n");
     for( int i = 0; i < W; i++ )
       ret = figtreeEvaluateDirectTree( d, N, M, x, h, q+i*N, y, epsilon, g+i*M );
   }
@@ -1118,6 +1120,11 @@ int figtree( int d, int N, int M, int W, double * x, double h,
   if( evalMethod == FIGTREE_EVAL_IFGT || 
       evalMethod == FIGTREE_EVAL_IFGT_TREE )
   {
+    if(verbose && evalMethod == FIGTREE_EVAL_IFGT)
+      verbose && printf("figtreeEvalMethod() chose the IFGT method.\n");
+    if(verbose && evalMethod == FIGTREE_EVAL_IFGT_TREE)
+      verbose && printf("figtreeEvalMethod() chose the IFGT+tree method.\n");
+
     bool alreadyHaveClustering = (data.clusterCenters != NULL); // quick and dirty test    
     double maxRange = 0;
     if( !alreadyHaveClustering )
@@ -2426,7 +2433,7 @@ int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double *
   FIGTREE_CHECK_POS_NONZERO_INT( W, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_NONNULL_PTR( x, figtreeEvaluateIfgtIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeEvaluateIfgtTreeAdaptiveCluster );
-  FIGTREE_CHECK_NONNULL_PTR( q, figtreeEvaluateIfgtTreeAdaptiveCluster );
+  FIGTREE_CHECK_NONNULL_PTR( g, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_NONNULL_PTR( y, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_POS_NONZERO_INT( pMax, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_POS_NONZERO_INT( K, figtreeEvaluateIfgtTreeAdaptiveCluster );
