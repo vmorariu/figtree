@@ -1,7 +1,7 @@
 Author: Vlad I. Morariu
 E-mail: morariu(at)umd(.)edu
 Date:     2007-06-26
-Modified: 2010-05-12
+Modified: 2014-10-18
 
 FIGTree is a library that provides a C/C++ and MATLAB interface
 for speeding up the computation of the Gauss Transform.  Its  
@@ -200,6 +200,14 @@ Todo List for Future versions
 Change Log
 
 -----------------------------------------------------------------------
+
+-----------------------------------------------------------------------
+2014-10-18 (Changes made by Vlad Morariu)
+-----------------------------------------------------------------------
+
+- Fixed bug: Added fabs() calls to cluster-wise error bounds to handle
+    negative weights properly.
+- Added verbose print statements for method selection.
 
 -----------------------------------------------------------------------
 figtree-0.9.3  2010-05-12  (Changes made by Vlad Morariu)
