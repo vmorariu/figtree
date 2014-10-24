@@ -54,6 +54,7 @@ TARGET=$(BINDIR)/sample
 all: $(SOURCES) $(TARGET)
 	
 $(TARGET): $(OBJECTS) 
+	mkdir -p ${BINDIR}
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 
 .cpp.o:

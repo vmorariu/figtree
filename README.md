@@ -1,22 +1,22 @@
 FIGTree
 =======
 
-Author: Vlad I. Morariu
-E-mail: morariu(at)umd(.)edu
-Date:     2007-06-26
+Author: Vlad I. Morariu 
+E-mail: morariu(at)umd(.)edu 
+Date:     2007-06-26 
 Modified: 2014-10-18
 
 FIGTree is a library that provides a C/C++ and MATLAB interface
-for speeding up the computation of the Gauss Transform.  Its  
-authors are Vlad Morariu, Vikas Raykar, and Changjiang Yang.  The 
-authors worked under the supervision of Professor Ramani Duraiswami 
+for speeding up the computation of the Gauss Transform.  Its
+authors are Vlad Morariu, Vikas Raykar, and Changjiang Yang.  The
+authors worked under the supervision of Professor Ramani Duraiswami
 and Professor Larry Davis, at the University of Maryland.
 
 The current version of the library is based on the following paper:
 
-Vlad I. Morariu, Balaji Vasan Srinivasan, Vikas C. Raykar, 
-Ramani Duraiswami, and Larry S. Davis. Automatic online tuning for 
-fast Gaussian summation. Advances in Neural Information Processing 
+Vlad I. Morariu, Balaji Vasan Srinivasan, Vikas C. Raykar,
+Ramani Duraiswami, and Larry S. Davis. Automatic online tuning for
+fast Gaussian summation. Advances in Neural Information Processing
 Systems (NIPS), 2008.
 
 For more up-to-date information on this library, please go to the 
@@ -73,6 +73,29 @@ be used to add the paths of libraries without having to copy them in
 the directory of each executable that uses them.
 
 
+Compiling the Python extension (requires cython)
+------------------------------------------------
+
+Change the directory to ${FIGTREE_DIR}/python. To build in place, putting
+the figtree.so (Linux) or figtree.pyd (Windows) in ${FIGTREE_DIR/python,
+issue the following command:
+
+    python setup.py build_ext --inplace
+
+Before running python, make sure ${FIGTREE_DIR}/python is in the
+PYTHONPATH environment variable. For example if you are using bash, you
+can use the python extension by starting python as follows (make sure
+you set the FIGTREE_DIR variable to the figtree root path first):
+
+PYTHONPATH=${FIGTREE_DIR}/python LD_LIBRARY_PATH=${FIGTREE_DIR}/lib python
+
+Another option is to install the python extension in a standard path
+using the command
+
+    python setup.py install
+
+with the "--user" or "--prefix PREFIX_PATH" flags set as needed.
+
 
 Compiling Library and Matlab MEX files in Windows using VS8
 -----------------------------------------------------------
@@ -88,7 +111,7 @@ be very slow!
 
 
 
-Compiling Matlab MEX files in Linux, Solaris, or Windows using Matlab mex
+Compiling Matlab MEX files in Linux, Solaris, or Windows using Matlab
 -------------------------------------------------------------------------
 
 This has been tested on Matlab 7 with g++ as a compiler.  Also, it works
@@ -154,7 +177,6 @@ Todo List for Future versions
 -----------------------------
 
 - TODO: Clean up makefiles for Unix/Linux/Solaris version.
-
 - TODO: estimate avg neighbors using approach of Faloutsos et 
           al (SIGMOD 2000) instead of querying kd-tree on subsampled
           sources
@@ -176,6 +198,7 @@ Todo List for Future versions
 - TODO: modify ANN so that it no longer uses global variables (which
           prevents figtree from being
           called simultaneously in multiple threads)
+
 
 Change Log
 ----------
