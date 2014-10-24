@@ -1,3 +1,6 @@
+FIGTree
+=======
+
 Author: Vlad I. Morariu
 E-mail: morariu(at)umd(.)edu
 Date:     2007-06-26
@@ -35,11 +38,8 @@ any other information regarding ANN, please go to the authors' website:
 http://www.cs.umd.edu/~mount/ANN/
 
 
------------------------------------------------------------------------
-
 Samples and Documentation
-
------------------------------------------------------------------------
+-------------------------
 
 Sample code for using the library in Matlab or C/C++ is provided in
 'samples' directory.
@@ -55,11 +55,8 @@ extension (depending on the version of Matlab).
 For a description of available C/C++ functions, see 'include/figtree.h'.
 
 
------------------------------------------------------------------------
-
 Using Precompiled WIN32 binaries
-
------------------------------------------------------------------------
+--------------------------------
 
 The figtree precompiled binaries (.dll) and lib files are provided in 
 figtree/bin and figtree/lib.
@@ -77,11 +74,8 @@ the directory of each executable that uses them.
 
 
 
------------------------------------------------------------------------
-
 Compiling Library and Matlab MEX files in Windows using VS8
-
------------------------------------------------------------------------
+-----------------------------------------------------------
 
 You can compile the library using the Visual Studio Solution
 (FIGTREE_DIR)/vs8/figtree.sln.  Compiling the entire solution will 
@@ -94,11 +88,8 @@ be very slow!
 
 
 
------------------------------------------------------------------------
-
 Compiling Matlab MEX files in Linux, Solaris, or Windows using Matlab mex
-
------------------------------------------------------------------------
+-------------------------------------------------------------------------
 
 This has been tested on Matlab 7 with g++ as a compiler.  Also, it works
 in windows if the compiler is set up right.
@@ -110,11 +101,8 @@ in windows if the compiler is set up right.
 
 
 
------------------------------------------------------------------------
-
 Compiling Library in Linux or Solaris
-
------------------------------------------------------------------------
+-------------------------------------
 
 1. Compile FIGTree library as a shared library by issuing command 'make'
    
@@ -135,11 +123,8 @@ Compiling Library in Linux or Solaris
 
 
 
------------------------------------------------------------------------
-
-Setting the PATH variable for programs that link against figtree.lib
-
------------------------------------------------------------------------
+Setting the PATH variable for programs that link against figtree.lib (Windows)
+------------------------------------------------------------------------------
 
 Assume the figtree.dll is located in 
 C:\figtree\bin.  To add it to the PATH environment variable (this
@@ -165,11 +150,8 @@ does not require admin privileges):
 
 
 
------------------------------------------------------------------------
-
 Todo List for Future versions
-
------------------------------------------------------------------------
+-----------------------------
 
 - TODO: Clean up makefiles for Unix/Linux/Solaris version.
 
@@ -195,23 +177,17 @@ Todo List for Future versions
           prevents figtree from being
           called simultaneously in multiple threads)
 
------------------------------------------------------------------------
-
 Change Log
+----------
 
------------------------------------------------------------------------
-
------------------------------------------------------------------------
-2014-10-18 (Changes made by Vlad Morariu)
------------------------------------------------------------------------
+### 2014-10-18 (Changes made by Vlad Morariu)
 
 - Fixed bug: Added fabs() calls to cluster-wise error bounds to handle
     negative weights properly.
 - Added verbose print statements for method selection.
 
------------------------------------------------------------------------
-figtree-0.9.3  2010-05-12  (Changes made by Vlad Morariu)
------------------------------------------------------------------------
+
+### figtree-0.9.3  2010-05-12  (Changes made by Vlad Morariu)
 
 - Added stdlib.h and string.h includes to for exit(), strcmp(),
     memset() (they used to be implicitly included by gcc headers, but
@@ -220,9 +196,8 @@ figtree-0.9.3  2010-05-12  (Changes made by Vlad Morariu)
     figtree, which uses the automatic method and parameter selection
     approach described in the NIPS 08 paper.
 
------------------------------------------------------------------------
-figtree-0.9.2  2008-12-05  (Changes made by Vlad Morariu)  
------------------------------------------------------------------------
+
+### figtree-0.9.2  2008-12-05  (Changes made by Vlad Morariu)  
 
 - NEW: Added function that chooses fastest method between Direct, 
     DirectTree, Ifgt, and IfgtTree, making figtree a black-box approach
@@ -238,16 +213,14 @@ figtree-0.9.2  2008-12-05  (Changes made by Vlad Morariu)
 - Changed interface of the mex files to remove redundant arguments.
 - Other improvements (see source files)
 
------------------------------------------------------------------------
-figtree-0.9.1  2008-02-26  (Changes made by Vlad Morariu)
------------------------------------------------------------------------
+
+### figtree-0.9.1  2008-02-26  (Changes made by Vlad Morariu)
 
 - FIX:  parameter selection gave bad params since K (number of 
         clusters) was not allowed to equal number of sources
 
------------------------------------------------------------------------
-figtree-0.9    2008-01-30   (Changes made by Vlad Morariu)
------------------------------------------------------------------------
+
+### figtree-0.9    2008-01-30   (Changes made by Vlad Morariu)
 
 - Initial adaptation from Vikas's initial code
 - NEW:  integrated Vikas's FIGTree code into library
