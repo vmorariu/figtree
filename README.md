@@ -38,6 +38,7 @@ any other information regarding ANN, please go to the authors' website:
 http://www.cs.umd.edu/~mount/ANN/
 
 
+
 Samples and Documentation
 -------------------------
 
@@ -53,6 +54,7 @@ figtree.dll MEX file can be renamed to have either a *.mex or *.mexw32
 extension (depending on the version of Matlab).
 
 For a description of available C/C++ functions, see 'include/figtree.h'.
+
 
 
 Using Precompiled WIN32 binaries
@@ -73,8 +75,11 @@ be used to add the paths of libraries without having to copy them in
 the directory of each executable that uses them.
 
 
-Compiling the Python extension (requires cython)
-------------------------------------------------
+
+Python wrapper
+--------------
+
+### cython extension
 
 Change the directory to ${FIGTREE_DIR}/python. To build in place, putting
 the figtree.so (Linux) or figtree.pyd (Windows) in ${FIGTREE_DIR/python,
@@ -97,8 +102,31 @@ using the command
 with the "--user" or "--prefix PREFIX_PATH" flags set as needed.
 
 
-Compiling Library and Matlab MEX files in Windows using VS8
------------------------------------------------------------
+### ctypes wrapper (provided by third party)
+
+Another option for using figtree in python is the ctypes wrapper
+provided by Frederik Beaujean: 
+
+https://github.com/fredRos/pyfigtree
+
+
+
+Matlab
+------
+
+This has been tested on Matlab 7 with g++ and msvc as a compiler.                
+
+1. Set up matlab to use the gcc/msvc compiler by running 'mex -setup'.
+
+2. In Matlab, set the working directory to (FIGTREE_DIR)/matlab/ and run
+   CompileMexFilesUsingMatlab.m.
+
+
+
+C/C++ library
+-------------
+
+### Windows (Visual Studio)
 
 You can compile the library using the Visual Studio Solution
 (FIGTREE_DIR)/vs8/figtree.sln.  Compiling the entire solution will 
@@ -110,22 +138,7 @@ Make sure you first switch to the 'Release' mode, or else figtree will
 be very slow!
 
 
-
-Compiling Matlab MEX files in Linux, Solaris, or Windows using Matlab
--------------------------------------------------------------------------
-
-This has been tested on Matlab 7 with g++ as a compiler.  Also, it works
-in windows if the compiler is set up right.
-
-1. Set up matlab to use the gcc compiler by running 'mex -setup'.
-
-2. In Matlab, set the working directory to (FIGTREE_DIR)/matlab/ and run
-   CompileMexFilesUsingMatlab.m.
-
-
-
-Compiling Library in Linux or Solaris
--------------------------------------
+### Linux or Solaris
 
 1. Compile FIGTree library as a shared library by issuing command 'make'
    
@@ -146,8 +159,8 @@ Compiling Library in Linux or Solaris
 
 
 
-Setting the PATH variable for programs that link against figtree.lib (Windows)
-------------------------------------------------------------------------------
+Windows: Setting the PATH variable for programs that link against figtree.lib
+-----------------------------------------------------------------------------
 
 Assume the figtree.dll is located in 
 C:\figtree\bin.  To add it to the PATH environment variable (this
