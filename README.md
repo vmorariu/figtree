@@ -20,11 +20,15 @@ fast Gaussian summation. Advances in Neural Information Processing
 Systems (NIPS), 2008.
 
 For more up-to-date information on this library, please go to the 
-FIGTree homepage: 
+FIGTree homepage,
 
 http://www.umiacs.umd.edu/~morariu/figtree/ 
 
-or the SourceForge download page: 
+the GitHub repo for the most recent changes,
+
+https://github.com/vmorariu/figtree
+
+or the SourceForge download page for releases with Windows binaries,
 
 http://sourceforge.net/projects/figtree
 
