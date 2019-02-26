@@ -16,13 +16,13 @@ cdef extern from "figtree.h":
 
 
 def figtree(np.ndarray[np.float64_t, ndim=2, mode='c'] X, float h,
-            np.ndarray[np.float64_t, mode='c'] Q,
+            np.ndarray[np.float64_t, ndim=2, mode='c'] Q,
             np.ndarray[np.float64_t, ndim=2, mode='c'] Y,
             float epsilon, int evalMethod=4,
             int ifgtParamMethod=1, int ifgtTruncMethod=2, int verbose=0):
     """Wrapper for the figtree C function."""
     N, d = X.shape[0], X.shape[1]
-    W = Q.size / N
+    W = int(Q.size / N)
     M, dY = Y.shape[0], Y.shape[1]
     assert((d == dY) and (W*N == Q.size) and (Q.size == N or (
         (Q.ndim == 2) and (Q.shape[0] == W) and (Q.shape[1] == N))))
