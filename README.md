@@ -220,11 +220,10 @@ Todo List for Future versions
 Change Log
 ----------
 
-### 2014-10-18 (Changes made by Vlad Morariu)
+### figtree-0.9.4    2019-02-26   (Changes made by Era Choshen)
 
-- Fixed bug: Added fabs() calls to cluster-wise error bounds to handle
-    negative weights properly.
-- Added verbose print statements for method selection.
+- Added compatibility in for python3 in pyx (division is automatically float, recast to int)
+- Added compatilbity in cdef for two dimensional Q
 
 
 ### figtree-0.9.3  2010-05-12  (Changes made by Vlad Morariu)
@@ -270,3 +269,9 @@ Change Log
     most work
 - Sources and targets no longer need to fit in unit hypercube
 
+
+### 2014-10-18 (Changes made by Vlad Morariu)
+
+- Fixed bug: Added fabs() calls to cluster-wise error bounds to handle
+    negative weights properly.
+- Added verbose print statements for method selection.
