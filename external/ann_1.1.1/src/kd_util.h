@@ -31,7 +31,7 @@
 //	externally accessible functions
 //----------------------------------------------------------------------
 
-double annAspectRatio(			// compute aspect ratio of box
+float annAspectRatio(			// compute aspect ratio of box
 	int					dim,			// dimension
 	const ANNorthRect	&bnd_box);		// bounding cube
 

@@ -59,7 +59,7 @@ using namespace std;					// make std:: accessible
 
 const int		STRING_LEN		= 500;	// string lengths
 const int		MAX_DIM			= 1000; // maximum dimension
-const double	DEF_SLICE_VAL	= 0;	// default slice value
+const float	DEF_SLICE_VAL	= 0;	// default slice value
 const char		FIG_HEAD[]		= {"#FIG 3.1"}; // fig file header
 const char		DUMP_SUFFIX[]	= {".dmp"};	// suffix for dump file
 const char		FIG_SUFFIX[]	= {".fig"};	// suffix for fig file
@@ -72,23 +72,23 @@ ofstream		ofile;					// output file stream
 ifstream		ifile;					// input file stream
 int				dim_x = 0;				// horizontal dimension
 int				dim_y = 1;				// vertical dimension
-double			slice_val[MAX_DIM];		// array of slice values
-double			u_per_in = 1200;		// fig units per inch (version 3.1)
-double			in_size = 5;			// size of figure (in inches)
-double			in_low_x = 1;			// fig upper left corner (in inches)
-double			in_low_y = 1;			// fig upper left corner (in inches)
-double			u_size = 6000;			// size of figure (in units)
-double			u_low_x = 1200;			// fig upper left corner (in units)
-double			u_low_y = 1200;			// fig upper left corner (in units)
+float			slice_val[MAX_DIM];		// array of slice values
+float			u_per_in = 1200;		// fig units per inch (version 3.1)
+float			in_size = 5;			// size of figure (in inches)
+float			in_low_x = 1;			// fig upper left corner (in inches)
+float			in_low_y = 1;			// fig upper left corner (in inches)
+float			u_size = 6000;			// size of figure (in units)
+float			u_low_x = 1200;			// fig upper left corner (in units)
+float			u_low_y = 1200;			// fig upper left corner (in units)
 int				pt_size = 10;			// point size (in fig units)
 
 int				dim;					// dimension
 int				n_pts;					// number of points
 ANNpointArray	pts = NULL;				// point array
 
-double			scale;					// scale factor for transformation
-double			offset_x;				// offsets for transformation
-double			offset_y;
+float			scale;					// scale factor for transformation
+float			offset_x;				// offsets for transformation
+float			offset_y;
 
 										// transformations
 #define TRANS_X(p)		(offset_x + scale*(p[dim_x]))
@@ -113,7 +113,7 @@ void Error(char *msg, ANNerr level)
 // set_slice_val - set all slice values to given value
 //----------------------------------------------------------------------
 
-void set_slice_val(double val)
+void set_slice_val(float val)
 {
 	for (int i = 0; i < MAX_DIM; i++) {
 		slice_val[i] = val;
@@ -151,7 +151,7 @@ void getArgs(int argc, char **argv)
 {
 	int i;
 	int sl_dim;									// temp slice dimension
-	double sl_val;								// temp slice value
+	float sl_val;								// temp slice value
 
 	set_slice_val(DEF_SLICE_VAL);				// set initial slice-values
 
@@ -560,8 +560,8 @@ void readANN()
 			ifile >> bnd_box.hi[j];				// read box high coordinates
 		}
 												// compute scaling factors
-		double box_len_x = bnd_box.hi[dim_x] - bnd_box.lo[dim_x];
-		double box_len_y = bnd_box.hi[dim_y] - bnd_box.lo[dim_y];
+		float box_len_x = bnd_box.hi[dim_x] - bnd_box.lo[dim_x];
+		float box_len_y = bnd_box.hi[dim_y] - bnd_box.lo[dim_y];
 												// longer side determines scale
 		if (box_len_x > box_len_y) scale = u_size/box_len_x;
 		else					   scale = u_size/box_len_y;

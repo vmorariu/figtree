@@ -282,7 +282,7 @@ using namespace std;					// make std:: available
 //------------------------------------------------------------------------
 
 const int		STRING_LEN		= 500;			// max string length
-const double	ERR				= 0.00001;		// epsilon (for float compares)
+const float	ERR				= 0.00001;		// epsilon (for float compares)
 
 //------------------------------------------------------------------------
 //	Enumerated values and conversions
@@ -447,10 +447,10 @@ const int		def_n_color		= 5;			// def number of colors
 const ANNbool	def_new_clust	= ANNfalse;		// def new clusters flag
 const int		def_max_dim		= 1;			// def max flat dimension
 const Distrib	def_distr		= UNIFORM;		// def distribution
-const double	def_std_dev		= 1.00;			// def standard deviation
-const double	def_corr_coef	= 0.05;			// def correlation coef
+const float	def_std_dev		= 1.00;			// def standard deviation
+const float	def_corr_coef	= 0.05;			// def correlation coef
 const int		def_bucket_size = 1;			// def bucket size
-const double	def_epsilon		= 0.0;			// def error bound
+const float	def_epsilon		= 0.0;			// def error bound
 const int		def_near_neigh	= 1;			// def number of near neighbors
 const int		def_max_visit	= 0;			// def number of points visited
 const int		def_rad_bound	= 0;			// def radius bound
@@ -476,15 +476,15 @@ int				n_color;				// number of colors
 ANNbool			new_clust;				// generate new clusters?
 int				max_dim;				// maximum flat dimension
 Distrib			distr;					// distribution
-double			corr_coef;				// correlation coef
-double			std_dev;				// standard deviation
-double			std_dev_lo;				// low standard deviation
-double			std_dev_hi;				// high standard deviation
+float			corr_coef;				// correlation coef
+float			std_dev;				// standard deviation
+float			std_dev_lo;				// low standard deviation
+float			std_dev_hi;				// high standard deviation
 int				bucket_size;			// bucket size
-double			epsilon;				// error bound
+float			epsilon;				// error bound
 int				near_neigh;				// number of near neighbors
 int				max_pts_visit;			// max number of points to visit
-double			radius_bound;			// maximum radius search bound
+float			radius_bound;			// maximum radius search bound
 int				true_nn;				// number of true nn's
 ANNbool			validate;				// validation flag
 StatLev			stats;					// statistics output level
@@ -887,7 +887,7 @@ int main(int argc, char** argv)
 
 				if (stats >= EXEC_TIME) {		// output processing time
 					cout << "  process_time  = "
-						 << double(prep_time)/CLOCKS_PER_SEC << " sec\n";
+						 << float(prep_time)/CLOCKS_PER_SEC << " sec\n";
 				}
 
 				if (stats >= PREP_STATS)		// output or check tree stats
@@ -1109,7 +1109,7 @@ int main(int argc, char** argv)
 
 				if (stats >= EXEC_TIME) {		// print exec time summary
 					cout << "  query_time    = " <<
-						double(query_time)/(query_size*CLOCKS_PER_SEC)
+						float(query_time)/(query_size*CLOCKS_PER_SEC)
 						 << " sec/query";
 					#ifdef ANN_PERF
 						cout << " (biased by perf measurements)";
@@ -1498,22 +1498,22 @@ void doValidation()						// perform validation
 			if (curr_tru_idx[j] == ANN_NULL_IDX)// no more true neighbors?
 				break;
 												// true i-th smallest distance
-			double true_dist = ANN_ROOT(curr_tru_dst[j]);
+			float true_dist = ANN_ROOT(curr_tru_dst[j]);
 												// reported i-th smallest
-			double rept_dist = ANN_ROOT(curr_apx_dst[j]);
+			float rept_dist = ANN_ROOT(curr_apx_dst[j]);
 												// better than optimum?
 			if (rept_dist < true_dist*(1-ERR)) {
 				Error("INTERNAL ERROR: True nearest neighbor incorrect",
 						ANNabort);
 			}
 
-			double resultErr;					// result error
+			float resultErr;					// result error
 			if (true_dist == 0.0) {				// let's not divide by zero
 				if (rept_dist != 0.0) resultErr = ANN_DBL_MAX;
 				else				  resultErr = 0.0;
 			}
 			else {
-				resultErr = (rept_dist - true_dist) / ((double) true_dist);
+				resultErr = (rept_dist - true_dist) / ((float) true_dist);
 			}
 
 			if (resultErr > epsilon && max_pts_visit == 0) {
@@ -1532,13 +1532,13 @@ void doValidation()						// perform validation
 				if (curr_tru_idx[i] == ANN_NULL_IDX) // no more true neighbors?
 					break;
 
-				double rnkErr = 0.0;			// rank error
+				float rnkErr = 0.0;			// rank error
 												// reported j-th distance
 				ANNdist rept_dist = curr_apx_dst[j];
 				int rnk = 0;					// compute rank of this item
 				while (rnk < true_nn && curr_tru_dst[rnk] <= rept_dist)
 					rnk++;
-				if (j+1-rnk > 0) rnkErr = (double) (j+1-rnk);
+				if (j+1-rnk > 0) rnkErr = (float) (j+1-rnk);
 				ann_rank_err += rnkErr;			// update average rank error
 			}
 		#endif
@@ -1602,8 +1602,8 @@ void treeStats(
 		verbose = ANNtrue;
 	}
 												// depth should be O(dim*log n)
-	int too_many_levels = (int) (2.0 * st.dim * log2((double) st.n_pts));
-	int opt_levels = (int) log2(double(st.n_pts)/st.bkt_size);
+	int too_many_levels = (int) (2.0 * st.dim * log2((float) st.n_pts));
+	int opt_levels = (int) log2(float(st.n_pts)/st.bkt_size);
 	if (st.n_pts >= MIN_PTS && st.depth > too_many_levels) {
 		out << "-----------------------------------------------------------\n";
 		out << "Warning: The tree is more than 2x as deep as (dim*log n).\n";

@@ -45,7 +45,7 @@
 int				ANNkdFRDim;				// dimension of space
 ANNpoint		ANNkdFRQ;				// query point
 ANNdist			ANNkdFRSqRad;			// squared radius search bound
-double			ANNkdFRMaxErr;			// max tolerable squared error
+float			ANNkdFRMaxErr;			// max tolerable squared error
 ANNpointArray	ANNkdFRPts;				// the points
 ANNmin_k*		ANNkdFRPointMK;			// set of k closest points
 int				ANNkdFRPtsVisited;		// total points visited
@@ -69,7 +69,7 @@ int ANNkd_tree::annkFRSearch(
 	int					k,				// number of near neighbors to return
 	ANNidxArray			nn_idx,			// nearest neighbor indices (returned)
 	ANNdistArray		dd,				// the approximate nearest neighbor
-	double				eps)			// the error bound
+	float				eps)			// the error bound
 {
 	ANNkdFRDim = dim;					// copy arguments to static equivs
 	ANNkdFRQ = q;
@@ -109,7 +109,7 @@ int ANNkd_tree::annkFRSearchFlops(
 	int					k,				// number of near neighbors to return
 	ANNidxArray			nn_idx,			// nearest neighbor indices (returned)
 	ANNdistArray		dd,				// the approximate nearest neighbor
-	double				eps, 		// the error bound
+	float				eps, 		// the error bound
   int * flops )			// the number of floating ops performed by this query
 {
 	ANNkdFRDim = dim;					// copy arguments to static equivs
@@ -398,7 +398,7 @@ int ANNkd_tree::annkFRSearchUnordered(
 	int					k,				// number of near neighbors to return
 	ANNidxArray			nn_idx,			// nearest neighbor indices (returned)
 	ANNdistArray		dd,				// the approximate nearest neighbor
-	double				eps)			// the error bound
+	float				eps)			// the error bound
 {
 	ANNkdFRDim = dim;					// copy arguments to static equivs
 	ANNkdFRQ = q;
@@ -433,7 +433,7 @@ int ANNkd_tree::annkFRSearchUnorderedFlops(
 	int					k,				// number of near neighbors to return
 	ANNidxArray			nn_idx,			// nearest neighbor indices (returned)
 	ANNdistArray		dd,				// the approximate nearest neighbor
-	double				eps, 		// the error bound
+	float				eps, 		// the error bound
   int * flops )			// the number of floating ops performed by this query
 {
 	ANNkdFRDim = dim;					// copy arguments to static equivs

@@ -73,13 +73,13 @@ void annGaussPts(				// Gaussian distribution
 	ANNpointArray	pa,			// point array (modified)
 	int				n,			// number of points
 	int				dim,		// dimension
-	double			std_dev);	// standard deviation
+	float			std_dev);	// standard deviation
 
 void annCoGaussPts(				// correlated-Gaussian distribution
 	ANNpointArray	pa,			// point array (modified)
 	int				n,			// number of points
 	int				dim,		// dimension
-	double			correlation);	// correlation
+	float			correlation);	// correlation
 
 void annLaplacePts(				// Laplacian distribution
 	ANNpointArray	pa,			// point array (modified)
@@ -90,7 +90,7 @@ void annCoLaplacePts(			// correlated-Laplacian distribution
 	ANNpointArray	pa,			// point array (modified)
 	int				n,			// number of points
 	int				dim,		// dimension
-	double			correlation);	// correlation
+	float			correlation);	// correlation
 
 void annClusGaussPts(			// clustered-Gaussian distribution
 	ANNpointArray	pa,			// point array (modified)
@@ -98,7 +98,7 @@ void annClusGaussPts(			// clustered-Gaussian distribution
 	int				dim,		// dimension
 	int				n_clus,		// number of colors (clusters)
 	ANNbool			new_clust,	// generate new cluster centers
-	double			std_dev);	// standard deviation within clusters
+	float			std_dev);	// standard deviation within clusters
 
 void annClusOrthFlats(          // clustered along orthogonal flats
 	ANNpointArray	pa,			// point array (modified)
@@ -106,7 +106,7 @@ void annClusOrthFlats(          // clustered along orthogonal flats
 	int				dim,		// dimension
 	int				n_clus,		// number of colors
 	ANNbool			new_clust,	// generate new clusters.
-	double			std_dev,	// standard deviation within clusters
+	float			std_dev,	// standard deviation within clusters
 	int				max_dim);	// maximum dimension of the flats
 
 void annClusEllipsoids(			// clustered around ellipsoids
@@ -115,9 +115,9 @@ void annClusEllipsoids(			// clustered around ellipsoids
 	int				dim,		// dimension
 	int				n_clus,		// number of colors
 	ANNbool			new_clust,	// generate new clusters.
-	double			std_dev_small,	// small standard deviation
-	double			std_dev_lo,	// low standard deviation for ellipses
-	double			std_dev_hi,	// high standard deviation for ellipses
+	float			std_dev_small,	// small standard deviation
+	float			std_dev_lo,	// low standard deviation for ellipses
+	float			std_dev_hi,	// high standard deviation for ellipses
 	int				max_dim);	// maximum dimension of the flats
 
 void annPlanted(				// planted nearest neighbors
@@ -126,6 +126,6 @@ void annPlanted(				// planted nearest neighbors
 	int				dim,		// dimension
 	ANNpointArray	src,		// source point array
 	int				n_src,		// source size
-	double			std_dev);	// standard deviation about source
+	float			std_dev);	// standard deviation about source
 
 #endif

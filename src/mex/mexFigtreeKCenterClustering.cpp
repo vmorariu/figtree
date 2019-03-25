@@ -60,7 +60,7 @@ void mexFunction(int nlhs,				// Number of left hand side (output) arguments
   
   // d
   int argu = 0;
-  if( !mxIsDouble(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
+  if( !mxIsfloat(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
     mexErrMsgTxt("Input 'd' must be a scalar.");
   int d = (int)
     mxGetScalar(prhs[argu]);
@@ -69,7 +69,7 @@ void mexFunction(int nlhs,				// Number of left hand side (output) arguments
 
   // N
   argu++;
-  if( !mxIsDouble(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
+  if( !mxIsfloat(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
     mexErrMsgTxt("Input 'N' must be a scalar.");
   int N = (int) mxGetScalar(prhs[argu]);
   if (N <= 0) 
@@ -77,7 +77,7 @@ void mexFunction(int nlhs,				// Number of left hand side (output) arguments
 
   // x
   argu++;
-  double *x = mxGetPr(prhs[argu]);
+  float *x = mxGetPr(prhs[argu]);
   int mrows = (int)mxGetM(prhs[argu]); //mrows
   int ncols = (int)mxGetN(prhs[argu]); //ncols
   if ( mrows != d && ncols != N )  
@@ -85,7 +85,7 @@ void mexFunction(int nlhs,				// Number of left hand side (output) arguments
   
   // kMax
   argu++;
-  if( !mxIsDouble(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
+  if( !mxIsfloat(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
     mexErrMsgTxt("Input 'kMax' must be a scalar.");
   int kMax = (int) mxGetScalar(prhs[argu]);
   if (kMax <= 0) 
@@ -97,13 +97,13 @@ void mexFunction(int nlhs,				// Number of left hand side (output) arguments
 
   // K
   argu = 0;
-  plhs[argu] = mxCreateDoubleMatrix(1, 1, mxREAL );
-  double * K = (double*)mxGetPr(plhs[argu]);
+  plhs[argu] = mxCreatefloatMatrix(1, 1, mxREAL );
+  float * K = (float*)mxGetPr(plhs[argu]);
 
   // rx
   argu++;
-  plhs[argu] = mxCreateDoubleMatrix(1, 1, mxREAL);
-  double * rx = (double*)mxGetPr(plhs[argu]);
+  plhs[argu] = mxCreatefloatMatrix(1, 1, mxREAL);
+  float * rx = (float*)mxGetPr(plhs[argu]);
   
   // clusterIndex
   argu++;
@@ -112,8 +112,8 @@ void mexFunction(int nlhs,				// Number of left hand side (output) arguments
 
   int kTemp; 
   int * numPointsTemp = (int*)mxMalloc( sizeof(int)*kMax );
-  double * clusterCentersTemp = (double*)mxMalloc( sizeof(double)*kMax*d );
-  double * clusterRadiiTemp = (double*)mxMalloc( sizeof(double)*kMax );
+  float * clusterCentersTemp = (float*)mxMalloc( sizeof(float)*kMax*d );
+  float * clusterRadiiTemp = (float*)mxMalloc( sizeof(float)*kMax );
 
   // function call
   figtreeKCenterClustering( d, N, x, kMax, &kTemp, rx, clusterIndex, clusterCentersTemp, numPointsTemp, clusterRadiiTemp );
@@ -122,9 +122,9 @@ void mexFunction(int nlhs,				// Number of left hand side (output) arguments
   // The sizes of these arrays depend on the number of final clusters, which can be less than kMax. 
   // clusterCenters  
   argu++;
-  plhs[argu] = mxCreateDoubleMatrix(d, kTemp, mxREAL);
-  double * clusterCenters = mxGetPr(plhs[argu]);
-  memcpy( clusterCenters, clusterCentersTemp, sizeof(double)*kTemp*d );
+  plhs[argu] = mxCreatefloatMatrix(d, kTemp, mxREAL);
+  float * clusterCenters = mxGetPr(plhs[argu]);
+  memcpy( clusterCenters, clusterCentersTemp, sizeof(float)*kTemp*d );
 
   // numPoints
   argu++;
@@ -134,9 +134,9 @@ void mexFunction(int nlhs,				// Number of left hand side (output) arguments
 
   // clusterRadii
   argu++;
-  plhs[argu] = mxCreateDoubleMatrix(1, kTemp, mxREAL);
-  double * clusterRadii = mxGetPr(plhs[argu]);
-  memcpy( clusterRadii, clusterRadiiTemp, sizeof(double)*kTemp );
+  plhs[argu] = mxCreatefloatMatrix(1, kTemp, mxREAL);
+  float * clusterRadii = mxGetPr(plhs[argu]);
+  memcpy( clusterRadii, clusterRadiiTemp, sizeof(float)*kTemp );
 
   // free temporary arrays
   mxFree( clusterCentersTemp );

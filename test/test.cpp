@@ -54,7 +54,7 @@
 int main()
 {
   int ds[] = {1,2,3,4,5,6};
-  double hs[] = {.01,.02,.04,.08,.16,.32,.64};
+  float hs[] = {.01,.02,.04,.08,.16,.32,.64};
   int nds = sizeof(ds)/sizeof(ds[0]);
   int nhs = sizeof(hs)/sizeof(hs[0]);
 
@@ -73,7 +73,7 @@ int main()
   // maximum absolute error.
   // The smaller epsilon is, the more accurate the results will be, at the
   // expense of increased computational complexity.
-  double epsilon = 1e-2;
+  float epsilon = 1e-2;
 
   // try each parameter combination ntrial times
   int ntrials = 3;
@@ -91,34 +91,34 @@ int main()
         // the Gauss Transform sums terms exp( -||x_i - y_j||^2 / h^2 ) as opposed
         // to  exp( -||x_i - y_j||^2 / (2*sigma^2) ).  Thus, if sigma is known, 
         // bandwidth can be set to h = sqrt(2)*sigma.
-        double h = hs[hind];
+        float h = hs[hind];
     
         // The source array.  It is a contiguous array, where
         // ( x[i*d], x[i*d+1], ..., x[i*d+d-1] ) is the ith d-dimensional sample.
-        double * x = new double[d*N];
+        float * x = new float[d*N];
         // initialize with random values between 0 and 1
         for( int i = 0; i < d*N; i++ )
-          x[i] = rand()/(double(RAND_MAX)+1);
+          x[i] = rand()/(float(RAND_MAX)+1);
 
         // The target array.  It is a contiguous array, where
         // ( y[j*d], y[j*d+1], ..., y[j*d+d-1] ) is the jth d-dimensional sample.
-        double * y = new double[d*M];
+        float * y = new float[d*M];
         // initialize with random values between 0 and 1
         for( int i = 0; i < d*M; i++ )
-          y[i] = rand()/(double(RAND_MAX)+1);
+          y[i] = rand()/(float(RAND_MAX)+1);
 
         // The weight array.  The ith weight is associated with the ith source sample.
         // To evaluate the Gauss Transform with the same sources and targets, but 
         // different sets of weights, add another row of weights and set W = 2.  
-        double * q = new double[W*N];
-        double * Q = new double[W]; // sum of each set of qs (error is relative to Q)
+        float * q = new float[W*N];
+        float * Q = new float[W]; // sum of each set of qs (error is relative to Q)
         // initialize with random values between 0 and 1
         for( int i = 0; i < W; i++ )
         {
           Q[i] = 0;
           for( int j = 0; j < N; j++ )
           {
-            q[i*N+j] = rand()/(double(RAND_MAX)+1);
+            q[i*N+j] = rand()/(float(RAND_MAX)+1);
             Q[i] += q[i*N+j];
           }
         }
@@ -127,26 +127,26 @@ int main()
         // target sample.  The first M elements will correspond to the Gauss Transform computed
         // with the first set of weights, second M elements will correspond to the G.T. computed
         // with the second set of weights, etc.
-        double * g_direct               = new double[W*M];
-        double * g_direct_tree          = new double[W*M];
-        double * g_ifgt                 = new double[W*M];
-        double * g_ifgt_point           = new double[W*M];
-        double * g_ifgt_cluster         = new double[W*M];
-        double * g_ifgt_tree_point      = new double[W*M];
-        double * g_ifgt_tree_cluster    = new double[W*M];
-        double * g_ifgt_tree            = new double[W*M];
-        double * g_auto                 = new double[W*M];
+        float * g_direct               = new float[W*M];
+        float * g_direct_tree          = new float[W*M];
+        float * g_ifgt                 = new float[W*M];
+        float * g_ifgt_point           = new float[W*M];
+        float * g_ifgt_cluster         = new float[W*M];
+        float * g_ifgt_tree_point      = new float[W*M];
+        float * g_ifgt_tree_cluster    = new float[W*M];
+        float * g_ifgt_tree            = new float[W*M];
+        float * g_auto                 = new float[W*M];
     
         // initialize all output arrays to zero
-        memset( g_direct                  , 0, sizeof(double)*W*M );
-        memset( g_direct_tree             , 0, sizeof(double)*W*M );
-        memset( g_ifgt                    , 0, sizeof(double)*W*M );
-        memset( g_ifgt_point              , 0, sizeof(double)*W*M );
-        memset( g_ifgt_cluster            , 0, sizeof(double)*W*M );
-        memset( g_ifgt_tree               , 0, sizeof(double)*W*M );
-        memset( g_ifgt_tree_point         , 0, sizeof(double)*W*M );
-        memset( g_ifgt_tree_cluster       , 0, sizeof(double)*W*M );
-        memset( g_auto                    , 0, sizeof(double)*W*M );
+        memset( g_direct                  , 0, sizeof(float)*W*M );
+        memset( g_direct_tree             , 0, sizeof(float)*W*M );
+        memset( g_ifgt                    , 0, sizeof(float)*W*M );
+        memset( g_ifgt_point              , 0, sizeof(float)*W*M );
+        memset( g_ifgt_cluster            , 0, sizeof(float)*W*M );
+        memset( g_ifgt_tree               , 0, sizeof(float)*W*M );
+        memset( g_ifgt_tree_point         , 0, sizeof(float)*W*M );
+        memset( g_ifgt_tree_cluster       , 0, sizeof(float)*W*M );
+        memset( g_auto                    , 0, sizeof(float)*W*M );
 
         // evaluate gauss transform using direct (slow) method
         figtree( d, N, M, W, x, h, q, y, epsilon, g_direct              , FIGTREE_EVAL_DIRECT );
@@ -168,14 +168,14 @@ int main()
         figtree( d, N, M, W, x, h, q, y, epsilon, g_auto                , FIGTREE_EVAL_AUTO, FIGTREE_PARAM_NON_UNIFORM, FIGTREE_TRUNC_CLUSTER, 1 );
 
         // compute absolute error of the Gauss Transform at each target and for all sets of weights.
-        double err_direct_tree          = fabs(g_direct_tree[0]       - g_direct[0])/Q[0];
-        double err_ifgt                 = fabs(g_ifgt[0]              - g_direct[0])/Q[0];
-        double err_ifgt_point           = fabs(g_ifgt_point[0]        - g_direct[0])/Q[0];
-        double err_ifgt_cluster         = fabs(g_ifgt_cluster[0]      - g_direct[0])/Q[0];
-        double err_ifgt_tree            = fabs(g_ifgt_tree[0]         - g_direct[0])/Q[0];
-        double err_ifgt_tree_point      = fabs(g_ifgt_tree_point[0]   - g_direct[0])/Q[0];
-        double err_ifgt_tree_cluster    = fabs(g_ifgt_tree_cluster[0] - g_direct[0])/Q[0];
-        double err_auto                 = fabs(g_auto[0]              - g_direct[0])/Q[0];
+        float err_direct_tree          = fabs(g_direct_tree[0]       - g_direct[0])/Q[0];
+        float err_ifgt                 = fabs(g_ifgt[0]              - g_direct[0])/Q[0];
+        float err_ifgt_point           = fabs(g_ifgt_point[0]        - g_direct[0])/Q[0];
+        float err_ifgt_cluster         = fabs(g_ifgt_cluster[0]      - g_direct[0])/Q[0];
+        float err_ifgt_tree            = fabs(g_ifgt_tree[0]         - g_direct[0])/Q[0];
+        float err_ifgt_tree_point      = fabs(g_ifgt_tree_point[0]   - g_direct[0])/Q[0];
+        float err_ifgt_tree_cluster    = fabs(g_ifgt_tree_cluster[0] - g_direct[0])/Q[0];
+        float err_auto                 = fabs(g_auto[0]              - g_direct[0])/Q[0];
 
         for( int i = 0; i < W; i++)
           for( int j = 0; j < M; j++ )

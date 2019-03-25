@@ -26,13 +26,14 @@
 #include "kd_tree.h"					// kd-tree definitions
 #include "kd_util.h"					// kd-tree utilities
 #include "kd_split.h"					// splitting functions
+#include <stdio.h>
 
 //----------------------------------------------------------------------
 //	Constants
 //----------------------------------------------------------------------
 
-const double ERR = 0.001;				// a small value
-const double FS_ASPECT_RATIO = 3.0;		// maximum allowed aspect ratio
+const float ERR = 0.001;				// a small value
+const float FS_ASPECT_RATIO = 3.0;		// maximum allowed aspect ratio
 										// in fair split. Must be >= 2.
 
 //----------------------------------------------------------------------
@@ -95,7 +96,7 @@ void midpt_split(
 	ANNcoord max_spread = -1;			// find long side with most spread
 	for (d = 0; d < dim; d++) {
 										// is it among longest?
-		if (double(bnds.hi[d] - bnds.lo[d]) >= (1-ERR)*max_length) {
+		if (float(bnds.hi[d] - bnds.lo[d]) >= (1-ERR)*max_length) {
 										// compute its spread
 			ANNcoord spr = annSpread(pa, pidx, n, d);
 			if (spr > max_spread) {		// is it max so far?
@@ -166,18 +167,31 @@ void sl_midpt_split(
 	for (d = 0; d < dim; d++) {
 										// is it among longest?
 		if ((bnds.hi[d] - bnds.lo[d]) >= (1-ERR)*max_length) {
+			std::cout << "here1" << "\n";
 										// compute its spread
 			ANNcoord spr = annSpread(pa, pidx, n, d);
+			std::cout << "here2" << "\n";
+
 			if (spr > max_spread) {		// is it max so far?
 				max_spread = spr;
+				std::cout << "here5" << "\n";
 				cut_dim = d;
 			}
 		}
 	}
-										// ideal split at midpoint
-	ANNcoord ideal_cut_val = (bnds.lo[cut_dim] + bnds.hi[cut_dim])/2;
+	printf("cut dim: %d \n", cut_dim);
+	printf("first: %f \n",  bnds.lo[cut_dim]/2);
+	printf("second: %f \n", bnds.hi[cut_dim]/2);
+	std::cout << "here4" << "\n";										// ideal split at midpoint
+	ANNcoord test_1 = bnds.lo[cut_dim]/2;
+	std::cout << "Middle" << "\n";
+	ANNcoord test_2 = bnds.hi[cut_dim]/2;
+	std::cout << "after" << "\n";
+	ANNcoord ideal_cut_val = bnds.lo[cut_dim]/2 + bnds.hi[cut_dim]/2;
 
 	ANNcoord min, max;
+	std::cout << "here3" << "\n";
+
 	annMinMax(pa, pidx, n, cut_dim, min, max);	// find min/max coordinates
 
 	if (ideal_cut_val < min)			// slide to min or max as needed
@@ -267,7 +281,7 @@ void fair_split(
 		ANNcoord length = bnds.hi[d] - bnds.lo[d];
 										// is this side midpoint splitable
 										// without violating aspect ratio?
-		if (((double) max_length)*2.0/((double) length) <= FS_ASPECT_RATIO) {
+		if (((float) max_length)*2.0/((float) length) <= FS_ASPECT_RATIO) {
 										// compute spread along this dim
 			ANNcoord spr = annSpread(pa, pidx, n, d);
 			if (spr > max_spread) {		// best spread so far
@@ -373,7 +387,7 @@ void sl_fair_split(
 		ANNcoord length = bnds.hi[d] - bnds.lo[d];
 										// is this side midpoint splitable
 										// without violating aspect ratio?
-		if (((double) max_length)*2.0/((double) length) <= FS_ASPECT_RATIO) {
+		if (((float) max_length)*2.0/((float) length) <= FS_ASPECT_RATIO) {
 										// compute spread along this dim
 			ANNcoord spr = annSpread(pa, pidx, n, d);
 			if (spr > max_spread) {		// best spread so far

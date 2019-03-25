@@ -61,7 +61,7 @@ void mexFunction(int nlhs,                // Number of left hand side (output) a
   // x
   //  The 2D array is column-major: each column represents a point.
   int argu = 0;
-  double *x = mxGetPr(prhs[argu]);
+  float *x = mxGetPr(prhs[argu]);
   int mrows = (int)  mxGetM(prhs[argu]); //mrows
   int ncols = (int) mxGetN(prhs[argu]); //ncols
   d = mrows;
@@ -72,15 +72,15 @@ void mexFunction(int nlhs,                // Number of left hand side (output) a
 
   // h
   argu = 1;
-  if( !mxIsDouble(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
+  if( !mxIsfloat(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
     mexErrMsgTxt("Input 'h' must be a scalar.");
-  double h = (double) mxGetScalar(prhs[argu]);
+  float h = (float) mxGetScalar(prhs[argu]);
   if ( h <= 0.0) 
     mexErrMsgTxt("Input 'h' must be a positive number.");
  
   //  W
   argu = 2;
-  if( !mxIsDouble(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
+  if( !mxIsfloat(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
     mexErrMsgTxt("Input 'W' must be a scalar.");
   W = (int) mxGetScalar(prhs[argu]);
   if (W <= 0) 
@@ -88,7 +88,7 @@ void mexFunction(int nlhs,                // Number of left hand side (output) a
 
   // y
   argu = 3;
-  double * y = mxGetPr(prhs[argu]);
+  float * y = mxGetPr(prhs[argu]);
   mrows = (int)mxGetM(prhs[argu]); //mrows
   ncols = (int)mxGetN(prhs[argu]); //ncols
   M = ncols;
@@ -99,9 +99,9 @@ void mexFunction(int nlhs,                // Number of left hand side (output) a
 
   // epsilon
   argu = 4;
-  if( !mxIsDouble(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
+  if( !mxIsfloat(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
     mexErrMsgTxt("Input 'epsilon' must be a scalar.");
-  double epsilon = (double) mxGetScalar(prhs[argu]);
+  float epsilon = (float) mxGetScalar(prhs[argu]);
   if ( epsilon <= 0.0) 
     mexErrMsgTxt("Input 'epsilon' must be a positive number.");
 
@@ -114,7 +114,7 @@ void mexFunction(int nlhs,                // Number of left hand side (output) a
   argu++;
   if( nrhs >= argu+1 )
   {
-    if( !mxIsDouble(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
+    if( !mxIsfloat(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
       mexErrMsgTxt("Input 'ifgtParamMethod' must be an integer between 0 and 1" );
     ifgtParamMethod = (int) mxGetScalar(prhs[argu]);
     if( ifgtParamMethod < 0 || ifgtParamMethod >= FIGTREE_TRUNC_SIZE ) 
@@ -124,7 +124,7 @@ void mexFunction(int nlhs,                // Number of left hand side (output) a
   argu++;
   if( nrhs >= argu+1 )
   {
-    if( !mxIsDouble(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
+    if( !mxIsfloat(prhs[argu]) || mxIsComplex(prhs[argu]) || mxGetN(prhs[argu])*mxGetM(prhs[argu])!=1 ) 
       mexErrMsgTxt("Input 'verbose' must be an integer.");
     verbose = (int) mxGetScalar(prhs[argu]);
   }
@@ -135,19 +135,19 @@ void mexFunction(int nlhs,                // Number of left hand side (output) a
 
   // g
   int bestEvalMethod = 0;
-  double * flops = NULL;
-  plhs[0] = mxCreateDoubleMatrix(1,1,mxREAL);
+  float * flops = NULL;
+  plhs[0] = mxCreatefloatMatrix(1,1,mxREAL);
   if( nlhs > 1 )
   {
-    plhs[1] = mxCreateDoubleMatrix(4,1,mxREAL);
+    plhs[1] = mxCreatefloatMatrix(4,1,mxREAL);
     flops = mxGetPr(plhs[1]);
   }
 
-  double * bestEvalMethodDouble = mxGetPr(plhs[0]);
+  float * bestEvalMethodfloat = mxGetPr(plhs[0]);
 
   // Function call
   figtreeChooseEvaluationMethod( d, N, M, W, x, h, y, epsilon, ifgtParamMethod, verbose, &bestEvalMethod, flops );
-  *bestEvalMethodDouble = (double)bestEvalMethod;
+  *bestEvalMethodfloat = (float)bestEvalMethod;
 
   return; 
 }

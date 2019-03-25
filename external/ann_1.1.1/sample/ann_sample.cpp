@@ -52,7 +52,7 @@ void getArgs(int argc, char **argv);			// get command-line arguments
 
 int				k				= 1;			// number of nearest neighbors
 int				dim				= 2;			// dimension
-double			eps				= 0;			// error bound
+float			eps				= 0;			// error bound
 int				maxPts			= 1000;			// maximum number of data points
 
 istream*		dataIn			= NULL;			// input for data points

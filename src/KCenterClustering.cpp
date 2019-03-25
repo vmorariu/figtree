@@ -74,7 +74,7 @@
 
 KCenterClustering::KCenterClustering(int Dim,
       int NSources,
-      double *pSources,
+      float *pSources,
       int *pClusterIndex,
       int NumClusters
       )
@@ -87,8 +87,8 @@ KCenterClustering::KCenterClustering(int Dim,
   px=pSources;
   pci=pClusterIndex;
   K=NumClusters;
-  dist_C = new double[N]; //distances to the center.
-  r=new double[K];
+  dist_C = new float[N]; //distances to the center.
+  r=new float[K];
 
   // moved from Cluster() by Vlad 1/24/07
   pCenters = new int[K]; //indices of the centers.
@@ -121,14 +121,14 @@ KCenterClustering::~KCenterClustering()
 
 
 //-------------------------------------------------------------------
-// ddist is the square of the distance of two vectors(double)
+// ddist is the square of the distance of two vectors(float)
 //-------------------------------------------------------------------
 
 
-double
-KCenterClustering::ddist(const int d, const double *x, const double *y)
+float
+KCenterClustering::ddist(const int d, const float *x, const float *y)
 {
-  double t, s = 0.0;
+  float t, s = 0.0;
   for (int i = d; i != 0; i--)
   {
     t = *x++ - *y++;
@@ -144,10 +144,10 @@ KCenterClustering::ddist(const int d, const double *x, const double *y)
 //-------------------------------------------------------------------
 
 int
-KCenterClustering::idmax(int n, double *x)
+KCenterClustering::idmax(int n, float *x)
 {
   int k = 0;
-  double t = -1.0;
+  float t = -1.0;
   for (int i = 0; i < n; i++, x++)
     if( t < *x )
     {
@@ -188,7 +188,7 @@ KCenterClustering::Cluster()
   // compute the distances from each node to the first center.
   // initialize the circular linked list, the center is the
   // sentinel node.
-  const double *x_nc, *x_j;
+  const float *x_nc, *x_j;
   x_nc = px + nc*d;
   x_j = px;
   for (int j = 0; j < N; x_j += d, j++)
@@ -227,7 +227,7 @@ KCenterClustering::Cluster()
     {
       int ct_j = pCenters[j];
       x_j = px + ct_j*d;
-      double dc2cq = ddist(d, x_j, x_nc) / 4;
+      float dc2cq = ddist(d, x_j, x_nc) / 4;
       if (dc2cq < r[j]) // neighbor cluster
       {
         r[j] = 0.0;
@@ -238,12 +238,12 @@ KCenterClustering::Cluster()
           int nextk = cnext[k];
           //compare the distances from new center 
           //and from current center.  
-          double dist2c_k = dist_C[k];
+          float dist2c_k = dist_C[k];
           if ( dc2cq < dist2c_k )
           {
             
             x_j = px + k*d;
-            double dd = ddist(d, x_j, x_nc);
+            float dd = ddist(d, x_j, x_nc);
             if ( dd < dist2c_k )
             {
               dist_C[k] = dd; // update distances to center
@@ -296,7 +296,7 @@ KCenterClustering::Cluster()
 }
 
 void 
-KCenterClustering::ClusterIncrement( int * nClusters, double * maxRadius )
+KCenterClustering::ClusterIncrement( int * nClusters, float * maxRadius )
 {
   if( numClusters == 0 )
   {
@@ -310,7 +310,7 @@ KCenterClustering::ClusterIncrement( int * nClusters, double * maxRadius )
     // compute the distances from each node to the first center.
     // initialize the circular linked list, the center is the
     // sentinel node.
-    const double *x_nc, *x_j;
+    const float *x_nc, *x_j;
     x_nc = px + nc*d;
     x_j = px;
     for (int j = 0; j < N; x_j += d, j++)
@@ -337,7 +337,7 @@ KCenterClustering::ClusterIncrement( int * nClusters, double * maxRadius )
     {
       int i = numClusters;
       int nc;
-      const double *x_nc, *x_j;
+      const float *x_nc, *x_j;
 
       //find the maximum of vector dist_C, i.e., find the node
       //that is farthest away from C. It is a new center.
@@ -356,7 +356,7 @@ KCenterClustering::ClusterIncrement( int * nClusters, double * maxRadius )
       {
         int ct_j = pCenters[j];
         x_j = px + ct_j*d;
-        double dc2cq = ddist(d, x_j, x_nc) / 4;
+        float dc2cq = ddist(d, x_j, x_nc) / 4;
         if (dc2cq < r[j]) // neighbor cluster
         {
           r[j] = 0.0;
@@ -367,11 +367,11 @@ KCenterClustering::ClusterIncrement( int * nClusters, double * maxRadius )
             int nextk = cnext[k];
             //compare the distances from new center 
             //and from current center.  
-            double dist2c_k = dist_C[k];
+            float dist2c_k = dist_C[k];
             if ( dc2cq < dist2c_k )
             {             
               x_j = px + k*d;
-              double dd = ddist(d, x_j, x_nc);
+              float dd = ddist(d, x_j, x_nc);
               if ( dd < dist2c_k )
               {
                 dist_C[k] = dd; // update distances to center
@@ -433,9 +433,9 @@ KCenterClustering::ClusterIncrement( int * nClusters, double * maxRadius )
 void 
 KCenterClustering::ComputeClusterCenters(
   int NumClusters,
-  double *pClusterCenters,
+  float *pClusterCenters,
   int *pNumPoints,
-  double *pClusterRadii
+  float *pClusterRadii
   )
 {
   int K=NumClusters;

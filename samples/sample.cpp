@@ -69,20 +69,20 @@ int main()
   // the Gauss Transform sums terms exp( -||x_i - y_j||^2 / h^2 ) as opposed
   // to  exp( -||x_i - y_j||^2 / (2*sigma^2) ).  Thus, if sigma is known, 
   // bandwidth can be set to h = sqrt(2)*sigma.
-  double h = .8;
+  float h = .8;
   
   // Desired maximum absolute error after normalizing output by sum of weights.
   // If the weights, q_i (see below), add up to 1, then this is will be the 
   // maximum absolute error.
   // The smaller epsilon is, the more accurate the results will be, at the
   // expense of increased computational complexity.
-  double epsilon = 1e-2;
+  float epsilon = 1e-2;
 
   // The source array.  It is a contiguous array, where
   // ( x[i*d], x[i*d+1], ..., x[i*d+d-1] ) is the ith d-dimensional sample.
   // For example, below N = 20 and d = 7, so there are 20 rows, each
   // a 7-dimensional sample.
-  double x[] = {0.7165, 0.5113, 0.7764, 0.4893, 0.1859, 0.7006, 0.9827,
+  float x[] = {0.7165, 0.5113, 0.7764, 0.4893, 0.1859, 0.7006, 0.9827,
                 0.8066, 0.7036, 0.4850, 0.1146, 0.6649, 0.3654, 0.1400,
                 0.5668, 0.8230, 0.6739, 0.9994, 0.9616, 0.0589, 0.3603,
                 0.5485, 0.2618, 0.5973, 0.0493, 0.5711, 0.7009, 0.9623,
@@ -107,7 +107,7 @@ int main()
   // ( y[j*d], y[j*d+1], ..., y[j*d+d-1] ) is the jth d-dimensional sample.
   // For example, below M = 10 and d = 7, so there are 10 rows, each
   // a 7-dimensional sample.
-  double y[] = {0.9561, 0.5955, 0.0287, 0.8121, 0.6101, 0.7015, 0.0922,
+  float y[] = {0.9561, 0.5955, 0.0287, 0.8121, 0.6101, 0.7015, 0.0922,
                 0.4249, 0.3756, 0.1662, 0.8332, 0.8386, 0.4516, 0.9566,
                 0.1472, 0.8699, 0.7694, 0.4442, 0.6206, 0.9517, 0.6400,
                 0.0712, 0.3143, 0.6084, 0.1750, 0.6210, 0.2460, 0.5874,
@@ -121,7 +121,7 @@ int main()
   // The weight array.  The ith weight is associated with the ith source sample.
   // To evaluate the Gauss Transform with the same sources and targets, but 
   // different sets of weights, add another row of weights and set W = 2.  
-  double q[] = {0.2280, 0.4496, 0.1722, 0.9688, 0.3557, 0.0490, 0.7553, 0.8948, 0.2861, 0.2512, 0.9327, 0.3353, 0.2530, 0.2532, 0.3352, 0.7235, 0.2506, 0.0235, 0.1062, 0.1061, 0.7234, 0.1532};
+  float q[] = {0.2280, 0.4496, 0.1722, 0.9688, 0.3557, 0.0490, 0.7553, 0.8948, 0.2861, 0.2512, 0.9327, 0.3353, 0.2530, 0.2532, 0.3352, 0.7235, 0.2506, 0.0235, 0.1062, 0.1061, 0.7234, 0.1532};
 
   // Number of weights.  For each set of weights a different Gauss Transform is computed, 
   // but by giving multiple sets of weights at once some overhead can be shared.
@@ -131,22 +131,22 @@ int main()
   // target sample.  The first M elements will correspond to the Gauss Transform computed
   // with the first set of weights, second M elements will correspond to the G.T. computed
   // with the second set of weights, etc.
-  double * g_auto = new double[W*M];
-  double * g_sf = new double[W*M];
-  double * g_sf_tree = new double[W*M];
-  double * g_ifgt_u = new double[W*M];
-  double * g_ifgt_tree_u = new double[W*M];
-  double * g_ifgt_nu = new double[W*M];
-  double * g_ifgt_tree_nu = new double[W*M];
+  float * g_auto = new float[W*M];
+  float * g_sf = new float[W*M];
+  float * g_sf_tree = new float[W*M];
+  float * g_ifgt_u = new float[W*M];
+  float * g_ifgt_tree_u = new float[W*M];
+  float * g_ifgt_nu = new float[W*M];
+  float * g_ifgt_tree_nu = new float[W*M];
   
   // initialize all output arrays to zero
-  memset( g_auto        , 0, sizeof(double)*W*M );
-  memset( g_sf          , 0, sizeof(double)*W*M );
-  memset( g_sf_tree     , 0, sizeof(double)*W*M );
-  memset( g_ifgt_u      , 0, sizeof(double)*W*M );
-  memset( g_ifgt_tree_u , 0, sizeof(double)*W*M );
-  memset( g_ifgt_nu     , 0, sizeof(double)*W*M );
-  memset( g_ifgt_tree_nu, 0, sizeof(double)*W*M );
+  memset( g_auto        , 0, sizeof(float)*W*M );
+  memset( g_sf          , 0, sizeof(float)*W*M );
+  memset( g_sf_tree     , 0, sizeof(float)*W*M );
+  memset( g_ifgt_u      , 0, sizeof(float)*W*M );
+  memset( g_ifgt_tree_u , 0, sizeof(float)*W*M );
+  memset( g_ifgt_nu     , 0, sizeof(float)*W*M );
+  memset( g_ifgt_tree_nu, 0, sizeof(float)*W*M );
 
   // 
   // RECOMMENDED way to call figtree().

@@ -56,14 +56,14 @@ int		annIdum = 0;					// used for random number generation
 //	the sequence.
 //------------------------------------------------------------------------
 
-double annRan0()
+float annRan0()
 {
 	const int TAB_SIZE = 97;			// table size: any large number
 	int j;
 
-	static double y, v[TAB_SIZE];
+	static float y, v[TAB_SIZE];
 	static int iff = 0;
-	const double RAN_DIVISOR = double(ANN_RAND_MAX + 1UL);
+	const float RAN_DIVISOR = float(ANN_RAND_MAX + 1UL);
 	if (RAN_DIVISOR < 0) {
 		cout << "RAN_DIVISOR " << RAN_DIVISOR << endl;
 		exit(0);
@@ -121,9 +121,9 @@ static int annRanInt(
 //	annRanUnif - generate a random uniform in [lo,hi]
 //------------------------------------------------------------------------
 
-static double annRanUnif(
-	double				lo,
-	double				hi)
+static float annRanUnif(
+	float				lo,
+	float				hi)
 {
 	return annRan0()*(hi-lo) + lo;
 }
@@ -134,14 +134,14 @@ static double annRanUnif(
 //		variance, using annRan0() as the source of uniform deviates.
 //------------------------------------------------------------------------
 
-static double annRanGauss()
+static float annRanGauss()
 {
 	static int iset=0;
-	static double gset;
+	static float gset;
 
 	if (iset == 0) {					// we don't have a deviate handy
-		double v1, v2;
-		double r = 2.0;
+		float v1, v2;
+		float r = 2.0;
 		while (r >= 1.0) {
 			//------------------------------------------------------------
 			// Pick two uniform numbers in the square extending from -1 to
@@ -152,7 +152,7 @@ static double annRanGauss()
 			v2 = annRanUnif(-1, 1);
 			r = v1 * v1 + v2 * v2;
 		}
-		double fac = sqrt(-2.0 * log(r) / r);
+		float fac = sqrt(-2.0 * log(r) / r);
 		//-----------------------------------------------------------------
 		// Now make the Box-Muller transformation to get two normal
 		// deviates.  Return one and save the other for next time.
@@ -178,12 +178,12 @@ static double annRanGauss()
 //		distribution [2/(b^2)] becomes 1. 
 //------------------------------------------------------------------------
 
-static double annRanLaplace() 
+static float annRanLaplace() 
 {
-	const double b = 1.4142136;
+	const float b = 1.4142136;
 
-	double laprand = -log(annRan0()) / b;
-	double sign = annRan0();
+	float laprand = -log(annRan0()) / b;
+	float sign = annRan0();
 	if (sign < 0.5) laprand = -laprand;
 	return(laprand);
 }
@@ -215,7 +215,7 @@ void annGaussPts(						// Gaussian distribution
 	ANNpointArray		pa,				// point array (modified)
 	int					n,				// number of points
 	int					dim,			// dimension
-	double				std_dev)		// standard deviation
+	float				std_dev)		// standard deviation
 {
 	for (int i = 0; i < n; i++) {
 		for (int d = 0; d < dim; d++) {
@@ -251,11 +251,11 @@ void annCoGaussPts(				// correlated-Gaussian distribution
 	ANNpointArray		pa,				// point array (modified)
 	int					n,				// number of points
 	int					dim,			// dimension
-	double				correlation)	// correlation
+	float				correlation)	// correlation
 {
-	double std_dev_w = sqrt(1.0 - correlation * correlation);
+	float std_dev_w = sqrt(1.0 - correlation * correlation);
 	for (int i = 0; i < n; i++) {
-		double previous = annRanGauss();
+		float previous = annRanGauss();
 		pa[i][0] = (ANNcoord) previous;
 		for (int d = 1; d < dim; d++) {
 			previous = correlation*previous + std_dev_w*annRanGauss();
@@ -274,16 +274,16 @@ void annCoLaplacePts(			// correlated-Laplacian distribution
 	ANNpointArray		pa,				// point array (modified)
 	int					n,				// number of points
 	int					dim,			// dimension
-	double				correlation)	// correlation
+	float				correlation)	// correlation
 {
-	double wn;
-	double corr_sq = correlation * correlation;
+	float wn;
+	float corr_sq = correlation * correlation;
 
 	for (int i = 0; i < n; i++) {
-		double previous = annRanLaplace();
+		float previous = annRanLaplace();
 		pa[i][0] = (ANNcoord) previous;
 		for (int d = 1; d < dim; d++) {
-			double temp = annRan0();
+			float temp = annRan0();
 			if (temp < corr_sq)
 				wn = 0.0;
 			else
@@ -317,7 +317,7 @@ void annClusGaussPts(			// clustered-Gaussian distribution
 	int					dim,			// dimension
 	int					n_clus,			// number of colors
 	ANNbool				new_clust,		// generate new clusters.
-	double				std_dev)		// standard deviation within clusters
+	float				std_dev)		// standard deviation within clusters
 {
 	static ANNpointArray clusters = NULL;// cluster storage
 
@@ -386,14 +386,14 @@ void annClusGaussPts(			// clustered-Gaussian distribution
 //		the given control vector.
 //
 //----------------------------------------------------------------------
-const double CO_FLAG = 999;						// special flag value
+const float CO_FLAG = 999;						// special flag value
 
 static void genOrthFlat(		// generate points on an orthog flat
 	ANNpointArray		pa,				// point array
 	int					n,				// number of points
 	int					dim,			// dimension
-	double				*control,		// control vector
-	double				std_dev)		// standard deviation
+	float				*control,		// control vector
+	float				std_dev)		// standard deviation
 {
 	for (int i = 0; i < n; i++) {				// generate each point
 		for (int d = 0; d < dim; d++) {			// generate each coord
@@ -411,7 +411,7 @@ void annClusOrthFlats(			// clustered along orthogonal flats
 	int					dim,			// dimension
 	int					n_clus,			// number of colors
 	ANNbool				new_clust,		// generate new clusters.
-	double				std_dev,		// standard deviation within clusters
+	float				std_dev,		// standard deviation within clusters
 	int					max_dim)		// maximum dimension of the flats
 {
 	static ANNpointArray control = NULL;		// control vectors
@@ -426,7 +426,7 @@ void annClusOrthFlats(			// clustered along orthogonal flats
 			int n_dim = 1 + annRanInt(max_dim); // number of dimensions in flat
 			for (int d = 0; d < dim; d++) {		// generate side locations
 												// prob. of picking next dim
-				double Prob = ((double) n_dim)/((double) (dim-d));
+				float Prob = ((float) n_dim)/((float) (dim-d));
 				if (annRan0() < Prob) {			// add this one to flat
 					control[c][d] = CO_FLAG;	// flag this entry
 					n_dim--;					// one fewer dim to fill
@@ -490,8 +490,8 @@ static void genGauss(			// generate points on a general Gaussian
 	ANNpointArray		pa,				// point array
 	int					n,				// number of points
 	int					dim,			// dimension
-	double				*center,		// center vector
-	double				*std_dev)		// standard deviation vector
+	float				*center,		// center vector
+	float				*std_dev)		// standard deviation vector
 {
 	for (int i = 0; i < n; i++) {
 		for (int d = 0; d < dim; d++) {
@@ -506,9 +506,9 @@ void annClusEllipsoids(			// clustered around ellipsoids
 	int					dim,			// dimension
 	int					n_clus,			// number of colors
 	ANNbool				new_clust,		// generate new clusters.
-	double				std_dev_small,	// small standard deviation
-	double				std_dev_lo,		// low standard deviation for ellipses
-	double				std_dev_hi,		// high standard deviation for ellipses
+	float				std_dev_small,	// small standard deviation
+	float				std_dev_lo,		// low standard deviation for ellipses
+	float				std_dev_hi,		// high standard deviation for ellipses
 	int					max_dim)		// maximum dimension of the flats
 {
 	static ANNpointArray centers = NULL;		// cluster centers
@@ -532,7 +532,7 @@ void annClusEllipsoids(			// clustered around ellipsoids
 			int n_dim = 1 + annRanInt(max_dim); // number of dimensions in flat
 			for (int d = 0; d < dim; d++) {		// generate std dev's
 												// prob. of picking next dim
-				double Prob = ((double) n_dim)/((double) (dim-d));
+				float Prob = ((float) n_dim)/((float) (dim-d));
 				if (annRan0() < Prob) {			// add this one to ellipse
 												// generate random std dev
 					std_dev[c][d] = annRanUnif(std_dev_lo, std_dev_hi);
@@ -583,7 +583,7 @@ void annPlanted(				// planted nearest neighbors
 	int				dim,		// dimension
 	ANNpointArray	src,		// source point array
 	int				n_src,		// source size
-	double			std_dev)	// standard deviation about source
+	float			std_dev)	// standard deviation about source
 {
 	for (int i = 0; i < n; i++) {
 		int c = annRanInt(n_src);			// generate source index

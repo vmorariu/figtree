@@ -142,7 +142,7 @@ void ANNkdStats::merge(const ANNkdStats &st)	// merge stats from child
 //	Update statistics for nodes
 //----------------------------------------------------------------------
 
-const double ANN_AR_TOOBIG = 1000;				// too big an aspect ratio
+const float ANN_AR_TOOBIG = 1000;				// too big an aspect ratio
 
 void ANNkd_leaf::getStats(						// get subtree statistics
 	int					dim,					// dimension of space
@@ -152,7 +152,7 @@ void ANNkd_leaf::getStats(						// get subtree statistics
 	st.reset();
 	st.n_lf = 1;								// count this leaf
 	if (this == KD_TRIVIAL) st.n_tl = 1;		// count trivial leaf
-	double ar = annAspectRatio(dim, bnd_box);	// aspect ratio of leaf
+	float ar = annAspectRatio(dim, bnd_box);	// aspect ratio of leaf
 												// incr sum (ignore outliers)
 	st.sum_ar += float(ar < ANN_AR_TOOBIG ? ar : ANN_AR_TOOBIG);
 }

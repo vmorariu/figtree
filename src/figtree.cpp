@@ -49,7 +49,7 @@
 //   other function remanimg)
 //
 // Modified: 02-20-08 by Vlad Morariu
-//   Added nchoosek_double function to use 'double' instead of 'int' to prevent
+//   Added nchoosek_float function to use 'float' instead of 'int' to prevent
 //   overflow issues.  The overflow would cause incorrect parameter estimation
 //   which then resulted in out of memory errors.
 //
@@ -59,7 +59,7 @@
 //   In some cases in higher dimensions, it is significantly cheaper to have
 //   a center at each pt (i.e. rx=0) than having even one cluster with nonzero
 //   radius (since the radius might require excessively high pMax).
-//   Also added FIGTREE_CHECK_POS_DOUBLE macro to allow rx to be zero when 
+//   Also added FIGTREE_CHECK_POS_float macro to allow rx to be zero when 
 //   checking input parameters.
 //
 // Modified: 05-03-08 by Vlad Morariu 
@@ -175,7 +175,7 @@
 #include <string.h>            // for memset()
 
 #include <algorithm>           // for lower_bound and random_sample
-#include <functional>          // for greater<double>
+#include <functional>          // for greater<float>
 
 #include "KCenterClustering.h" // provides class for KCenterClustering
 
@@ -235,14 +235,14 @@ void operator delete (void *p)
 // define some macros to use for checking values of input args
 // without the macros, all the if statements take up a lot of space
 //------------------------------------------------------------------------------
-#define FIGTREE_CHECK_POS_NONZERO_DOUBLE( VAR, FCN )                 \
+#define FIGTREE_CHECK_POS_NONZERO_float( VAR, FCN )                 \
   if( (VAR) <= 0.0 )                                                 \
   {                                                                  \
     printf( #FCN ": Input '" #VAR "' must be a positive number.\n"); \
     return -1;                                                       \
   }
 
-#define FIGTREE_CHECK_POS_DOUBLE( VAR, FCN )                         \
+#define FIGTREE_CHECK_POS_float( VAR, FCN )                         \
   if( (VAR) < 0.0 )                                                 \
   {                                                                  \
     printf( #FCN ": Input '" #VAR "' must be a positive number.\n"); \
@@ -275,22 +275,22 @@ typedef struct _FigtreeData
 //  int N;
 //  int M;
 //  int W;
-//  double epsilon;
-//  double * x;
-//  double h;
-//  double * q; 
-//  double * y;
+//  float epsilon;
+//  float * x;
+//  float h;
+//  float * q; 
+//  float * y;
   
   // params for IFGT
   int pMax;
   int pMaxTotal;
   int K;
   int * clusterIndex;
-  double * clusterCenters;
-  double * clusterRadii;
+  float * clusterCenters;
+  float * clusterRadii;
   int * numPoints;
-  double r;
-  double rx;
+  float r;
+  float rx;
 
   // params for IFGT + Tree
   ANNpointArray annClusters;
@@ -409,12 +409,12 @@ int nchoosek(int n, int k)
 }
 
 //------------------------------------------------------------------------------
-// Compute the combinatorial number nchoosek, using double precision.
+// Compute the combinatorial number nchoosek, using float precision.
 // This prevents some overflow issues for large n.
 //
 // Created by Vlad Morariu on 2008-02-20.
 //------------------------------------------------------------------------------
-double nchoosek_double(int n, int k)
+float nchoosek_float(int n, int k)
 {
   int n_k = n - k;
   
@@ -424,7 +424,7 @@ double nchoosek_double(int n, int k)
     n_k = n - k;
   }
 
-  double nchsk = 1; 
+  float nchsk = 1; 
   for ( int i = 1; i <= n_k; i++)
   {
     nchsk *= (++k);
@@ -441,7 +441,7 @@ double nchoosek_double(int n, int k)
 //
 // Modified by Vlad Morariu on 2007-06-19.
 //------------------------------------------------------------------------------
-void computeConstantSeries( int d, int pMaxTotal, int pMax, double * constantSeries )
+void computeConstantSeries( int d, int pMaxTotal, int pMax, float * constantSeries )
 { 
   int *heads = new int[d+1];
   int *cinds = new int[pMaxTotal];
@@ -462,7 +462,7 @@ void computeConstantSeries( int d, int pMaxTotal, int pMax, double * constantSer
       {
         cinds[t] = (j < heads[i+1])? cinds[j] + 1 : 1;
         constantSeries[t] = 2.0 * constantSeries[j];
-        constantSeries[t] /= (double) cinds[t];
+        constantSeries[t] /= (float) cinds[t];
       }
     }
   }
@@ -479,8 +479,8 @@ void computeConstantSeries( int d, int pMaxTotal, int pMax, double * constantSer
 //
 // Modified by Vlad Morariu on 2007-06-19.
 //------------------------------------------------------------------------------
-void computeSourceCenterMonomials( int d, double h, double * dx, 
-                                   int p, double * sourceCenterMonomials )
+void computeSourceCenterMonomials( int d, float h, float * dx, 
+                                   int p, float * sourceCenterMonomials )
 {    
   int * heads = new int[d];
 
@@ -512,8 +512,8 @@ void computeSourceCenterMonomials( int d, double h, double * dx,
 //
 // Modified by Vlad Morariu on 2007-06-19.
 //------------------------------------------------------------------------------
-void computeTargetCenterMonomials( int d, double h, double * dy, 
-                                   int pMax, double * targetCenterMonomials )
+void computeTargetCenterMonomials( int d, float h, float * dy, 
+                                   int pMax, float * targetCenterMonomials )
 {    
   int *heads = new int[d];
 
@@ -549,10 +549,10 @@ void computeTargetCenterMonomials( int d, double h, double * dy,
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
 inline
-double figtreeOneSidedErrorBound( double a, double b_max, double c, double h2, int p )
+float figtreeOneSidedErrorBound( float a, float b_max, float c, float h2, int p )
 {
-  double b = MIN( b_max, .5*(a + sqrt(a*a + 2*p*h2)) ); // this is the value of at which error(a,b,p) reaches maximum for a given 'a' and 'p'
-  double d_ab = a-b;
+  float b = MIN( b_max, .5*(a + sqrt(a*a + 2*p*h2)) ); // this is the value of at which error(a,b,p) reaches maximum for a given 'a' and 'p'
+  float d_ab = a-b;
   return c * pow(a*b/h2,p) * exp( -d_ab*d_ab/h2 );
 }
 
@@ -571,9 +571,9 @@ double figtreeOneSidedErrorBound( double a, double b_max, double c, double h2, i
 //
 // Created by Vlad Morariu on 2008-06-04
 //------------------------------------------------------------------------------
-void figtreeFindRadiusBounds( double a_lo, double a_hi, double b_max, 
-                              double c, double h2, int p, double epsilon,
-                              int max_it, double * lo_out, double * hi_out )
+void figtreeFindRadiusBounds( float a_lo, float a_hi, float b_max, 
+                              float c, float h2, int p, float epsilon,
+                              int max_it, float * lo_out, float * hi_out )
 {
   // compute bounds at hi
   bool sat_hi = (figtreeOneSidedErrorBound( a_hi, b_max, c, h2 ,p ) <= epsilon);
@@ -597,7 +597,7 @@ void figtreeFindRadiusBounds( double a_lo, double a_hi, double b_max,
     {
       for( int i = 0; i < max_it; i++ )
       {
-        double a_mid = .5*(a_lo + a_hi);
+        float a_mid = .5*(a_lo + a_hi);
         bool sat_mid = (figtreeOneSidedErrorBound( a_mid, b_max, c, h2 ,p ) <= epsilon);
         if( sat_mid ) // move the lo or hi value to keep property that error is not satisfied at a_hi, but is satisfied at a_lo
           a_lo = a_mid;
@@ -618,18 +618,18 @@ void figtreeFindRadiusBounds( double a_lo, double a_hi, double b_max,
 //
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
-void figtreeSourceTruncationRanges( double r, double rx, double h, double epsilon, int pMax, double * max_source_dists2 )
+void figtreeSourceTruncationRanges( float r, float rx, float h, float epsilon, int pMax, float * max_source_dists2 )
 {
-  double h2 = h*h;
+  float h2 = h*h;
   for( int i = 0; i < pMax-1; i++ )
     max_source_dists2[i] = -1; // negative numbers indicate no distance satisfies error bounds for the particular value of p
   max_source_dists2[pMax-1] = rx;
 
-  double c = 1;
+  float c = 1;
   for( int i = 0; i < pMax-1; i++ )
   {
     c *= (2.0/(i+1));
-    double a_lo = 0, a_hi = rx;
+    float a_lo = 0, a_hi = rx;
     figtreeFindRadiusBounds( a_lo, a_hi, r + rx, c, h2, i+1, epsilon, 10, &a_lo, &a_hi );
     max_source_dists2[i] = a_lo*a_lo;
   }
@@ -642,27 +642,27 @@ void figtreeSourceTruncationRanges( double r, double rx, double h, double epsilo
 //
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
-void figtreeTargetTruncationRanges( double r, double rx, double h, double epsilon, int pMax, double * max_target_dists2, double * min_target_dists2 )
+void figtreeTargetTruncationRanges( float r, float rx, float h, float epsilon, int pMax, float * max_target_dists2, float * min_target_dists2 )
 {
-  double h2 = h*h;
-  double ry = r + rx;
+  float h2 = h*h;
+  float ry = r + rx;
   for( int i = 0; i < pMax-1; i++ )
   {
     max_target_dists2[i] = -1;   
     min_target_dists2[i] = ry*ry+1;
   }
 
-  double c = 1;
+  float c = 1;
   for( int i = 0; i < pMax-1; i++ )
   {
     c *= (2.0/(i+1));
 
-    double peak_dist = .5*(rx + sqrt( rx*rx + 2*h2*(i+1) ));
+    float peak_dist = .5*(rx + sqrt( rx*rx + 2*h2*(i+1) ));
 
     // here we calculate for each value of p the maximum distance from a cluster center 
     //   that a target can be to satisfy the error bounds, provided the distance is 
     //   in the portion of the error bound that monotonically increases with distance
-    double a_lo = 0, a_hi = MIN(ry,peak_dist);
+    float a_lo = 0, a_hi = MIN(ry,peak_dist);
     figtreeFindRadiusBounds( a_lo, a_hi, rx, c, h2, i+1, epsilon, 10, &a_lo, &a_hi );
     max_target_dists2[i] = a_lo*a_lo;
 
@@ -698,7 +698,7 @@ void figtreeTargetTruncationRanges( double r, double rx, double h, double epsilo
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
 inline
-int figtreeSourceTruncationNumber( double dx2, int pMax, double * max_source_dists2 )
+int figtreeSourceTruncationNumber( float dx2, int pMax, float * max_source_dists2 )
 {
   return (int)(std::lower_bound( max_source_dists2, max_source_dists2 + pMax - 1, dx2) - max_source_dists2) + 1;  
 }
@@ -712,12 +712,12 @@ int figtreeSourceTruncationNumber( double dx2, int pMax, double * max_source_dis
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
 inline
-int figtreeTargetTruncationNumber( double dy2, int pMax, double * max_target_dists2, double * min_target_dists2 )
+int figtreeTargetTruncationNumber( float dy2, int pMax, float * max_target_dists2, float * min_target_dists2 )
 {
   if( dy2 <= max_target_dists2[pMax-2] )
     return (int)(std::lower_bound( max_target_dists2, max_target_dists2 + pMax - 1, dy2) - max_target_dists2) + 1;
   else if( dy2 >= min_target_dists2[pMax-2] )
-    return (int)(std::lower_bound( min_target_dists2, min_target_dists2 + pMax - 1, dy2, std::greater<double>() ) - min_target_dists2) + 1;
+    return (int)(std::lower_bound( min_target_dists2, min_target_dists2 + pMax - 1, dy2, std::greater<float>() ) - min_target_dists2) + 1;
   else 
     return pMax;
 }
@@ -729,13 +729,13 @@ int figtreeTargetTruncationNumber( double dy2, int pMax, double * max_target_dis
 // Modified by Vlad Morariu on 2007-06-19.
 //------------------------------------------------------------------------------
 void computeC( int d, int N, int W, int K, int pMaxTotal, int pMax, 
-               double h, int * clusterIndex, double * x, double * q,
-               double * clusterCenter, double * C )
+               float h, int * clusterIndex, float * x, float * q,
+               float * clusterCenter, float * C )
 {
-  double * sourceCenterMonomials = new double[pMaxTotal];
-  double * constantSeries = new double[pMaxTotal];
-  double hSquare = h*h;
-  double * dx = new double[d];
+  float * sourceCenterMonomials = new float[pMaxTotal];
+  float * constantSeries = new float[pMaxTotal];
+  float hSquare = h*h;
+  float * dx = new float[d];
 
   for (int i = 0; i < W*K*pMaxTotal; i++)
   {
@@ -747,7 +747,7 @@ void computeC( int d, int N, int W, int K, int pMaxTotal, int pMax,
     int k = clusterIndex[i];
     int sourceBase = i*d;
     int centerBase = k*d;
-    double sourceCenterDistanceSquare = 0.0;
+    float sourceCenterDistanceSquare = 0.0;
 
     for (int j = 0; j < d; j++)
     {
@@ -759,7 +759,7 @@ void computeC( int d, int N, int W, int K, int pMaxTotal, int pMax,
     
     for(int w = 0; w < W; w++ )
     {
-      double f = q[N*w + i]*exp(-sourceCenterDistanceSquare/hSquare);
+      float f = q[N*w + i]*exp(-sourceCenterDistanceSquare/hSquare);
       for(int alpha = 0; alpha < pMaxTotal; alpha++)
       {
           C[(K*w + k)*pMaxTotal + alpha] += (f*sourceCenterMonomials[alpha]);
@@ -807,17 +807,17 @@ void computeC( int d, int N, int W, int K, int pMaxTotal, int pMax,
 //
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
-void figtreeFindClusterTruncations( int d, int N, double * x, double * q, double h, double epsilon, double r, int pMax, int K, int * clusterIndex, int * numPoints, double * clusterCenters, double * clusterRadii, int * clusterTruncations )
+void figtreeFindClusterTruncations( int d, int N, float * x, float * q, float h, float epsilon, float r, int pMax, int K, int * clusterIndex, int * numPoints, float * clusterCenters, float * clusterRadii, int * clusterTruncations )
 {
-  double * clusterWeights = new double[K];
-  double * pointClusterDists = new double[N];
-  double h2 = h*h;
+  float * clusterWeights = new float[K];
+  float * pointClusterDists = new float[N];
+  float h2 = h*h;
 
-  double * q_reordered = new double[N];
+  float * q_reordered = new float[N];
 
   memset(clusterTruncations,0,sizeof(int)*K);
-  memset(clusterWeights,0,sizeof(double)*K);
-  memset(pointClusterDists,0,sizeof(double)*N);
+  memset(clusterWeights,0,sizeof(float)*K);
+  memset(pointClusterDists,0,sizeof(float)*N);
 
   // find out total sum of weights for each cluster
   for( int i = 0; i < N; i++ )
@@ -851,7 +851,7 @@ void figtreeFindClusterTruncations( int d, int N, double * x, double * q, double
       q_reordered[i] = fabs(q[clusterMembers[i]]) / clusterWeights[k];
       for( int j = 0; j < d; j++ )
       {
-        double dx = clusterCenters[k*d+j] - x[clusterMembers[i]*d+j];
+        float dx = clusterCenters[k*d+j] - x[clusterMembers[i]*d+j];
         pointClusterDists[i] += dx*dx;
       }
       pointClusterDists[i] = sqrt(pointClusterDists[i]);
@@ -859,7 +859,7 @@ void figtreeFindClusterTruncations( int d, int N, double * x, double * q, double
   }
 
   // precompute constant in front of error term that depends only on p
-  double * constants = new double[pMax];
+  float * constants = new float[pMax];
   constants[0] = 2;
   for( int p = 2; p <= pMax; p++ )
     constants[p-1] = constants[p-2]*2.0/p;
@@ -876,10 +876,10 @@ void figtreeFindClusterTruncations( int d, int N, double * x, double * q, double
     while( p_lo < p_hi )
     {
       int p_mid = (p_hi + p_lo)/2;
-      double clusterBound = 0;
+      float clusterBound = 0;
       for( int i = start; i < end && clusterBound <= epsilon; i++ )
       {
-        double error = q_reordered[i]*figtreeOneSidedErrorBound( pointClusterDists[i], clusterRadii[k]+r, constants[p_mid-1], h2 , p_mid );
+        float error = q_reordered[i]*figtreeOneSidedErrorBound( pointClusterDists[i], clusterRadii[k]+r, constants[p_mid-1], h2 , p_mid );
         clusterBound += error;
       }
 
@@ -924,22 +924,22 @@ void figtreeFindClusterTruncations( int d, int N, double * x, double * q, double
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
 void computeCAdaptiveCluster( int d, int N, int W, int K, int pMaxTotal, int pMax, 
-                       double h, int * clusterIndex, double * x, double * q,
-                       double * clusterCenter, int * clusterTruncations, int * pMaxTotals, double * C )
+                       float h, int * clusterIndex, float * x, float * q,
+                       float * clusterCenter, int * clusterTruncations, int * pMaxTotals, float * C )
 {
-  double * sourceCenterMonomials = new double[pMaxTotal];
-  double * constantSeries = new double[pMaxTotal];
-  double hSquare = h*h;
-  double * dx = new double[d];
+  float * sourceCenterMonomials = new float[pMaxTotal];
+  float * constantSeries = new float[pMaxTotal];
+  float hSquare = h*h;
+  float * dx = new float[d];
 
-  memset( C, 0, sizeof(double)*W*K*pMaxTotal );
+  memset( C, 0, sizeof(float)*W*K*pMaxTotal );
 
   for(int i = 0; i < N; i++)
   {
     int k = clusterIndex[i];
     int sourceBase = i*d;
     int centerBase = k*d;
-    double sourceCenterDistanceSquare = 0.0;
+    float sourceCenterDistanceSquare = 0.0;
 
     for (int j = 0; j < d; j++)
     {
@@ -953,7 +953,7 @@ void computeCAdaptiveCluster( int d, int N, int W, int K, int pMaxTotal, int pMa
     
     for(int w = 0; w < W; w++ )
     {
-      double f = q[N*w + i]*exp(-sourceCenterDistanceSquare/hSquare);
+      float f = q[N*w + i]*exp(-sourceCenterDistanceSquare/hSquare);
       for(int alpha = 0; alpha < pTotal; alpha++)
       {
           C[(K*w + k)*pMaxTotal + alpha] += (f*sourceCenterMonomials[alpha]);
@@ -992,15 +992,15 @@ void computeCAdaptiveCluster( int d, int N, int W, int K, int pMaxTotal, int pMa
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
 void computeCAdaptivePoint( int d, int N, int W, int K, int pMaxTotal, int pMax, 
-                       double h, int * clusterIndex, double * x, double * q,
-                       double * clusterCenter, double * maxSourceDists2, int * pMaxTotals, double * C )
+                       float h, int * clusterIndex, float * x, float * q,
+                       float * clusterCenter, float * maxSourceDists2, int * pMaxTotals, float * C )
 {
-  double * sourceCenterMonomials = new double[pMaxTotal];
-  double * constantSeries = new double[pMaxTotal];
-  double hSquare = h*h;
-  double * dx = new double[d];
+  float * sourceCenterMonomials = new float[pMaxTotal];
+  float * constantSeries = new float[pMaxTotal];
+  float hSquare = h*h;
+  float * dx = new float[d];
 
-  memset( C, 0, sizeof(double)*W*K*pMaxTotal );
+  memset( C, 0, sizeof(float)*W*K*pMaxTotal );
 
   //int * pHistogram = new int[pMax];
   //memset(pHistogram,0,sizeof(int)*pMax);
@@ -1010,7 +1010,7 @@ void computeCAdaptivePoint( int d, int N, int W, int K, int pMaxTotal, int pMax,
     int k = clusterIndex[i];
     int sourceBase = i*d;
     int centerBase = k*d;
-    double sourceCenterDistanceSquare = 0.0;
+    float sourceCenterDistanceSquare = 0.0;
 
     for (int j = 0; j < d; j++)
     {
@@ -1025,7 +1025,7 @@ void computeCAdaptivePoint( int d, int N, int W, int K, int pMaxTotal, int pMax,
     
     for(int w = 0; w < W; w++ )
     {
-      double f = q[N*w + i]*exp(-sourceCenterDistanceSquare/hSquare);
+      float f = q[N*w + i]*exp(-sourceCenterDistanceSquare/hSquare);
       for(int alpha = 0; alpha < pTotal; alpha++)
       {
           C[(K*w + k)*pMaxTotal + alpha] += (f*sourceCenterMonomials[alpha]);
@@ -1085,8 +1085,8 @@ void computeCAdaptivePoint( int d, int N, int W, int K, int pMaxTotal, int pMax,
 //      possibilities, separating evaluation method from truncation number choices
 //    - removed 'forceK' option, since it was used only for debugging
 //------------------------------------------------------------------------------
-int figtree( int d, int N, int M, int W, double * x, double h, 
-             double * q, double * y, double epsilon, double * g,
+int figtree( int d, int N, int M, int W, float * x, float h, 
+             float * q, float * y, float epsilon, float * g,
              int evalMethod, int ifgtParamMethod, int ifgtTruncMethod, int verbose )
 {
   int ret = 0;
@@ -1126,7 +1126,7 @@ int figtree( int d, int N, int M, int W, double * x, double h,
       verbose && printf("figtreeEvalMethod() chose the IFGT+tree method.\n");
 
     bool alreadyHaveClustering = (data.clusterCenters != NULL); // quick and dirty test    
-    double maxRange = 0;
+    float maxRange = 0;
     if( !alreadyHaveClustering )
     {
       int kLimit = N, kMax;
@@ -1134,8 +1134,8 @@ int figtree( int d, int N, int M, int W, double * x, double h,
       //
       // calculate R, the diameter of the hypercube that encompasses sources and targets
       //
-      double * mins = new double[d];
-      double * maxs = new double[d];
+      float * mins = new float[d];
+      float * maxs = new float[d];
       figtreeCalcMinMax( d, N, x, mins, maxs, 0 );
       figtreeCalcMinMax( d, M, y, mins, maxs, 1 );
       figtreeCalcMaxRange( d, mins, maxs, &maxRange );
@@ -1164,8 +1164,8 @@ int figtree( int d, int N, int M, int W, double * x, double h,
       //
       data.clusterIndex = new int[N];
       data.numPoints    = new int[kMax]; 
-      data.clusterCenters = new double[d*kMax];
-      data.clusterRadii = new double[kMax];
+      data.clusterCenters = new float[d*kMax];
+      data.clusterRadii = new float[kMax];
 
       ret = figtreeKCenterClustering( d, N, x, kMax, &data.K, &data.rx, data.clusterIndex, 
                                    data.clusterCenters, data.numPoints, data.clusterRadii );
@@ -1173,7 +1173,7 @@ int figtree( int d, int N, int M, int W, double * x, double h,
         printf("figtree: figtreeKCenterClustering() failed.\n");
     }
 
-    double errorBound = epsilon + 1;
+    float errorBound = epsilon + 1;
     if( ret >= 0 && !alreadyHaveClustering )
     {
       // choose truncation number again now that clustering is done
@@ -1279,38 +1279,38 @@ int figtree( int d, int N, int M, int W, double * x, double h,
 //     any source and target) as argument instead of assuming that data fits
 //     in unit hypercube
 //------------------------------------------------------------------------------
-int figtreeChooseTruncationNumber( int d, double h, double epsilon, 
-                                double rx, double maxRange, int * pMax, double * errorBound )
+int figtreeChooseTruncationNumber( int d, float h, float epsilon, 
+                                float rx, float maxRange, int * pMax, float * errorBound )
 {
   // check input arguments
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeChooseTruncationNumber );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeChooseTruncationNumber );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeChooseTruncationNumber );
-  FIGTREE_CHECK_POS_DOUBLE( rx, figtreeChooseTruncationNumber );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( maxRange, figtreeChooseTruncationNumber );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeChooseTruncationNumber );
+  FIGTREE_CHECK_POS_NONZERO_float( epsilon, figtreeChooseTruncationNumber );
+  FIGTREE_CHECK_POS_float( rx, figtreeChooseTruncationNumber );
+  FIGTREE_CHECK_POS_NONZERO_float( maxRange, figtreeChooseTruncationNumber );
   FIGTREE_CHECK_NONNULL_PTR( pMax, figtreeChooseTruncationNumber );
 
-  double R = maxRange*sqrt((double)d);
-  double hSquare = h*h;
-  double r = MIN(R, h*sqrt(log(1/epsilon)));
-  double rxSquare = rx*rx;
+  float R = maxRange*sqrt((float)d);
+  float hSquare = h*h;
+  float r = MIN(R, h*sqrt(log(1/epsilon)));
+  float rxSquare = rx*rx;
   
-  double error = epsilon + 1;
-  double temp = 1;
+  float error = epsilon + 1;
+  float temp = 1;
   int p = 0;
   /*
   while((error > epsilon) & (p <= P_UPPER_LIMIT)){
     p++;
-    double b = MIN(((rx + sqrt((rxSquare) + (2*p*hSquare)))/2), rx + r);
-    double c = rx - b;
+    float b = MIN(((rx + sqrt((rxSquare) + (2*p*hSquare)))/2), rx + r);
+    float c = rx - b;
     temp = temp*(((2*rx*b)/hSquare)/p);
     error = temp*(exp(-(c*c)/hSquare));      
   } */ 
   while((error > epsilon) & (p <= P_UPPER_LIMIT))
   {
     p++;
-    double b = MIN(((rx + sqrt((rxSquare) + (2*p*hSquare)))/2), rx + r);
-    double c = rx - b;
+    float b = MIN(((rx + sqrt((rxSquare) + (2*p*hSquare)))/2), rx + r);
+    float c = rx - b;
     temp = 1;
     for( int i = 1; i <= p; i++ )
       temp = temp*((2.0*rx*b/hSquare)/i);
@@ -1344,47 +1344,47 @@ int figtreeChooseTruncationNumber( int d, double h, double epsilon,
 // Modified by Vlad Morariu on 2008-06-04 - change the way bound is computed to
 //     be more precise
 //------------------------------------------------------------------------------
-int figtreeChooseParametersUniform( int d, double h, double epsilon, 
-                                 int kLimit, double maxRange, int * K, int * pMax, double * r, double * errorBound )
+int figtreeChooseParametersUniform( int d, float h, float epsilon, 
+                                 int kLimit, float maxRange, int * K, int * pMax, float * r, float * errorBound )
 {
   // check input arguments
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeChooseParametersUniform );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeChooseParametersUniform );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( maxRange, figtreeChooseParametersUniform );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeChooseParametersUniform );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeChooseParametersUniform );
+  FIGTREE_CHECK_POS_NONZERO_float( maxRange, figtreeChooseParametersUniform );
+  FIGTREE_CHECK_POS_NONZERO_float( epsilon, figtreeChooseParametersUniform );
   FIGTREE_CHECK_POS_NONZERO_INT( kLimit, figtreeChooseParametersUniform );
 
-  double R = maxRange*sqrt((double)d);
-  double hSquare = h*h;
-  double complexityMin = DBL_MAX;
+  float R = maxRange*sqrt((float)d);
+  float hSquare = h*h;
+  float complexityMin = DBL_MAX;
 
   // These variables will hold the values that will then be returned.
   // We use temporary variables in case caller does not care about a variable 
   // and passes a NULL pointer.
   int kTemp = 1;
   int pMaxTemp = P_UPPER_LIMIT + 1;
-  double rTemp = MIN(R,h*sqrt(log(1/epsilon)));
-  double errorTemp = epsilon + 1;
+  float rTemp = MIN(R,h*sqrt(log(1/epsilon)));
+  float errorTemp = epsilon + 1;
 
   for(int i = 0; i < kLimit; i++)
   {
-    double rx = maxRange*pow((double)i + 1,-1.0/(double)d);
-    double rxSquare = rx*rx;
-    double n = MIN(i + 1, pow(rTemp/rx,(double)d));
-    double error = epsilon + 1;
-    double temp = 1;
+    float rx = maxRange*pow((float)i + 1,-1.0/(float)d);
+    float rxSquare = rx*rx;
+    float n = MIN(i + 1, pow(rTemp/rx,(float)d));
+    float error = epsilon + 1;
+    float temp = 1;
     int p = 0;
     while((error > epsilon) & (p <= P_UPPER_LIMIT))
     {
       p++;
-      double b = MIN(((rx + sqrt((rxSquare) + (2*p*hSquare)))/2), rx + rTemp);
-      double c = rx - b;
+      float b = MIN(((rx + sqrt((rxSquare) + (2*p*hSquare)))/2), rx + rTemp);
+      float c = rx - b;
       temp = 1;
       for( int j = 1; j <= p; j++ )
         temp = temp*((2.0*rx*b/hSquare)/j);
       error = temp*(exp(-(c*c)/hSquare));      
     }  
-    double complexity = (i + 1) + log((double)i + 1) + ((1 + n)*nchoosek_double(p - 1 + d, d));
+    float complexity = (i + 1) + log((float)i + 1) + ((1 + n)*nchoosek_float(p - 1 + d, d));
     if (complexity < complexityMin )
     {
       complexityMin = complexity;
@@ -1437,35 +1437,35 @@ int figtreeChooseParametersUniform( int d, double h, double epsilon,
 // Modified by Vlad Morariu on 2008-12-05 - began changing function to incorporate
 //     memory limit for coefficient storage... not done yet
 //------------------------------------------------------------------------------
-int figtreeChooseParametersNonUniform( int d, int N, double * x, 
-                                    double h, double epsilon, int kLimit, double maxRange,
-                                    int * K, int * pMax, double * r, double * errorBound )
+int figtreeChooseParametersNonUniform( int d, int N, float * x, 
+                                    float h, float epsilon, int kLimit, float maxRange,
+                                    int * K, int * pMax, float * r, float * errorBound )
 {
   // check input arguments
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeChooseParametersNonUniform );
   FIGTREE_CHECK_POS_NONZERO_INT( N, figtreeChooseParametersNonUniform );
   FIGTREE_CHECK_NONNULL_PTR( x, figtreeChooseParametersNonUniform );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeChooseParametersNonUniform );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeChooseParametersNonUniform );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeChooseParametersNonUniform );
+  FIGTREE_CHECK_POS_NONZERO_float( epsilon, figtreeChooseParametersNonUniform );
   FIGTREE_CHECK_POS_NONZERO_INT( kLimit, figtreeChooseParametersNonUniform );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( maxRange, figtreeChooseParametersNonUniform );
+  FIGTREE_CHECK_POS_NONZERO_float( maxRange, figtreeChooseParametersNonUniform );
 
   // allocate temporary memory, and set some variables
   int * pClusterIndex = new int[N];
   KCenterClustering * kcc = new KCenterClustering( d, N, x, pClusterIndex, kLimit );
 
-  double R = maxRange*sqrt((double)d);
-  double hSquare = h*h;
-  double complexityMin = DBL_MAX;
-  double complexityLast = DBL_MAX;
+  float R = maxRange*sqrt((float)d);
+  float hSquare = h*h;
+  float complexityMin = DBL_MAX;
+  float complexityLast = DBL_MAX;
 
-  double rTemp = MIN(R,h*sqrt(log(1/epsilon)));
+  float rTemp = MIN(R,h*sqrt(log(1/epsilon)));
   int kTemp = 1;
   int pMaxTemp = P_UPPER_LIMIT + 1;
-  double errorTemp = epsilon + 1;
+  float errorTemp = epsilon + 1;
 
   int numClusters;
-  double rx;
+  float rx;
   
   // Vlad 01/24/07 - add first cluster and get rx
   kcc->ClusterIncrement( &numClusters, &rx ); 
@@ -1473,26 +1473,26 @@ int figtreeChooseParametersNonUniform( int d, int N, double * x,
   // evaluate complexity for increasing values of K
   for(int i = 0; i < kLimit; i++)
   {
-    double rxSquare = rx*rx;
-    double n = MIN(i + 1, pow(rTemp/rx,(double)d));
-    double error = epsilon + 1;
-    double temp = 1;
+    float rxSquare = rx*rx;
+    float n = MIN(i + 1, pow(rTemp/rx,(float)d));
+    float error = epsilon + 1;
+    float temp = 1;
     int p = 0;
     /*
     while((error > epsilon) & (p <= P_UPPER_LIMIT))
     {
       p++;
-      double b = MIN(((rx + sqrt((rxSquare) + (2*p*hSquare)))/2), rx + rTemp);
-      double c = rx - b;
+      float b = MIN(((rx + sqrt((rxSquare) + (2*p*hSquare)))/2), rx + rTemp);
+      float c = rx - b;
       temp = temp*(((2*rx*b)/hSquare)/p);
       error = temp*(exp(-(c*c)/hSquare));      
     }*/  
-    //double memTotalC = 8*(i+1);  // 8 is number of bytes, i+1 is K
+    //float memTotalC = 8*(i+1);  // 8 is number of bytes, i+1 is K
     while((error > epsilon) && (p <= P_UPPER_LIMIT) ) //&& (memTotalC <= C_UPPER_LIMIT) )
     {
       p++;
-      double b = MIN(((rx + sqrt((rxSquare) + (2*p*hSquare)))/2), rx + rTemp);
-      double c = rx - b;
+      float b = MIN(((rx + sqrt((rxSquare) + (2*p*hSquare)))/2), rx + rTemp);
+      float c = rx - b;
       temp = 1;
       for( int j = 1; j <= p; j++ )
         temp = temp*((2.0*rx*b/hSquare)/j);
@@ -1501,7 +1501,7 @@ int figtreeChooseParametersNonUniform( int d, int N, double * x,
       //memTotalC *= (d+p);
       //memTotalC /= p;
     }
-    double complexity = d*(i + 1) + d*log((double)i + 1) + ((1 + n)*nchoosek_double(p - 1 + d, d));
+    float complexity = d*(i + 1) + d*log((float)i + 1) + ((1 + n)*nchoosek_float(p - 1 + d, d));
     if ( (complexity < complexityMin) && (error <= epsilon))
     {
       complexityMin = complexity;
@@ -1515,7 +1515,7 @@ int figtreeChooseParametersNonUniform( int d, int N, double * x,
     // we'll assume we've passed the global minimum).
     // Also stop if truncation number is only 1 or if the max number of unique 
     // clusters are reached (rx = 0).
-    double nextComplexityEstimate = d*(i + 1) + d*log((double)i + 1) + ((1 + n)*nchoosek_double(p - 2 + d, d));   
+    float nextComplexityEstimate = d*(i + 1) + d*log((float)i + 1) + ((1 + n)*nchoosek_float(p - 2 + d, d));   
     if( (p == 1) || (rx <= 0) || ( nextComplexityEstimate > 2*complexityMin || complexity > 2*complexityMin ) )
     {
       break;    
@@ -1534,7 +1534,7 @@ int figtreeChooseParametersNonUniform( int d, int N, double * x,
     kTemp = kLimit;
   }
 
-  //printf("memLimit = %e, memTotalC = %e\n", (double)C_UPPER_LIMIT, kTemp*8*nchoosek_double(pMaxTemp-1+d,d));
+  //printf("memLimit = %e, memTotalC = %e\n", (float)C_UPPER_LIMIT, kTemp*8*nchoosek_float(pMaxTemp-1+d,d));
 
   // copy results 
   if( K != NULL )
@@ -1558,9 +1558,9 @@ int figtreeChooseParametersNonUniform( int d, int N, double * x,
 //
 // Created by Vlad Morariu 2007-06-19.
 //------------------------------------------------------------------------------
-int figtreeKCenterClustering( int d, int N, double * x, int kMax, int * K,
-                           double * rx, int * clusterIndex, double * clusterCenters, 
-                           int * numPoints, double * clusterRadii )
+int figtreeKCenterClustering( int d, int N, float * x, int kMax, int * K,
+                           float * rx, int * clusterIndex, float * clusterCenters, 
+                           int * numPoints, float * clusterRadii )
 {
   // check input arguments
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeKCenterClustering );
@@ -1591,30 +1591,30 @@ int figtreeKCenterClustering( int d, int N, double * x, int kMax, int * K,
 //
 // Modified by Vlad Morariu on 2007-06-19.
 //------------------------------------------------------------------------------
-int figtreeEvaluateDirect( int d, int N, int M, double * x, double h, 
-                        double * q, double * y, double * g )
+int figtreeEvaluateDirect( int d, int N, int M, float * x, float h, 
+                        float * q, float * y, float * g )
 {
   // check input arguments
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeEvaluateDirect );
   FIGTREE_CHECK_POS_NONZERO_INT( N, figtreeEvaluateDirect );
   FIGTREE_CHECK_POS_NONZERO_INT( M, figtreeEvaluateDirect );
   FIGTREE_CHECK_NONNULL_PTR( x, figtreeEvaluateDirect );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeEvaluateDirect );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeEvaluateDirect );
   FIGTREE_CHECK_NONNULL_PTR( q, figtreeEvaluateDirect );
   FIGTREE_CHECK_NONNULL_PTR( y, figtreeEvaluateDirect );
   FIGTREE_CHECK_NONNULL_PTR( g, figtreeEvaluateDirect );
 
   // evaluate
-  double hSquare = h*h;
+  float hSquare = h*h;
   for(int j = 0; j < M; j++)
   {
     g[j] = 0.0;
     for(int i = 0; i < N; i++)
     {
-      double norm = 0.0;
+      float norm = 0.0;
       for (int k = 0; k < d; k++)
       {
-        double temp = x[(d*i) + k] - y[(d*j) + k];
+        float temp = x[(d*i) + k] - y[(d*j) + k];
         norm = norm + (temp*temp);
       }
       g[j] = g[j] + (q[i]*exp(-norm/hSquare));
@@ -1631,11 +1631,11 @@ int figtreeEvaluateDirect( int d, int N, int M, double * x, double h,
 //
 // Modified by Vlad Morariu on 2007-06-19.
 //------------------------------------------------------------------------------
-int figtreeEvaluateIfgt( int d, int N, int M, int W, double * x, 
-                           double h, double * q, double * y, 
+int figtreeEvaluateIfgt( int d, int N, int M, int W, float * x, 
+                           float h, float * q, float * y, 
                            int pMax, int K, int * clusterIndex, 
-                           double * clusterCenter, double * clusterRadii,
-                           double r, double epsilon, double * g )
+                           float * clusterCenter, float * clusterRadii,
+                           float r, float epsilon, float * g )
 {
   // check input arguments
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeEvaluateIfgt );
@@ -1643,7 +1643,7 @@ int figtreeEvaluateIfgt( int d, int N, int M, int W, double * x,
   FIGTREE_CHECK_POS_NONZERO_INT( M, figtreeEvaluateIfgt );
   FIGTREE_CHECK_POS_NONZERO_INT( W, figtreeEvaluateIfgt );
   FIGTREE_CHECK_NONNULL_PTR( x, figtreeEvaluateIfgt );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeEvaluateIfgt );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeEvaluateIfgt );
   FIGTREE_CHECK_NONNULL_PTR( q, figtreeEvaluateIfgt );
   FIGTREE_CHECK_NONNULL_PTR( y, figtreeEvaluateIfgt );
   FIGTREE_CHECK_POS_NONZERO_INT( pMax, figtreeEvaluateIfgt );
@@ -1651,18 +1651,18 @@ int figtreeEvaluateIfgt( int d, int N, int M, int W, double * x,
   FIGTREE_CHECK_NONNULL_PTR( clusterIndex, figtreeEvaluateIfgt );
   FIGTREE_CHECK_NONNULL_PTR( clusterCenter, figtreeEvaluateIfgt );
   FIGTREE_CHECK_NONNULL_PTR( clusterRadii, figtreeEvaluateIfgt );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( r, figtreeEvaluateIfgt );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeEvaluateIfgt );
+  FIGTREE_CHECK_POS_NONZERO_float( r, figtreeEvaluateIfgt );
+  FIGTREE_CHECK_POS_NONZERO_float( epsilon, figtreeEvaluateIfgt );
   FIGTREE_CHECK_NONNULL_PTR( g, figtreeEvaluateIfgt );
 
   //Memory allocation
   int pMaxTotal = nchoosek(pMax - 1 + d, d);
-  double hSquare=h*h;
-  double * targetCenterMonomials = new double[pMaxTotal];
-  double * dy = new double[d];
-  double * C = new double[W*K*pMaxTotal];
-  double * ry = new double[K];
-  double * rySquare = new double[K];
+  float hSquare=h*h;
+  float * targetCenterMonomials = new float[pMaxTotal];
+  float * dy = new float[d];
+  float * C = new float[W*K*pMaxTotal];
+  float * ry = new float[K];
+  float * rySquare = new float[K];
 
   for(int i = 0; i < K; i++)
   {
@@ -1686,7 +1686,7 @@ int figtreeEvaluateIfgt( int d, int N, int M, int W, double * x,
     for(int k = 0; k < K; k++)
     {
       int centerBase = k*d;
-      double targetCenterDistanceSquare = 0.0;
+      float targetCenterDistanceSquare = 0.0;
       for(int i = 0; i < d; i++)
       {
         dy[i] = y[targetBase + i] - clusterCenter[centerBase + i];
@@ -1697,7 +1697,7 @@ int figtreeEvaluateIfgt( int d, int N, int M, int W, double * x,
       if(targetCenterDistanceSquare <= rySquare[k])
       {
         computeTargetCenterMonomials( d, h, dy, pMax, targetCenterMonomials );
-        double f=exp(-targetCenterDistanceSquare/hSquare);
+        float f=exp(-targetCenterDistanceSquare/hSquare);
         for(int w = 0; w < W; w++ )
         {        
           for(int alpha = 0; alpha < pMaxTotal; alpha++)
@@ -1736,12 +1736,12 @@ int figtreeEvaluateIfgt( int d, int N, int M, int W, double * x,
 //
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
-int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, double * x, 
-                                      double h, double * q, double * y, 
+int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, float * x, 
+                                      float h, float * q, float * y, 
                                       int pMax, int K, int * clusterIndex, 
-                                      double * clusterCenter, double * clusterRadii,
-                                      double r, double epsilon,
-                                      double * g )
+                                      float * clusterCenter, float * clusterRadii,
+                                      float r, float epsilon,
+                                      float * g )
 {
   // check input arguments
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeEvaluateIfgtAdaptive );
@@ -1749,7 +1749,7 @@ int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, double * x,
   FIGTREE_CHECK_POS_NONZERO_INT( M, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_POS_NONZERO_INT( W, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( x, figtreeEvaluateIfgtIfgtAdaptive );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeEvaluateIfgtAdaptive );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( q, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( y, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_POS_NONZERO_INT( pMax, figtreeEvaluateIfgtAdaptive );
@@ -1757,8 +1757,8 @@ int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, double * x,
   FIGTREE_CHECK_NONNULL_PTR( clusterIndex, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( clusterCenter, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( clusterRadii, figtreeEvaluateIfgtAdaptive );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( r, figtreeEvaluateIfgtAdaptive );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeEvaluateIfgtAdaptive );
+  FIGTREE_CHECK_POS_NONZERO_float( r, figtreeEvaluateIfgtAdaptive );
+  FIGTREE_CHECK_POS_NONZERO_float( epsilon, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( g, figtreeEvaluateIfgtAdaptive );
 
   //Memory allocation
@@ -1767,14 +1767,14 @@ int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, double * x,
   for( int i = 0; i < pMax; i++ )
     pMaxTotals[i] = nchoosek( i + d, d );
 
-  double hSquare=h*h;
-  double * targetCenterMonomials = new double[pMaxTotal];
-  double * dy = new double[d];
-  double * C = new double[W*K*pMaxTotal];
-  double * ry = new double[K];
-  double * rySquare = new double[K];
+  float hSquare=h*h;
+  float * targetCenterMonomials = new float[pMaxTotal];
+  float * dy = new float[d];
+  float * C = new float[W*K*pMaxTotal];
+  float * ry = new float[K];
+  float * rySquare = new float[K];
 
-  double rx = clusterRadii[0];
+  float rx = clusterRadii[0];
   for(int i = 0; i < K; i++)
   {
     ry[i] = r + clusterRadii[i];
@@ -1786,26 +1786,26 @@ int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, double * x,
   // Evaluate  
   //////////////////////////////////////////////////////////////////////////////
   // for each cluster, compute max distances at which we can use a certain truncation number
-  double * maxSourceDists2 = new double[pMax];
+  float * maxSourceDists2 = new float[pMax];
   figtreeSourceTruncationRanges( r, rx, h, epsilon, pMax, maxSourceDists2 );
   computeCAdaptivePoint( d, N, W, K, pMaxTotal, pMax, h, clusterIndex, x, q, clusterCenter, maxSourceDists2, pMaxTotals, C );
   delete [] maxSourceDists2;
 
   // for each cluster, compute distance ranges for each truncation number
-  double * targetDists2 = new double[2*pMax];
+  float * targetDists2 = new float[2*pMax];
   figtreeTargetTruncationRanges( r, rx, h, epsilon, pMax, targetDists2, targetDists2+pMax );
 
   //int * pHistogram = new int[pMax];
   //memset(pHistogram,0,sizeof(int)*pMax);
 
-  memset( g, 0, sizeof(double)*M*W );
+  memset( g, 0, sizeof(float)*M*W );
     //int targetBase = j*d;        
   for(int k = 0; k < K; k++)
   {
     for(int j = 0; j < M; j++)
     {
       //int centerBase = k*d;
-      double targetCenterDistanceSquare = 0.0;
+      float targetCenterDistanceSquare = 0.0;
       for(int i = 0; i < d; i++)
       {
         dy[i] = y[j*d + i] - clusterCenter[k*d + i];
@@ -1819,10 +1819,10 @@ int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, double * x,
         int pTotal = pMaxTotals[p-1];
         //pHistogram[p-1]++;
         computeTargetCenterMonomials( d, h, dy, p, targetCenterMonomials );
-        double f=exp(-targetCenterDistanceSquare/hSquare);
+        float f=exp(-targetCenterDistanceSquare/hSquare);
         for(int w = 0; w < W; w++ )
         {        
-          double * C_offset = C + (K*w + k)*pMaxTotal;
+          float * C_offset = C + (K*w + k)*pMaxTotal;
           for(int alpha = 0; alpha < pTotal; alpha++)
           {
             g[M*w + j] += *(C_offset++)*f*targetCenterMonomials[alpha];
@@ -1875,12 +1875,12 @@ int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, double * x,
 //
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
-int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, double * x, 
-                                        double h, double * q, double * y, 
+int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, float * x, 
+                                        float h, float * q, float * y, 
                                         int pMax, int K, int * clusterIndex, 
-                                        double * clusterCenter, double * clusterRadii,
-                                        double r, double epsilon, int * clusterTruncations,
-                                        double * g )
+                                        float * clusterCenter, float * clusterRadii,
+                                        float r, float epsilon, int * clusterTruncations,
+                                        float * g )
 {
   // check input arguments
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeEvaluateIfgtAdaptive );
@@ -1888,7 +1888,7 @@ int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, double * x,
   FIGTREE_CHECK_POS_NONZERO_INT( M, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_POS_NONZERO_INT( W, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( x, figtreeEvaluateIfgtIfgtAdaptive );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeEvaluateIfgtAdaptive );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( q, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( y, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_POS_NONZERO_INT( pMax, figtreeEvaluateIfgtAdaptive );
@@ -1896,8 +1896,8 @@ int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, double * x,
   FIGTREE_CHECK_NONNULL_PTR( clusterIndex, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( clusterCenter, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( clusterRadii, figtreeEvaluateIfgtAdaptive );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( r, figtreeEvaluateIfgtAdaptive );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeEvaluateIfgtAdaptive );
+  FIGTREE_CHECK_POS_NONZERO_float( r, figtreeEvaluateIfgtAdaptive );
+  FIGTREE_CHECK_POS_NONZERO_float( epsilon, figtreeEvaluateIfgtAdaptive );
   FIGTREE_CHECK_NONNULL_PTR( g, figtreeEvaluateIfgtAdaptive );
 
   //Memory allocation
@@ -1906,14 +1906,14 @@ int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, double * x,
   for( int i = 0; i < pMax; i++ )
     pMaxTotals[i] = nchoosek( i + d, d );
 
-  double hSquare=h*h;
-  double * targetCenterMonomials = new double[pMaxTotal];
-  double * dy = new double[d];
-  double * C = new double[W*K*pMaxTotal];
-  double * ry = new double[K];
-  double * rySquare = new double[K];
+  float hSquare=h*h;
+  float * targetCenterMonomials = new float[pMaxTotal];
+  float * dy = new float[d];
+  float * C = new float[W*K*pMaxTotal];
+  float * ry = new float[K];
+  float * rySquare = new float[K];
 
-  double rx = clusterRadii[0];
+  float rx = clusterRadii[0];
   for(int i = 0; i < K; i++)
   {
     ry[i] = r + clusterRadii[i];
@@ -1927,7 +1927,7 @@ int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, double * x,
   // for each cluster, compute max distances at which we can use a certain truncation number
   computeCAdaptiveCluster( d, N, W, K, pMaxTotal, pMax, h, clusterIndex, x, q, clusterCenter, clusterTruncations, pMaxTotals, C );
 
-  memset( g, 0, sizeof(double)*M*W );
+  memset( g, 0, sizeof(float)*M*W );
     //int targetBase = j*d;        
   for(int k = 0; k < K; k++)
   {
@@ -1936,7 +1936,7 @@ int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, double * x,
     for(int j = 0; j < M; j++)
     {
       //int centerBase = k*d;
-      double targetCenterDistanceSquare = 0.0;
+      float targetCenterDistanceSquare = 0.0;
       for(int i = 0; i < d; i++)
       {
         dy[i] = y[j*d + i] - clusterCenter[k*d + i];
@@ -1947,10 +1947,10 @@ int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, double * x,
       if(targetCenterDistanceSquare <= rySquare[k])
       {
         computeTargetCenterMonomials( d, h, dy, p, targetCenterMonomials );
-        double f=exp(-targetCenterDistanceSquare/hSquare);
+        float f=exp(-targetCenterDistanceSquare/hSquare);
         for(int w = 0; w < W; w++ )
         {        
-          double * C_offset = C + (K*w + k)*pMaxTotal;
+          float * C_offset = C + (K*w + k)*pMaxTotal;
           for(int alpha = 0; alpha < pTotal; alpha++)
           {
             g[M*w + j] += *(C_offset++)*f*targetCenterMonomials[alpha];
@@ -1982,11 +1982,11 @@ int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, double * x,
 //
 // Modified by Vlad Morariu on 2007-06-19.
 //------------------------------------------------------------------------------
-int figtreeEvaluateIfgtTree( int d, int N, int M, int W, double * x, 
-                              double h, double * q, double * y, 
+int figtreeEvaluateIfgtTree( int d, int N, int M, int W, float * x, 
+                              float h, float * q, float * y, 
                               int pMax, int K, int * clusterIndex, 
-                              double * clusterCenter, double * clusterRadii,
-                              double r, double epsilon, double * g )
+                              float * clusterCenter, float * clusterRadii,
+                              float r, float epsilon, float * g )
 {
 #ifdef FIGTREE_NO_ANN
   printf("This code was not compiled with support for ANN.  Please recompile\n");
@@ -1999,7 +1999,7 @@ int figtreeEvaluateIfgtTree( int d, int N, int M, int W, double * x,
   FIGTREE_CHECK_POS_NONZERO_INT( M, figtreeEvaluateIfgtTree );
   FIGTREE_CHECK_POS_NONZERO_INT( W, figtreeEvaluateIfgtTree );
   FIGTREE_CHECK_NONNULL_PTR( x, figtreeEvaluateIfgtTree );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeEvaluateIfgtTree );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeEvaluateIfgtTree );
   FIGTREE_CHECK_NONNULL_PTR( q, figtreeEvaluateIfgtTree );
   FIGTREE_CHECK_NONNULL_PTR( y, figtreeEvaluateIfgtTree );
   FIGTREE_CHECK_POS_NONZERO_INT( pMax, figtreeEvaluateIfgtTree );
@@ -2007,19 +2007,19 @@ int figtreeEvaluateIfgtTree( int d, int N, int M, int W, double * x,
   FIGTREE_CHECK_NONNULL_PTR( clusterIndex, figtreeEvaluateIfgtTree );
   FIGTREE_CHECK_NONNULL_PTR( clusterCenter, figtreeEvaluateIfgtTree );
   FIGTREE_CHECK_NONNULL_PTR( clusterRadii, figtreeEvaluateIfgtTree );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( r, figtreeEvaluateIfgtTree );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeEvaluateIfgtTree );
+  FIGTREE_CHECK_POS_NONZERO_float( r, figtreeEvaluateIfgtTree );
+  FIGTREE_CHECK_POS_NONZERO_float( epsilon, figtreeEvaluateIfgtTree );
   FIGTREE_CHECK_NONNULL_PTR( g, figtreeEvaluateIfgtTree );
 
   //Memory allocation
   int pMaxTotal = nchoosek(pMax-1+d,d);
-  double * targetCenterMonomials = new double[pMaxTotal];
-  double * dy = new double[d];
-  double * C = new double[W*K*pMaxTotal]; 
-  double hSquare = h*h;
+  float * targetCenterMonomials = new float[pMaxTotal];
+  float * dy = new float[d];
+  float * C = new float[W*K*pMaxTotal]; 
+  float hSquare = h*h;
 
   //Find the maximum cluster radius
-  double pcr_max = clusterRadii[0];
+  float pcr_max = clusterRadii[0];
   for(int i = 0; i < K; i++)
   {
     if (clusterRadii[i] > pcr_max)
@@ -2027,7 +2027,7 @@ int figtreeEvaluateIfgtTree( int d, int N, int M, int W, double * x,
       pcr_max = clusterRadii[i];
     }
   }
-  double rSquare=(r+pcr_max)*(r+pcr_max);
+  float rSquare=(r+pcr_max)*(r+pcr_max);
 
   //Allocate storage using ANN procedures 
   ANNpointArray dataPts = annAllocPts(K,d);     // allocate data points
@@ -2079,13 +2079,13 @@ int figtreeEvaluateIfgtTree( int d, int N, int M, int W, double * x,
       {
         int k = nnIdx[l];
         int centerBase = k*d;
-        double  targetCenterDistanceSquare = dists[l];
+        float  targetCenterDistanceSquare = dists[l];
         for(int i = 0; i < d; i++)
         {
           dy[i] = y[targetBase + i] - clusterCenter[centerBase + i];
         }
         computeTargetCenterMonomials( d, h, dy, pMax, targetCenterMonomials );
-        double e = exp(-targetCenterDistanceSquare/hSquare);
+        float e = exp(-targetCenterDistanceSquare/hSquare);
         for(int w = 0; w < W; w++ )
         {        
           for(int alpha = 0; alpha < pMaxTotal; alpha++)
@@ -2128,8 +2128,8 @@ int figtreeEvaluateIfgtTree( int d, int N, int M, int W, double * x,
 //   nearest neighbors unordered (saves a significant amt of time), and with
 //   one call instead of two, as a result.
 //------------------------------------------------------------------------------
-int figtreeEvaluateDirectTree( int d, int N, int M, double * x, double h, 
-                               double * q, double * y, double epsilon, double * g )
+int figtreeEvaluateDirectTree( int d, int N, int M, float * x, float h, 
+                               float * q, float * y, float epsilon, float * g )
 {
 #ifdef FIGTREE_NO_ANN
   printf("This code was not compiled with support for ANN.  Please recompile\n");
@@ -2141,18 +2141,18 @@ int figtreeEvaluateDirectTree( int d, int N, int M, double * x, double h,
   FIGTREE_CHECK_POS_NONZERO_INT( N, figtreeEvaluateDirectTreeUnordered );
   FIGTREE_CHECK_POS_NONZERO_INT( M, figtreeEvaluateDirectTreeUnordered );
   FIGTREE_CHECK_NONNULL_PTR( x, figtreeEvaluateDirectTreeUnordered );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeEvaluateDirectTreeUnordered );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeEvaluateDirectTreeUnordered );
   FIGTREE_CHECK_NONNULL_PTR( q, figtreeEvaluateDirectTreeUnordered );
   FIGTREE_CHECK_NONNULL_PTR( y, figtreeEvaluateDirectTreeUnordered );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeEvaluateDirectTreeUnordered );
+  FIGTREE_CHECK_POS_NONZERO_float( epsilon, figtreeEvaluateDirectTreeUnordered );
   FIGTREE_CHECK_NONNULL_PTR( g, figtreeEvaluateDirectTreeUnordered );
 
-  double hSquare = h*h;
-  double epsANN = 0.0;
+  float hSquare = h*h;
+  float epsANN = 0.0;
 
   // Compute the cutoff radius
-  double r = h*sqrt(log(1/epsilon));
-  double rSquare=r*r;
+  float r = h*sqrt(log(1/epsilon));
+  float rSquare=r*r;
 
   // Allocate storage using ANN procedures 
   ANNpointArray dataPts = annAllocPts(N,d);  // allocate data points
@@ -2193,7 +2193,7 @@ int figtreeEvaluateDirectTree( int d, int N, int M, double * x, double h,
     for(int l = 0; l < NN; l++)
     {
       int i = nnIdx[l];
-      double sourceTargetDistanceSquare = dists[l];
+      float sourceTargetDistanceSquare = dists[l];
       g[j] += (q[i]*exp(-sourceTargetDistanceSquare/hSquare));
     }
   }
@@ -2228,12 +2228,12 @@ int figtreeEvaluateDirectTree( int d, int N, int M, double * x, double h,
 //
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
-int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x, 
-                                      double h, double * q, double * y, 
+int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, float * x, 
+                                      float h, float * q, float * y, 
                                       int pMax, int K, int * clusterIndex, 
-                                      double * clusterCenter, double * clusterRadii,
-                                      double r, double epsilon,
-                                      double * g )
+                                      float * clusterCenter, float * clusterRadii,
+                                      float r, float epsilon,
+                                      float * g )
 {
 #ifdef FIGTREE_NO_ANN
   printf("This code was not compiled with support for ANN.  Please recompile\n");
@@ -2246,7 +2246,7 @@ int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x
   FIGTREE_CHECK_POS_NONZERO_INT( M, figtreeEvaluateIfgtTreeAdaptivePoint );
   FIGTREE_CHECK_POS_NONZERO_INT( W, figtreeEvaluateIfgtTreeAdaptivePoint );
   FIGTREE_CHECK_NONNULL_PTR( x, figtreeEvaluateIfgtIfgtTreeAdaptivePoint );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeEvaluateIfgtTreeAdaptivePoint );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeEvaluateIfgtTreeAdaptivePoint );
   FIGTREE_CHECK_NONNULL_PTR( q, figtreeEvaluateIfgtTreeAdaptivePoint );
   FIGTREE_CHECK_NONNULL_PTR( y, figtreeEvaluateIfgtTreeAdaptivePoint );
   FIGTREE_CHECK_POS_NONZERO_INT( pMax, figtreeEvaluateIfgtTreeAdaptivePoint );
@@ -2254,8 +2254,8 @@ int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x
   FIGTREE_CHECK_NONNULL_PTR( clusterIndex, figtreeEvaluateIfgtTreeAdaptivePoint );
   FIGTREE_CHECK_NONNULL_PTR( clusterCenter, figtreeEvaluateIfgtTreeAdaptivePoint );
   FIGTREE_CHECK_NONNULL_PTR( clusterRadii, figtreeEvaluateIfgtTreeAdaptivePoint );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( r, figtreeEvaluateIfgtTreeAdaptivePoint );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeEvaluateIfgtTreeAdaptivePoint );
+  FIGTREE_CHECK_POS_NONZERO_float( r, figtreeEvaluateIfgtTreeAdaptivePoint );
+  FIGTREE_CHECK_POS_NONZERO_float( epsilon, figtreeEvaluateIfgtTreeAdaptivePoint );
   FIGTREE_CHECK_NONNULL_PTR( g, figtreeEvaluateIfgtTreeAdaptivePoint );
 
   //Memory allocation
@@ -2264,14 +2264,14 @@ int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x
   for( int i = 0; i < pMax; i++ )
     pMaxTotals[i] = nchoosek( i + d, d );
 
-  double hSquare=h*h;
-  double * targetCenterMonomials = new double[pMaxTotal];
-  double * dy = new double[d];
-  double * C = new double[W*K*pMaxTotal];
-  double * ry = new double[K];
-  double * rySquare = new double[K];
+  float hSquare=h*h;
+  float * targetCenterMonomials = new float[pMaxTotal];
+  float * dy = new float[d];
+  float * C = new float[W*K*pMaxTotal];
+  float * ry = new float[K];
+  float * rySquare = new float[K];
 
-  double rx = clusterRadii[0];
+  float rx = clusterRadii[0];
   for(int i = 0; i < K; i++)
   {
     ry[i] = r + clusterRadii[i];
@@ -2282,7 +2282,7 @@ int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x
   //
   // Build tree on cluster centers
   //
-  double rSquare = (r+rx)*(r+rx);
+  float rSquare = (r+rx)*(r+rx);
   //Allocate storage using ANN procedures 
   ANNpointArray dataPts = annAllocPts(K,d);     // allocate data points
   ANNidxArray   nnIdx   = new ANNidx[K];        // allocate near neigh indices
@@ -2308,19 +2308,19 @@ int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x
   // Evaluate  
   //////////////////////////////////////////////////////////////////////////////
   // for each cluster, compute max distances at which we can use a certain truncation number
-  double * maxSourceDists2 = new double[pMax];
+  float * maxSourceDists2 = new float[pMax];
   figtreeSourceTruncationRanges( r, rx, h, epsilon, pMax, maxSourceDists2 );
   computeCAdaptivePoint( d, N, W, K, pMaxTotal, pMax, h, clusterIndex, x, q, clusterCenter, maxSourceDists2, pMaxTotals, C );
   delete [] maxSourceDists2;
 
   // for each cluster, compute distance ranges for each truncation number
-  double * targetDists2 = new double[2*pMax];
+  float * targetDists2 = new float[2*pMax];
   figtreeTargetTruncationRanges( r, rx, h, epsilon, pMax, targetDists2, targetDists2+pMax );
 
   //int * pHistogram = new int[pMax];
   //memset(pHistogram,0,sizeof(int)*pMax);
 
-  memset( g, 0, sizeof(double)*M*W );
+  memset( g, 0, sizeof(float)*M*W );
 
   for(int j = 0; j < M; j++)
   {
@@ -2339,7 +2339,7 @@ int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x
       int k = nnIdx[l];
 
       int centerBase = k*d;
-      double targetCenterDistanceSquare = dists[l];
+      float targetCenterDistanceSquare = dists[l];
       if(targetCenterDistanceSquare <= rySquare[k])
       {
         int p = figtreeTargetTruncationNumber( targetCenterDistanceSquare, pMax, targetDists2, targetDists2+pMax );
@@ -2350,10 +2350,10 @@ int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x
           dy[i] = y[targetBase + i] - clusterCenter[centerBase + i];
         }
         computeTargetCenterMonomials( d, h, dy, p, targetCenterMonomials );
-        double f=exp(-targetCenterDistanceSquare/hSquare);
+        float f=exp(-targetCenterDistanceSquare/hSquare);
         for(int w = 0; w < W; w++ )
         {        
-          double * C_offset = C + (K*w + k)*pMaxTotal;
+          float * C_offset = C + (K*w + k)*pMaxTotal;
           for(int alpha = 0; alpha < pTotal; alpha++)
           {
             g[M*w + j] += *(C_offset++)*f*targetCenterMonomials[alpha];
@@ -2414,12 +2414,12 @@ int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x
 //
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
-int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double * x, 
-                                        double h, double * q, double * y, 
+int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, float * x, 
+                                        float h, float * q, float * y, 
                                         int pMax, int K, int * clusterIndex, 
-                                        double * clusterCenter, double * clusterRadii,
-                                        double r, double epsilon, int * clusterTruncations,
-                                        double * g )
+                                        float * clusterCenter, float * clusterRadii,
+                                        float r, float epsilon, int * clusterTruncations,
+                                        float * g )
 {
 #ifdef FIGTREE_NO_ANN
   printf("This code was not compiled with support for ANN.  Please recompile\n");
@@ -2432,7 +2432,7 @@ int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double *
   FIGTREE_CHECK_POS_NONZERO_INT( M, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_POS_NONZERO_INT( W, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_NONNULL_PTR( x, figtreeEvaluateIfgtIfgtTreeAdaptiveCluster );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( h, figtreeEvaluateIfgtTreeAdaptiveCluster );
+  FIGTREE_CHECK_POS_NONZERO_float( h, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_NONNULL_PTR( g, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_NONNULL_PTR( y, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_POS_NONZERO_INT( pMax, figtreeEvaluateIfgtTreeAdaptiveCluster );
@@ -2440,8 +2440,8 @@ int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double *
   FIGTREE_CHECK_NONNULL_PTR( clusterIndex, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_NONNULL_PTR( clusterCenter, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_NONNULL_PTR( clusterRadii, figtreeEvaluateIfgtTreeAdaptiveCluster );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( r, figtreeEvaluateIfgtTreeAdaptiveCluster );
-  FIGTREE_CHECK_POS_NONZERO_DOUBLE( epsilon, figtreeEvaluateIfgtTreeAdaptiveCluster );
+  FIGTREE_CHECK_POS_NONZERO_float( r, figtreeEvaluateIfgtTreeAdaptiveCluster );
+  FIGTREE_CHECK_POS_NONZERO_float( epsilon, figtreeEvaluateIfgtTreeAdaptiveCluster );
   FIGTREE_CHECK_NONNULL_PTR( g, figtreeEvaluateIfgtTreeAdaptiveCluster );
 
   //Memory allocation
@@ -2450,14 +2450,14 @@ int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double *
   for( int i = 0; i < pMax; i++ )
     pMaxTotals[i] = nchoosek( i + d, d );
 
-  double hSquare=h*h;
-  double * targetCenterMonomials = new double[pMaxTotal];
-  double * dy = new double[d];
-  double * C = new double[W*K*pMaxTotal];
-  double * ry = new double[K];
-  double * rySquare = new double[K];
+  float hSquare=h*h;
+  float * targetCenterMonomials = new float[pMaxTotal];
+  float * dy = new float[d];
+  float * C = new float[W*K*pMaxTotal];
+  float * ry = new float[K];
+  float * rySquare = new float[K];
 
-  double rx = clusterRadii[0];
+  float rx = clusterRadii[0];
   for(int i = 0; i < K; i++)
   {
     ry[i] = r + clusterRadii[i];
@@ -2468,7 +2468,7 @@ int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double *
   //
   // Build tree on cluster centers
   //
-  double rSquare = (r+rx)*(r+rx);
+  float rSquare = (r+rx)*(r+rx);
   //Allocate storage using ANN procedures 
   ANNpointArray dataPts = annAllocPts(K,d);     // allocate data points
   ANNidxArray   nnIdx   = new ANNidx[K];        // allocate near neigh indices
@@ -2495,7 +2495,7 @@ int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double *
   // for each cluster, compute max distances at which we can use a certain truncation number
   computeCAdaptiveCluster( d, N, W, K, pMaxTotal, pMax, h, clusterIndex, x, q, clusterCenter, clusterTruncations, pMaxTotals, C );
 
-  memset( g, 0, sizeof(double)*M*W );
+  memset( g, 0, sizeof(float)*M*W );
   
   for(int j = 0; j < M; j++)
   {
@@ -2516,7 +2516,7 @@ int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double *
       int p = clusterTruncations[k];
       int pTotal = pMaxTotals[p-1];
 
-      double targetCenterDistanceSquare = dists[l];
+      float targetCenterDistanceSquare = dists[l];
       if(targetCenterDistanceSquare <= rySquare[k])
       {
         for(int i = 0; i < d; i++)
@@ -2524,10 +2524,10 @@ int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double *
           dy[i] = y[targetBase + i] - clusterCenter[centerBase + i];
         }
         computeTargetCenterMonomials( d, h, dy, p, targetCenterMonomials );
-        double f=exp(-targetCenterDistanceSquare/hSquare);
+        float f=exp(-targetCenterDistanceSquare/hSquare);
         for(int w = 0; w < W; w++ )
         {        
-          double * C_offset = C + (K*w + k)*pMaxTotal;
+          float * C_offset = C + (K*w + k)*pMaxTotal;
           for(int alpha = 0; alpha < pTotal; alpha++)
           {
             g[M*w + j] += *(C_offset++)*f*targetCenterMonomials[alpha];
@@ -2556,7 +2556,7 @@ int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double *
 #endif
 }
 
-int figtreeCalcMinMax( int d, int n, double * x, double * mins, double * maxs, int update )
+int figtreeCalcMinMax( int d, int n, float * x, float * mins, float * maxs, int update )
 {
   // check input arguments
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeCalcMinMax );
@@ -2589,14 +2589,14 @@ int figtreeCalcMinMax( int d, int n, double * x, double * mins, double * maxs, i
   return 0;
 }
 
-int figtreeCalcMaxRange( double d, double * mins, double * maxs, double * maxRange )
+int figtreeCalcMaxRange( float d, float * mins, float * maxs, float * maxRange )
 {
   FIGTREE_CHECK_POS_NONZERO_INT( d, figtreeCalcMaxRange );
   FIGTREE_CHECK_NONNULL_PTR( mins, figtreeCalcMaxRange );
   FIGTREE_CHECK_NONNULL_PTR( maxs, figtreeCalcMaxRange );
   FIGTREE_CHECK_NONNULL_PTR( maxRange, figtreeCalcMaxRange );
 
-  double maxRangeTemp = maxs[0] - mins[0];
+  float maxRangeTemp = maxs[0] - mins[0];
   for( int i = 0; i < d; i++ )
     maxRangeTemp = MAX( maxRangeTemp, maxs[i] - mins[i] );
   *maxRange = maxRangeTemp;
@@ -2623,12 +2623,12 @@ int figtreeCalcMaxRange( double d, double * mins, double * maxs, double * maxRan
 // Created by Vlad Morariu 2008-06-04.
 //------------------------------------------------------------------------------
 #ifndef FIGTREE_NO_ANN
-inline void figtreeGetAverageNumNeighbors( ANNkd_tree * kdTree, int d, int M, double * y, double r, int Msample, double * avgNbrs, double * avgAnnFlops )
+inline void figtreeGetAverageNumNeighbors( ANNkd_tree * kdTree, int d, int M, float * y, float r, int Msample, float * avgNbrs, float * avgAnnFlops )
 {
   int numNbrs = 0;
   int flopsAccum = 0, flops =0;
-  double rSquare = r*r;
-  double epsANN = 0.0;
+  float rSquare = r*r;
+  float epsANN = 0.0;
 
   for(int i = 0; i < Msample; i++)
   {
@@ -2647,23 +2647,23 @@ inline void figtreeGetAverageNumNeighbors( ANNkd_tree * kdTree, int d, int M, do
     flopsAccum += flops;
   }
 
-  *avgNbrs = numNbrs / (double)Msample;
-  *avgAnnFlops = flopsAccum / (double)Msample;
+  *avgNbrs = numNbrs / (float)Msample;
+  *avgAnnFlops = flopsAccum / (float)Msample;
 }
 
-inline void figtreeEstimatedNeighborSources( int d, int M, double * y, double h, double epsilon, ANNkd_tree * sourcesKdTree, int Msample, double * avgNbrSources, double * avgAnnFlopsSources )
+inline void figtreeEstimatedNeighborSources( int d, int M, float * y, float h, float epsilon, ANNkd_tree * sourcesKdTree, int Msample, float * avgNbrSources, float * avgAnnFlopsSources )
 {
   // Compute the cutoff radius
-  double r = h*sqrt(log(1/epsilon));
+  float r = h*sqrt(log(1/epsilon));
 
   // estimate avg number of neighbors
   figtreeGetAverageNumNeighbors( sourcesKdTree, d, M, y, r, Msample, avgNbrSources, avgAnnFlopsSources ); 
 }
 
-inline void figtreeEstimatedNeighborClusters( int d, int M, double * y, int K, double * clusterRadii, double r, ANNkd_tree * clustersKdTree, int Msample, double * avgNbrClusters, double * avgAnnFlopsClusters )
+inline void figtreeEstimatedNeighborClusters( int d, int M, float * y, int K, float * clusterRadii, float r, ANNkd_tree * clustersKdTree, int Msample, float * avgNbrClusters, float * avgAnnFlopsClusters )
 {
   //Find the maximum cluster radius
-  double pcrMax = clusterRadii[0];
+  float pcrMax = clusterRadii[0];
   for(int i = 0; i < K; i++)
   {
     if (clusterRadii[i] > pcrMax)
@@ -2671,21 +2671,21 @@ inline void figtreeEstimatedNeighborClusters( int d, int M, double * y, int K, d
       pcrMax = clusterRadii[i];
     }
   }
-  double rMax =(r+pcrMax);
+  float rMax =(r+pcrMax);
 
   // estimate numbers of pts with more than 1 neighbor and avg number of neighbors
   figtreeGetAverageNumNeighbors( clustersKdTree, d, M, y, rMax, Msample, avgNbrClusters, avgAnnFlopsClusters ); 
 }
 #endif
-inline void figtreeEstimatedNeighborClustersNoAnn( int d, int N, int M, double h, double * y, 
-                                                   int K, double * clusterCenter, double * clusterRadii, double r, int Msample,
-                                                   double * avgNbrClustersNoAnn, double * avgFindCentersFlops )
+inline void figtreeEstimatedNeighborClustersNoAnn( int d, int N, int M, float h, float * y, 
+                                                   int K, float * clusterCenter, float * clusterRadii, float r, int Msample,
+                                                   float * avgNbrClustersNoAnn, float * avgFindCentersFlops )
 {
-  double flops = 0;
-  double avgNbrClusters = 0;
-  double * dy = new double[d];
-  double * ry = new double[K];
-  double * rySquare = new double[K];
+  float flops = 0;
+  float avgNbrClusters = 0;
+  float * dy = new float[d];
+  float * ry = new float[K];
+  float * rySquare = new float[K];
 
   for(int i = 0; i < K; i++)
   {
@@ -2699,7 +2699,7 @@ inline void figtreeEstimatedNeighborClustersNoAnn( int d, int N, int M, double h
     for(int k = 0; k < K; k++)
     {
       int centerBase = k*d;
-      double targetCenterDistanceSquare = 0.0;
+      float targetCenterDistanceSquare = 0.0;
       for(int i = 0; i < d; i++)
       {
         dy[i] = y[targetBase + i] - clusterCenter[centerBase + i];
@@ -2734,70 +2734,70 @@ inline void figtreeEstimatedNeighborClustersNoAnn( int d, int N, int M, double h
 // Modified by Vlad Morariu 2008-12-05 
 //   Changed floating op estimation functions to reflect revised versions of code.
 //------------------------------------------------------------------------------
-inline double figtreeEstimatedFlopsComputeSourceCenterMonomials( int d, int pMaxTotal )
+inline float figtreeEstimatedFlopsComputeSourceCenterMonomials( int d, int pMaxTotal )
 {
-  return (d + (double)pMaxTotal);
+  return (d + (float)pMaxTotal);
 }
 
-inline double figtreeEstimatedFlopsComputeTargetCenterMonomials( int d, int pMaxTotal )
+inline float figtreeEstimatedFlopsComputeTargetCenterMonomials( int d, int pMaxTotal )
 {
-  return (d + (double)pMaxTotal);
+  return (d + (float)pMaxTotal);
 }
 
-inline double figtreeEstimatedFlopsComputeConstantSeries( int pMaxTotal )
+inline float figtreeEstimatedFlopsComputeConstantSeries( int pMaxTotal )
 {
   return (2.0*pMaxTotal);
 }
 
-inline double figtreeEstimatedFlopsComputeC( int d, int N, int W, int K, int pMaxTotal, double flopsExp )
+inline float figtreeEstimatedFlopsComputeC( int d, int N, int W, int K, int pMaxTotal, float flopsExp )
 {
-  double computeSourceCenterMonomials = figtreeEstimatedFlopsComputeSourceCenterMonomials( d, pMaxTotal );
-  double computeConstantSeries = figtreeEstimatedFlopsComputeConstantSeries( pMaxTotal );
+  float computeSourceCenterMonomials = figtreeEstimatedFlopsComputeSourceCenterMonomials( d, pMaxTotal );
+  float computeConstantSeries = figtreeEstimatedFlopsComputeConstantSeries( pMaxTotal );
   return N*(3*d + computeSourceCenterMonomials + W*(2+flopsExp+2*pMaxTotal)) + computeConstantSeries + W*K*pMaxTotal;
 }
 
-inline double figtreeEstimatedFlopsBuildTree( int d, int N )
+inline float figtreeEstimatedFlopsBuildTree( int d, int N )
 {
-  return d*N*log((double)N);
+  return d*N*log((float)N);
 }
 
-inline double figtreeEstimatedFlopsKCenterClustering( int d, int N, int K )
+inline float figtreeEstimatedFlopsKCenterClustering( int d, int N, int K )
 {
-  return 3*d*(N*log((double)K) + K*(double)K); // not using the NlogK version yet
+  return 3*d*(N*log((float)K) + K*(float)K); // not using the NlogK version yet
 }
 
-inline double figtreeEstimatedFlopsDirect( int d, int N, int M, int W, double flopsExp )
+inline float figtreeEstimatedFlopsDirect( int d, int N, int M, int W, float flopsExp )
 {
-  return W*(1 + ((double)M)*((double)N)*(d*3 + 3 + flopsExp));
+  return W*(1 + ((float)M)*((float)N)*(d*3 + 3 + flopsExp));
 }
 
-inline double figtreeEstimatedFlopsDirectTree( int d, int N, int M, int W, double avgNbrSources, double avgAnnFlopsSources, double flopsExp )
+inline float figtreeEstimatedFlopsDirectTree( int d, int N, int M, int W, float avgNbrSources, float avgAnnFlopsSources, float flopsExp )
 {
-  return W*(7 + ((double)M)*( avgAnnFlopsSources + avgNbrSources*(3+flopsExp) ));
+  return W*(7 + ((float)M)*( avgAnnFlopsSources + avgNbrSources*(3+flopsExp) ));
 }
 
-inline double figtreeEstimatedFlopsIfgt( int d, int N, int M, int W, int K, int pMaxTotal, double avgNbrClustersNoAnn, double avgFindCentersFlops, double flopsExp )
+inline float figtreeEstimatedFlopsIfgt( int d, int N, int M, int W, int K, int pMaxTotal, float avgNbrClustersNoAnn, float avgFindCentersFlops, float flopsExp )
 {
   // cost of computing coeffs from sources
-  double computeC = figtreeEstimatedFlopsComputeC( d, N, W, K, pMaxTotal, flopsExp );
-  double source = 2*K + 1 + computeC;
+  float computeC = figtreeEstimatedFlopsComputeC( d, N, W, K, pMaxTotal, flopsExp );
+  float source = 2*K + 1 + computeC;
 
   // cost of computing target monomials and evaluating
-  double computeTargetCenterMonomials = figtreeEstimatedFlopsComputeTargetCenterMonomials( d, pMaxTotal );
-  double target = ((double)M)*(avgFindCentersFlops + avgNbrClustersNoAnn*(computeTargetCenterMonomials + 1 + flopsExp + W*3*((double)pMaxTotal)));
+  float computeTargetCenterMonomials = figtreeEstimatedFlopsComputeTargetCenterMonomials( d, pMaxTotal );
+  float target = ((float)M)*(avgFindCentersFlops + avgNbrClustersNoAnn*(computeTargetCenterMonomials + 1 + flopsExp + W*3*((float)pMaxTotal)));
 
   return source + target;
 }
 
-inline double figtreeEstimatedFlopsIfgtTree( int d, int N, int M, int W, int K, int pMaxTotal, double avgNbrClusters, double avgAnnFlopsClusters, double flopsExp )
+inline float figtreeEstimatedFlopsIfgtTree( int d, int N, int M, int W, int K, int pMaxTotal, float avgNbrClusters, float avgAnnFlopsClusters, float flopsExp )
 {
   // cost of computing coeffs from sources
-  double computeC = figtreeEstimatedFlopsComputeC( d, N, W, K, pMaxTotal, flopsExp );
-  double source = 4 + computeC;
+  float computeC = figtreeEstimatedFlopsComputeC( d, N, W, K, pMaxTotal, flopsExp );
+  float source = 4 + computeC;
 
   // cost of computing target monomials and evaluating
-  double computeTargetCenterMonomials = figtreeEstimatedFlopsComputeTargetCenterMonomials( d, pMaxTotal );
-  double target =  ((double)M)*( avgAnnFlopsClusters + avgNbrClusters*(d + computeTargetCenterMonomials + 1 + flopsExp + W*3*((double)pMaxTotal) ) );
+  float computeTargetCenterMonomials = figtreeEstimatedFlopsComputeTargetCenterMonomials( d, pMaxTotal );
+  float target =  ((float)M)*( avgAnnFlopsClusters + avgNbrClusters*(d + computeTargetCenterMonomials + 1 + flopsExp + W*3*((float)pMaxTotal) ) );
 
   return source + target;
 }
@@ -2808,9 +2808,9 @@ inline double figtreeEstimatedFlopsIfgtTree( int d, int N, int M, int W, int K, 
 //
 // Created by Vlad Morariu 2008-05-03 to 2008-06-04.
 //------------------------------------------------------------------------------
-int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, double h,
-                                   double * y, double epsilon, int ifgtParamMethod, int verbose,
-                                   int * bestMethod, double * flops, void * data_struct )
+int figtreeChooseEvaluationMethod( int d, int N, int M, int W, float * x, float h,
+                                   float * y, float epsilon, int ifgtParamMethod, int verbose,
+                                   int * bestMethod, float * flops, void * data_struct )
 {
   int ret = 0;           // return value (0 is no error, -1 is error)
 
@@ -2824,22 +2824,22 @@ int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, doubl
   //
   int Msample = M_SAMPLE; // how many of the target points do we sample to estimate avg number of neighbors and flops?
   int Nss = MAX( MIN(N,N_SS_MIN), (int)pow(N,N_SS_POW) ); // number of subsampled sources
-  double kLimitToAvgNbrRatio = K_LIMIT_TO_AVG_NBR_RATIO;  // set k limit to this times avg number of source neighbors
-  double flopsExp = FLOPS_EXP;                            // floating point ops per exp() call
+  float kLimitToAvgNbrRatio = K_LIMIT_TO_AVG_NBR_RATIO;  // set k limit to this times avg number of source neighbors
+  float flopsExp = FLOPS_EXP;                            // floating point ops per exp() call
 
   // other values computed fromthe parameters above
-  double ss = N/(double)Nss;       // how much subsampling to do for building kd-Tree
+  float ss = N/(float)Nss;       // how much subsampling to do for building kd-Tree
   int kLimit = N, kMax;            // kLimit is the highest K that we allow, kMax is the max K-value chosen by param selection
 
   // initialize flop estimates; -1 indicates flop estimation was not completed
-  double flopsDirect = figtreeEstimatedFlopsDirect( d, N, M, W, flopsExp );
-  double flopsDirectTree = -1;
-  double flopsIfgt = -1;
-  double flopsIfgtTree = -1;
+  float flopsDirect = figtreeEstimatedFlopsDirect( d, N, M, W, flopsExp );
+  float flopsDirectTree = -1;
+  float flopsIfgt = -1;
+  float flopsIfgtTree = -1;
 
   // avg number of neighboring clusters for IFGT (no tree), and avg flops spent finding
   //   the neighboring clusters
-  double avgNbrClustersNoAnn, avgFindCentersFlops;
+  float avgNbrClustersNoAnn, avgFindCentersFlops;
 
   // this datastructure will hold the kd-Trees, cluster centers, etc
   FigtreeData data = figtreeCreateData();  // obtain data structure filled with 0's
@@ -2847,10 +2847,10 @@ int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, doubl
 #ifndef FIGTREE_NO_ANN
 
   // these variables will represent statistics of source distribution (avg neighbors)
-  double avgNbrSources, avgNbrClusters;
+  float avgNbrSources, avgNbrClusters;
 
   // these variables contain avg cost of each kd-Tree query for finding neighbors
-  double avgAnnFlopsSources, avgAnnFlopsClusters;
+  float avgAnnFlopsSources, avgAnnFlopsClusters;
 
   // get a random sampling of Nss points, w/o replacement
   int * shuffled_indexes = new int[N];
@@ -2879,7 +2879,7 @@ int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, doubl
                                         ANN_KD_SUGGEST );
 
   figtreeEstimatedNeighborSources( d, M, y, h, epsilon, data.annSourcesKdTree, Msample, &avgNbrSources, &avgAnnFlopsSources);
-  flopsDirectTree  = figtreeEstimatedFlopsBuildTree( d, N ) + figtreeEstimatedFlopsDirectTree( d, N, M, W, ss*avgNbrSources, ss*avgAnnFlopsSources*(log((double)N)/log((double)Nss)), flopsExp );
+  flopsDirectTree  = figtreeEstimatedFlopsBuildTree( d, N ) + figtreeEstimatedFlopsDirectTree( d, N, M, W, ss*avgNbrSources, ss*avgAnnFlopsSources*(log((float)N)/log((float)Nss)), flopsExp );
 
   // set kLimit based on how many source points, on average, are within radius of each query pt
   kLimit = MIN((int)(kLimitToAvgNbrRatio*ss*avgNbrSources),N);
@@ -2888,11 +2888,11 @@ int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, doubl
 
   if( kLimit > 0 )
   {
-    double maxRange=0;
+    float maxRange=0;
 
     // calculate R, the diameter of the hypercube that encompasses sources and targets
-    double * mins = new double[d];
-    double * maxs = new double[d];
+    float * mins = new float[d];
+    float * maxs = new float[d];
     figtreeCalcMinMax( d, N, x, mins, maxs, 0 );
     figtreeCalcMinMax( d, M, y, mins, maxs, 1 );
     figtreeCalcMaxRange( d, mins, maxs, &maxRange );
@@ -2916,14 +2916,14 @@ int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, doubl
     // do k-center clustering
     data.clusterIndex = new int[N];
     data.numPoints    = new int[kMax]; 
-    data.clusterCenters = new double[d*kMax];
-    data.clusterRadii = new double[kMax];
+    data.clusterCenters = new float[d*kMax];
+    data.clusterRadii = new float[kMax];
 
     ret = figtreeKCenterClustering( d, N, x, kMax, &data.K, &data.rx, data.clusterIndex, 
                                  data.clusterCenters, data.numPoints, data.clusterRadii );
     if( ret >= 0 )
     {
-      double errorBound = epsilon + 1;
+      float errorBound = epsilon + 1;
       // choose truncation number again now that clustering is done
       ret = figtreeChooseTruncationNumber( d, h, epsilon, data.rx, maxRange, &data.pMax, &errorBound );
       if( ret >= 0 )
@@ -2932,10 +2932,10 @@ int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, doubl
         verbose && printf( "Eval IFGT(h= %3.2e, pMax= %i, K= %i, r= %3.2e, rx= %3.2e, epsilon= %3.2e, bound = %3.2e)\n", 
                            h, data.pMax, data.K, data.r, data.rx, epsilon, errorBound);
 
-        double pMaxTotalDouble = nchoosek_double(data.pMax-1+d,d);
-        if( errorBound <= epsilon && pMaxTotalDouble < INT_MAX )
+        float pMaxTotalfloat = nchoosek_float(data.pMax-1+d,d);
+        if( errorBound <= epsilon && pMaxTotalfloat < INT_MAX )
         {
-          data.pMaxTotal = (int)pMaxTotalDouble;
+          data.pMaxTotal = (int)pMaxTotalfloat;
 
           //
           // Estimate number of flops for performing IFGT
@@ -3014,7 +3014,7 @@ int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, doubl
   // choose best method if user supplies non-NULL pointer
   if( bestMethod!= NULL )
   {
-    double bestFlops = flopsDirect;
+    float bestFlops = flopsDirect;
     *bestMethod = FIGTREE_EVAL_DIRECT;
     
     if( flopsDirectTree != -1 && flopsDirectTree < bestFlops )

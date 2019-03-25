@@ -81,14 +81,14 @@ class KCenterClustering{
 
     //Output parameters
 
-    double MaxClusterRadius;  //maximum cluster radius
+    float MaxClusterRadius;  //maximum cluster radius
   
     //Functions
 
     //constructor 
     KCenterClustering(int Dim,
       int NSources,
-      double *pSources,
+      float *pSources,
       int *pClusterIndex,
       int NumClusters
     );
@@ -105,14 +105,14 @@ class KCenterClustering{
     //Incremental k-center clustering
     //  nClusters - if non-NULL, value is set to the # of clusters at end of call
     //  maxRadius - if non-NULL, value is set to the max radius of all clusters
-    void ClusterIncrement( int * nClusters, double * maxRadius );
+    void ClusterIncrement( int * nClusters, float * maxRadius );
 
     //Compute cluster centers and the number of points in each cluster
     //and the radius of each cluster.
     void ComputeClusterCenters( int NumClusters,
-                                double *pClusterCenters,
+                                float *pClusterCenters,
                                 int *pNumPoints,
-                                double *pClusterRadii
+                                float *pClusterRadii
                               );
     
   private:
@@ -120,12 +120,12 @@ class KCenterClustering{
 
     int d;           // dimension of the points.
     int N;           // number of sources.
-    double *px;      // pointer to sources, (d*N).
+    float *px;      // pointer to sources, (d*N).
     int K;           // max number of clusters
     int *pci;        // pointer to a vector of length N where the i th element is the 
                      // cluster number to which the i th point belongs.
-    double *dist_C;  // distances to the center.
-    double *r;
+    float *dist_C;  // distances to the center.
+    float *r;
 
     int *pCenters;   // indices of the centers.
     int *cprev;      // index to the previous node
@@ -135,8 +135,8 @@ class KCenterClustering{
     int numClusters; // added by Vlad to keep track of # of clusters
 
     //Functions
-    double ddist(const int d, const double *x, const double *y);
-    int idmax(int n, double *x);
+    float ddist(const int d, const float *x, const float *y);
+    int idmax(int n, float *x);
     
 };
 

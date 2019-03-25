@@ -25,8 +25,8 @@ extern "C" {
 //    * pMax --> maximum truncation number for the Taylor series.
 //    * errorBound --> the error bound (if desired error bound is not reached, then it will be epsilon+1)
 FIGTREE_DLL_API 
-int figtreeChooseTruncationNumber( int d, double h, double epsilon, 
-                                   double rx, double maxRange, int * pMax, double * errorBound );
+int figtreeChooseTruncationNumber( int d, float h, float epsilon, 
+                                   float rx, float maxRange, int * pMax, float * errorBound );
 
 // Chooses parameters for IFGT and FIGTree by assuming that sources are
 //   uniformly distributed in a unit cube.
@@ -48,9 +48,9 @@ int figtreeChooseTruncationNumber( int d, double h, double epsilon,
 //    * r --> source cutoff radius.
 //    * errorBound --> the expected error bound (if desired error bound is not reached, then it will be epsilon+1)
 FIGTREE_DLL_API 
-int figtreeChooseParametersUniform( int d, double h, double epsilon, 
-                                    int kLimit, double maxRange,
-                                    int * K, int * pMax, double * r, double * errorBound );
+int figtreeChooseParametersUniform( int d, float h, float epsilon, 
+                                    int kLimit, float maxRange,
+                                    int * K, int * pMax, float * r, float * errorBound );
 
 // Chooses parameters for IFGT and FIGTree without assumption that sources are
 // uniformly distributed.  In this case, k-center clustering is done as part
@@ -81,9 +81,9 @@ int figtreeChooseParametersUniform( int d, double h, double epsilon,
 //    * r --> source cutoff radius.
 //    * errorBound --> the expected error bound (if desired error bound is not reached, then it will be epsilon+1)
 FIGTREE_DLL_API 
-int figtreeChooseParametersNonUniform( int d, int N, double * x, 
-                                       double h, double epsilon, int kLimit, double maxRange,
-                                       int * K, int * pMax, double * r, double * errorBound );
+int figtreeChooseParametersNonUniform( int d, int N, float * x, 
+                                       float h, float epsilon, int kLimit, float maxRange,
+                                       int * K, int * pMax, float * r, float * errorBound );
 
 // Computes exact gauss transform (within machine precision) using direct 
 // evaluation. Provided for time/error comparison.
@@ -101,8 +101,8 @@ int figtreeChooseParametersNonUniform( int d, int N, double * x,
 //    * g --> 1 x M vector of the Gauss Transform evaluated at each target
 //            point. 
 FIGTREE_DLL_API 
-int figtreeEvaluateDirect( int d, int N, int M, double * x, double h, 
-                           double * q, double * y, double * g );
+int figtreeEvaluateDirect( int d, int N, int M, float * x, float h, 
+                           float * q, float * y, float * g );
 
 // Computes an approximation to Gauss Transform.  Implementation based on:
 // Fast computation of sums of Gaussians in high dimensions. Vikas C. Raykar, 
@@ -137,11 +137,11 @@ int figtreeEvaluateDirect( int d, int N, int M, double * x, double h,
 //            point. Each row q is the result of the transform using the qth set
 //            of weights.
 FIGTREE_DLL_API 
-int figtreeEvaluateIfgt( int d, int N, int M, int W, double * x, 
-                         double h, double * q, double * y, 
+int figtreeEvaluateIfgt( int d, int N, int M, int W, float * x, 
+                         float h, float * q, float * y, 
                          int pMax, int K, int * clusterIndex, 
-                         double * clusterCenter, double * clusterRadii,
-                         double r, double epsilon, double * g );
+                         float * clusterCenter, float * clusterRadii,
+                         float r, float epsilon, float * g );
 
 // Computes an approximation to Gauss Transform using approximate 
 // nearest-neighbors. Same as figtreeEvaluateIfgt() but uses Approximate 
@@ -177,11 +177,11 @@ int figtreeEvaluateIfgt( int d, int N, int M, int W, double * x,
 //            point.  Each row of g is the result of the transform using one set
 //            of weights.
 FIGTREE_DLL_API 
-int figtreeEvaluateIfgtTree( int d, int N, int M, int W, double * x, 
-                             double h, double * q, double * y, 
+int figtreeEvaluateIfgtTree( int d, int N, int M, int W, float * x, 
+                             float h, float * q, float * y, 
                              int pMax, int K, int * clusterIndex, 
-                             double * clusterCenter, double * clusterRadii,
-                             double r, double epsilon, double * g );
+                             float * clusterCenter, float * clusterRadii,
+                             float r, float epsilon, float * g );
 
 //------------------------------------------------------------------------------
 // This function evaluates the IFGT by using a different for each source assuming
@@ -198,12 +198,12 @@ int figtreeEvaluateIfgtTree( int d, int N, int M, int W, double * x,
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
 FIGTREE_DLL_API
-int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, double * x, 
-                                      double h, double * q, double * y, 
+int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, float * x, 
+                                      float h, float * q, float * y, 
                                       int pMax, int K, int * clusterIndex, 
-                                      double * clusterCenter, double * clusterRadii,
-                                      double r, double epsilon,
-                                      double * g );
+                                      float * clusterCenter, float * clusterRadii,
+                                      float r, float epsilon,
+                                      float * g );
 
 //------------------------------------------------------------------------------
 // This function evaluates the IFGT by using a different truncation number for
@@ -228,12 +228,12 @@ int figtreeEvaluateIfgtAdaptivePoint( int d, int N, int M, int W, double * x,
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
 FIGTREE_DLL_API
-int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, double * x, 
-                                        double h, double * q, double * y, 
+int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, float * x, 
+                                        float h, float * q, float * y, 
                                         int pMax, int K, int * clusterIndex, 
-                                        double * clusterCenter, double * clusterRadii,
-                                        double r, double epsilon, int * clusterTruncations,
-                                        double * g );
+                                        float * clusterCenter, float * clusterRadii,
+                                        float r, float epsilon, int * clusterTruncations,
+                                        float * g );
 
 //------------------------------------------------------------------------------
 // This function evaluates the IFGT by using a different for each source assuming
@@ -251,12 +251,12 @@ int figtreeEvaluateIfgtAdaptiveCluster( int d, int N, int M, int W, double * x,
 //
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
-int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x, 
-                                          double h, double * q, double * y, 
+int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, float * x, 
+                                          float h, float * q, float * y, 
                                           int pMax, int K, int * clusterIndex, 
-                                          double * clusterCenter, double * clusterRadii,
-                                          double r, double epsilon,
-                                          double * g );
+                                          float * clusterCenter, float * clusterRadii,
+                                          float r, float epsilon,
+                                          float * g );
 
 //------------------------------------------------------------------------------
 // This function evaluates the IFGT by using a different truncation number for
@@ -282,12 +282,12 @@ int figtreeEvaluateIfgtTreeAdaptivePoint( int d, int N, int M, int W, double * x
 //
 // Created by Vlad Morariu on 2008-06-04.
 //------------------------------------------------------------------------------
-int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double * x, 
-                                            double h, double * q, double * y, 
+int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, float * x, 
+                                            float h, float * q, float * y, 
                                             int pMax, int K, int * clusterIndex, 
-                                            double * clusterCenter, double * clusterRadii,
-                                            double r, double epsilon, int * clusterTruncations,
-                                            double * g );
+                                            float * clusterCenter, float * clusterRadii,
+                                            float r, float epsilon, int * clusterTruncations,
+                                            float * g );
 
 // Computes an approximation to Gauss Transform using approximate 
 // nearest-neighbors.  Direct method (no taylor expansion is done), with tree 
@@ -308,8 +308,8 @@ int figtreeEvaluateIfgtTreeAdaptiveCluster( int d, int N, int M, int W, double *
 //    * g --> 1 x M vector of the Gauss Transform evaluated at each target
 //            point.
 FIGTREE_DLL_API 
-int figtreeEvaluateDirectTree( int d, int N, int M, double * x, double h, 
-                               double * q, double * y, double epsilon, double * g );
+int figtreeEvaluateDirectTree( int d, int N, int M, float * x, float h, 
+                               float * q, float * y, float epsilon, float * g );
 
 // Computes min and max values along each dimension.  Used to determine
 //   the size of the hypercube (and the max distance R that any two pts 
@@ -329,10 +329,10 @@ int figtreeEvaluateDirectTree( int d, int N, int M, double * x, double h,
 //    * mins --> d x 1 vector of minimum values
 //    * maxs --> d x 1 vector of maximum values
 FIGTREE_DLL_API
-int figtreeCalcMinMax( int d, int n, double * x, double * mins, double * maxs, int update=0 );
+int figtreeCalcMinMax( int d, int n, float * x, float * mins, float * maxs, int update=0 );
 
 FIGTREE_DLL_API
-int figtreeCalcMaxRange( double d, double * mins, double * maxs, double * R );
+int figtreeCalcMaxRange( float d, float * mins, float * maxs, float * R );
 
 #if defined(__cplusplus) && !defined(FIGTREE_STATIC)
 } // extern "C"

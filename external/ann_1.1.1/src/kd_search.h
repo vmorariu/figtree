@@ -40,7 +40,7 @@
 
 extern int				ANNkdDim;		// dimension of space (static copy)
 extern ANNpoint			ANNkdQ;			// query point (static copy)
-extern double			ANNkdMaxErr;	// max tolerable squared error
+extern float			ANNkdMaxErr;	// max tolerable squared error
 extern ANNpointArray	ANNkdPts;		// the points (static copy)
 extern ANNmin_k			*ANNkdPointMK;	// set of k closest points
 extern int				ANNptsVisited;	// number of points visited

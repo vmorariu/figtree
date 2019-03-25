@@ -78,7 +78,7 @@
 
 int				ANNkdDim;				// dimension of space
 ANNpoint		ANNkdQ;					// query point
-double			ANNkdMaxErr;			// max tolerable squared error
+float			ANNkdMaxErr;			// max tolerable squared error
 ANNpointArray	ANNkdPts;				// the points
 ANNmin_k		*ANNkdPointMK;			// set of k closest points
 
@@ -91,7 +91,7 @@ void ANNkd_tree::annkSearch(
 	int					k,				// number of near neighbors to return
 	ANNidxArray			nn_idx,			// nearest neighbor indices (returned)
 	ANNdistArray		dd,				// the approximate nearest neighbor
-	double				eps)			// the error bound
+	float				eps)			// the error bound
 {
 
 	ANNkdDim = dim;						// copy arguments to static equivs

@@ -6,13 +6,13 @@ cimport numpy as np
 
 cdef extern from "figtree.h":
     cdef int c_figtree "figtree" (
-       int d, int N, int M, int W, double * x, double h, double * q,
-       double * y, double epsilon, double * g, int evalMethod,
+       int d, int N, int M, int W, float * x, float h, float * q,
+       float * y, float epsilon, float * g, int evalMethod,
        int ifgtParamMethod, int ifgtTruncMethod, int verbose)
     cdef int c_k_centers "figtreeKCenterClustering" (
-       int d, int N, double * x, int kMax, int * K,
-  double * rx, int * clusterIndex, double * clusterCenters, 
-  int * numPoints, double * clusterRadii)
+       int d, int N, float * x, int kMax, int * K,
+  float * rx, int * clusterIndex, float * clusterCenters, 
+  int * numPoints, float * clusterRadii)
 
 
 def figtree(np.ndarray[np.float64_t, ndim=2, mode='c'] X, float h,
@@ -28,8 +28,8 @@ def figtree(np.ndarray[np.float64_t, ndim=2, mode='c'] X, float h,
         (Q.ndim == 2) and (Q.shape[0] == W) and (Q.shape[1] == N))))
     assert(epsilon > 0)
     cdef np.ndarray G = np.zeros((W, M), dtype='float64')
-    cdef int ret = c_figtree(d, N, M, W, <double*>X.data, h, <double*>Q.data,
-                        <double*>Y.data, epsilon, <double*>G.data, evalMethod,
+    cdef int ret = c_figtree(d, N, M, W, <float*>X.data, h, <float*>Q.data,
+                        <float*>Y.data, epsilon, <float*>G.data, evalMethod,
                         ifgtParamMethod, ifgtTruncMethod, verbose)
     if ret >= 0:
         return G
@@ -54,14 +54,14 @@ def k_centers(np.ndarray[np.float64_t, ndim=2, mode='c'] X, int K):
     """    
     N, d = X.shape[0], X.shape[1]
     cdef int K_out = 0
-    cdef double rx = 0
+    cdef float rx = 0
     cdef np.ndarray[np.int32_t, ndim=1] clusterIndex = np.zeros((N,), dtype='int32')
     cdef np.ndarray[np.float64_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float64')
     cdef np.ndarray[np.int32_t, ndim=1] numPoints = np.zeros((K,), dtype='int32')
     cdef np.ndarray[np.float64_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float64')
-    cdef int ret = c_k_centers(d, N, <double*>X.data, K, &K_out, &rx, <int*>clusterIndex.data,
-                               <double*>clusterCenters.data, <int*>numPoints.data,
-                               <double*>clusterRadii.data)
+    cdef int ret = c_k_centers(d, N, <float*>X.data, K, &K_out, &rx, <int*>clusterIndex.data,
+                               <float*>clusterCenters.data, <int*>numPoints.data,
+                               <float*>clusterRadii.data)
     if ret < 0:
         raise ValueError('k_centers returned failure code...')
     return (clusterIndex, clusterCenters[:K_out, :], numPoints[:K_out], clusterRadii[:K_out])

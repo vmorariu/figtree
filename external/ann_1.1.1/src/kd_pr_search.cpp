@@ -72,10 +72,10 @@
 //		These are given below.
 //----------------------------------------------------------------------
 
-double			ANNprEps;				// the error bound
+float			ANNprEps;				// the error bound
 int				ANNprDim;				// dimension of space
 ANNpoint		ANNprQ;					// query point
-double			ANNprMaxErr;			// max tolerable squared error
+float			ANNprMaxErr;			// max tolerable squared error
 ANNpointArray	ANNprPts;				// the points
 ANNpr_queue		*ANNprBoxPQ;			// priority queue for boxes
 ANNmin_k		*ANNprPointMK;			// set of k closest points
@@ -89,7 +89,7 @@ void ANNkd_tree::annkPriSearch(
 	int					k,				// number of near neighbors to return
 	ANNidxArray			nn_idx,			// nearest neighbor indices (returned)
 	ANNdistArray		dd,				// dist to near neighbors (returned)
-	double				eps)			// error bound (ignored)
+	float				eps)			// error bound (ignored)
 {
 										// max tolerable squared error
 	ANNprMaxErr = ANN_POW(1.0 + eps);

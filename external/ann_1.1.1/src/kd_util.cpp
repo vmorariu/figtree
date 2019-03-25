@@ -49,7 +49,7 @@
 //		of a rectangle.
 //----------------------------------------------------------------------
 
-double annAspectRatio(
+float annAspectRatio(
 	int					dim,			// dimension
 	const ANNorthRect	&bnd_box)		// bounding cube
 {

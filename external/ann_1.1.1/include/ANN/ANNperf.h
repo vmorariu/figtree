@@ -71,7 +71,7 @@ public:
 
 //----------------------------------------------------------------------
 //  ANNsampStat
-//	A sample stat collects numeric (double) samples and returns some
+//	A sample stat collects numeric (float) samples and returns some
 //	simple statistics.  Its main functions are:
 //
 //		reset()		Reset to no samples.
@@ -84,9 +84,9 @@ public:
 //----------------------------------------------------------------------
 class DLL_API ANNsampStat {
 	int				n;				// number of samples
-	double			sum;			// sum
-	double			sum2;			// sum of squares
-	double			minVal, maxVal;	// min and max
+	float			sum;			// sum
+	float			sum2;			// sum of squares
+	float			minVal, maxVal;	// min and max
 public :
 	void reset()				// reset everything
 	{  
@@ -98,7 +98,7 @@ public :
 
 	ANNsampStat() { reset(); }		// constructor
 
-	void operator+=(double x)		// add sample
+	void operator+=(float x)		// add sample
 	{
 		n++;  sum += x;  sum2 += x*x;
 		if (x < minVal) minVal = x;
@@ -107,13 +107,13 @@ public :
 
 	int samples() { return n; }		// number of samples
 
-	double mean() { return sum/n; } // mean
+	float mean() { return sum/n; } // mean
 
 									// standard deviation
-	double stdDev() { return sqrt((sum2 - (sum*sum)/n)/(n-1));}
+	float stdDev() { return sqrt((sum2 - (sum*sum)/n)/(n-1));}
 
-	double min() { return minVal; } // minimum
-	double max() { return maxVal; } // maximum
+	float min() { return minVal; } // minimum
+	float max() { return maxVal; } // maximum
 };
 
 //----------------------------------------------------------------------

@@ -228,8 +228,8 @@ extern "C" {
 //            The ith row is the result of the transform using the ith set of 
 //            weights.
 FIGTREE_DLL_API 
-int figtree( int d, int N, int M, int W, double * x, double h, 
-             double * q, double * y, double epsilon, double * g,
+int figtree( int d, int N, int M, int W, float * x, float h, 
+             float * q, float * y, float epsilon, float * g,
              int evalMethod = FIGTREE_EVAL_AUTO,
              int ifgtParamMethod = FIGTREE_PARAM_NON_UNIFORM, 
              int ifgtTruncMethod = FIGTREE_TRUNC_CLUSTER,
@@ -260,7 +260,7 @@ int figtree( int d, int N, int M, int W, double * x, double h,
 //            transform. Can be FIGTREE_EVAL_[DIRECT,IFGT,DIRECT_TREE,
 //            IFGT_TREE], defined above. 
 //
-//    * flops --> if non-NULL, a double array of size FIGTREE_EVAL_SIZE, indexed by eval method
+//    * flops --> if non-NULL, a float array of size FIGTREE_EVAL_SIZE, indexed by eval method
 //                type where flops[evalMethod] = estimated number of flops if we use this method.
 //                For evalMethod=FIGTREE_EVAL_IFGT or evalMethod=FIGTREE_EVAL_IFGT_TREE,
 //                it is possible that flops[.] = -1 in the case that it is decided early (before
@@ -270,9 +270,9 @@ int figtree( int d, int N, int M, int W, double * x, double h,
 //                that were computed during method selection that can be reused 
 //
 FIGTREE_DLL_API
-int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, double h,
-                                 double * y, double epsilon, int paramMethod=FIGTREE_PARAM_NON_UNIFORM, int verbose=0,
-                                 int * bestEvalMethod=0, double * flops=0, void * data_struct=0 );
+int figtreeChooseEvaluationMethod( int d, int N, int M, int W, float * x, float h,
+                                 float * y, float epsilon, int paramMethod=FIGTREE_PARAM_NON_UNIFORM, int verbose=0,
+                                 int * bestEvalMethod=0, float * flops=0, void * data_struct=0 );
 
 
 // Gonzalez's farthest-point clustering algorithm.
@@ -295,9 +295,9 @@ int figtreeChooseEvaluationMethod( int d, int N, int M, int W, double * x, doubl
 //    * numPoints --> number of points in each cluster.
 //    * clusterRadii --> radius of each cluster.
 FIGTREE_DLL_API 
-int figtreeKCenterClustering( int d, int N, double * x, int kMax, int * K,
-                              double * rx, int * clusterIndex, double * clusterCenters, 
-                              int * numPoints, double * clusterRadii );
+int figtreeKCenterClustering( int d, int N, float * x, int kMax, int * K,
+                              float * rx, int * clusterIndex, float * clusterCenters, 
+                              int * numPoints, float * clusterRadii );
 
 #if defined(__cplusplus) && !defined(FIGTREE_STATIC)
 } // extern "C"
