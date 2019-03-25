@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------
 
 #include "kd_util.h"					// kd-utility declarations
-
+#include <stdio.h>
 #include <ANN/ANNperf.h>				// performance evaluation
 
 //----------------------------------------------------------------------
@@ -196,6 +196,8 @@ ANNcoord annSpread(				// compute point spread along dimension
 		if (c < min) min = c;
 		else if (c > max) max = c;
 	}
+	printf("max: %f\n", max);
+	printf("min: %f\n", min);
 	return (max - min);					// total spread is difference
 }
 

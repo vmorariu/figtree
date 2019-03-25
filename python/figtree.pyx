@@ -15,9 +15,9 @@ cdef extern from "figtree.h":
   int * numPoints, float * clusterRadii)
 
 
-def figtree(np.ndarray[np.float64_t, ndim=2, mode='c'] X, float h,
-            np.ndarray[np.float64_t, ndim=2, mode='c'] Q,
-            np.ndarray[np.float64_t, ndim=2, mode='c'] Y,
+def figtree(np.ndarray[np.float32_t, ndim=2, mode='c'] X, float h,
+            np.ndarray[np.float32_t, ndim=2, mode='c'] Q,
+            np.ndarray[np.float32_t, ndim=2, mode='c'] Y,
             float epsilon, int evalMethod=4,
             int ifgtParamMethod=1, int ifgtTruncMethod=2, int verbose=0):
     """Wrapper for the figtree C function."""
@@ -27,7 +27,7 @@ def figtree(np.ndarray[np.float64_t, ndim=2, mode='c'] X, float h,
     assert((d == dY) and (W*N == Q.size) and (Q.size == N or (
         (Q.ndim == 2) and (Q.shape[0] == W) and (Q.shape[1] == N))))
     assert(epsilon > 0)
-    cdef np.ndarray G = np.zeros((W, M), dtype='float64')
+    cdef np.ndarray G = np.zeros((W, M), dtype='float32')
     cdef int ret = c_figtree(d, N, M, W, <float*>X.data, h, <float*>Q.data,
                         <float*>Y.data, epsilon, <float*>G.data, evalMethod,
                         ifgtParamMethod, ifgtTruncMethod, verbose)
@@ -36,7 +36,7 @@ def figtree(np.ndarray[np.float64_t, ndim=2, mode='c'] X, float h,
     return None
 
 
-def k_centers(np.ndarray[np.float64_t, ndim=2, mode='c'] X, int K):
+def k_centers(np.ndarray[np.float32_t, ndim=2, mode='c'] X, int K):
     """Wrapper for the K-center clustering function used by figtree.
        indexes, clusters, num_points, radii = k_centers(X, K)
        Input
@@ -56,9 +56,9 @@ def k_centers(np.ndarray[np.float64_t, ndim=2, mode='c'] X, int K):
     cdef int K_out = 0
     cdef float rx = 0
     cdef np.ndarray[np.int32_t, ndim=1] clusterIndex = np.zeros((N,), dtype='int32')
-    cdef np.ndarray[np.float64_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float64')
+    cdef np.ndarray[np.float32_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float32')
     cdef np.ndarray[np.int32_t, ndim=1] numPoints = np.zeros((K,), dtype='int32')
-    cdef np.ndarray[np.float64_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float64')
+    cdef np.ndarray[np.float32_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float32')
     cdef int ret = c_k_centers(d, N, <float*>X.data, K, &K_out, &rx, <int*>clusterIndex.data,
                                <float*>clusterCenters.data, <int*>numPoints.data,
                                <float*>clusterRadii.data)

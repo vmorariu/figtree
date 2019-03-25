@@ -107,7 +107,7 @@
 //----------------------------------------------------------------------
 #ifdef ANN_NO_LIMITS_H					// limits.h unavailable
   #include <cvalues>					// replacement for limits.h
-  const float ANN_DBL_MAX = MAXfloat;	// insert maximum float
+  const float ANN_DBL_MAX = std::numeric_limits<float>::max();	// insert maximum float
 #else
   #include <climits>
   #include <cfloat>

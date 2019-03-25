@@ -167,30 +167,18 @@ void sl_midpt_split(
 	for (d = 0; d < dim; d++) {
 										// is it among longest?
 		if ((bnds.hi[d] - bnds.lo[d]) >= (1-ERR)*max_length) {
-			std::cout << "here1" << "\n";
 										// compute its spread
 			ANNcoord spr = annSpread(pa, pidx, n, d);
-			std::cout << "here2" << "\n";
 
 			if (spr > max_spread) {		// is it max so far?
 				max_spread = spr;
-				std::cout << "here5" << "\n";
 				cut_dim = d;
 			}
 		}
 	}
-	printf("cut dim: %d \n", cut_dim);
-	printf("first: %f \n",  bnds.lo[cut_dim]/2);
-	printf("second: %f \n", bnds.hi[cut_dim]/2);
-	std::cout << "here4" << "\n";										// ideal split at midpoint
-	ANNcoord test_1 = bnds.lo[cut_dim]/2;
-	std::cout << "Middle" << "\n";
-	ANNcoord test_2 = bnds.hi[cut_dim]/2;
-	std::cout << "after" << "\n";
-	ANNcoord ideal_cut_val = bnds.lo[cut_dim]/2 + bnds.hi[cut_dim]/2;
+	ANNcoord ideal_cut_val = bnds.lo[cut_dim]/2 + bnds.hi[cut_dim]/2; // ideal split at midpoint
 
 	ANNcoord min, max;
-	std::cout << "here3" << "\n";
 
 	annMinMax(pa, pidx, n, cut_dim, min, max);	// find min/max coordinates
 

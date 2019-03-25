@@ -1679,7 +1679,7 @@ static PyTypeObject *__pyx_ptype_5numpy_ufunc = 0;
 static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *, char *, char *, int *); /*proto*/
 
 /* Module declarations from 'figtree' */
-static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t = { "float64_t", NULL, sizeof(__pyx_t_5numpy_float64_t), { 0 }, 0, 'R', 0, 0 };
+static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_float32_t = { "float32_t", NULL, sizeof(__pyx_t_5numpy_float32_t), { 0 }, 0, 'R', 0, 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_int32_t = { "int32_t", NULL, sizeof(__pyx_t_5numpy_int32_t), { 0 }, 0, IS_UNSIGNED(__pyx_t_5numpy_int32_t) ? 'U' : 'I', IS_UNSIGNED(__pyx_t_5numpy_int32_t), 0 };
 #define __Pyx_MODULE_NAME "figtree"
 extern int __pyx_module_is_main_figtree;
@@ -1717,7 +1717,7 @@ static const char __pyx_k_zeros[] = "zeros";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_epsilon[] = "epsilon";
 static const char __pyx_k_figtree[] = "figtree";
-static const char __pyx_k_float64[] = "float64";
+static const char __pyx_k_float32[] = "float32";
 static const char __pyx_k_verbose[] = "verbose";
 static const char __pyx_k_k_centers[] = "k_centers";
 static const char __pyx_k_numPoints[] = "numPoints";
@@ -1767,7 +1767,7 @@ static PyObject *__pyx_n_s_epsilon;
 static PyObject *__pyx_n_s_evalMethod;
 static PyObject *__pyx_n_s_figtree;
 static PyObject *__pyx_kp_s_figtree_pyx;
-static PyObject *__pyx_n_s_float64;
+static PyObject *__pyx_n_s_float32;
 static PyObject *__pyx_n_s_h;
 static PyObject *__pyx_n_s_ifgtParamMethod;
 static PyObject *__pyx_n_s_ifgtTruncMethod;
@@ -1814,9 +1814,9 @@ static PyObject *__pyx_codeobj__13;
 /* "figtree.pyx":18
  * 
  * 
- * def figtree(np.ndarray[np.float64_t, ndim=2, mode='c'] X, float h,             # <<<<<<<<<<<<<<
- *             np.ndarray[np.float64_t, ndim=2, mode='c'] Q,
- *             np.ndarray[np.float64_t, ndim=2, mode='c'] Y,
+ * def figtree(np.ndarray[np.float32_t, ndim=2, mode='c'] X, float h,             # <<<<<<<<<<<<<<
+ *             np.ndarray[np.float32_t, ndim=2, mode='c'] Q,
+ *             np.ndarray[np.float32_t, ndim=2, mode='c'] Y,
  */
 
 /* Python wrapper */
@@ -2029,17 +2029,17 @@ static PyObject *__pyx_pf_7figtree_figtree(CYTHON_UNUSED PyObject *__pyx_self, P
   __pyx_pybuffernd_Y.rcbuffer = &__pyx_pybuffer_Y;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_X.rcbuffer->pybuffer, (PyObject*)__pyx_v_X, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 18, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_X.rcbuffer->pybuffer, (PyObject*)__pyx_v_X, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float32_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 18, __pyx_L1_error)
   }
   __pyx_pybuffernd_X.diminfo[0].strides = __pyx_pybuffernd_X.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_X.diminfo[0].shape = __pyx_pybuffernd_X.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_X.diminfo[1].strides = __pyx_pybuffernd_X.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_X.diminfo[1].shape = __pyx_pybuffernd_X.rcbuffer->pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_Q.rcbuffer->pybuffer, (PyObject*)__pyx_v_Q, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 18, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_Q.rcbuffer->pybuffer, (PyObject*)__pyx_v_Q, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float32_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 18, __pyx_L1_error)
   }
   __pyx_pybuffernd_Q.diminfo[0].strides = __pyx_pybuffernd_Q.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_Q.diminfo[0].shape = __pyx_pybuffernd_Q.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_Q.diminfo[1].strides = __pyx_pybuffernd_Q.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_Q.diminfo[1].shape = __pyx_pybuffernd_Q.rcbuffer->pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_Y.rcbuffer->pybuffer, (PyObject*)__pyx_v_Y, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 18, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_Y.rcbuffer->pybuffer, (PyObject*)__pyx_v_Y, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float32_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 18, __pyx_L1_error)
   }
   __pyx_pybuffernd_Y.diminfo[0].strides = __pyx_pybuffernd_Y.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_Y.diminfo[0].shape = __pyx_pybuffernd_Y.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_Y.diminfo[1].strides = __pyx_pybuffernd_Y.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_Y.diminfo[1].shape = __pyx_pybuffernd_Y.rcbuffer->pybuffer.shape[1];
 
@@ -2133,7 +2133,7 @@ static PyObject *__pyx_pf_7figtree_figtree(CYTHON_UNUSED PyObject *__pyx_self, P
  *     assert((d == dY) and (W*N == Q.size) and (Q.size == N or (
  *         (Q.ndim == 2) and (Q.shape[0] == W) and (Q.shape[1] == N))))             # <<<<<<<<<<<<<<
  *     assert(epsilon > 0)
- *     cdef np.ndarray G = np.zeros((W, M), dtype='float64')
+ *     cdef np.ndarray G = np.zeros((W, M), dtype='float32')
  */
     __pyx_t_6 = ((__pyx_v_Q->nd == 2) != 0);
     if (__pyx_t_6) {
@@ -2171,7 +2171,7 @@ static PyObject *__pyx_pf_7figtree_figtree(CYTHON_UNUSED PyObject *__pyx_self, P
  *     assert((d == dY) and (W*N == Q.size) and (Q.size == N or (
  *         (Q.ndim == 2) and (Q.shape[0] == W) and (Q.shape[1] == N))))
  *     assert(epsilon > 0)             # <<<<<<<<<<<<<<
- *     cdef np.ndarray G = np.zeros((W, M), dtype='float64')
+ *     cdef np.ndarray G = np.zeros((W, M), dtype='float32')
  *     cdef int ret = c_figtree(d, N, M, W, <float*>X.data, h, <float*>Q.data,
  */
   #ifndef CYTHON_WITHOUT_ASSERTIONS
@@ -2186,7 +2186,7 @@ static PyObject *__pyx_pf_7figtree_figtree(CYTHON_UNUSED PyObject *__pyx_self, P
   /* "figtree.pyx":30
  *         (Q.ndim == 2) and (Q.shape[0] == W) and (Q.shape[1] == N))))
  *     assert(epsilon > 0)
- *     cdef np.ndarray G = np.zeros((W, M), dtype='float64')             # <<<<<<<<<<<<<<
+ *     cdef np.ndarray G = np.zeros((W, M), dtype='float32')             # <<<<<<<<<<<<<<
  *     cdef int ret = c_figtree(d, N, M, W, <float*>X.data, h, <float*>Q.data,
  *                         <float*>Y.data, epsilon, <float*>G.data, evalMethod,
  */
@@ -2212,7 +2212,7 @@ static PyObject *__pyx_pf_7figtree_figtree(CYTHON_UNUSED PyObject *__pyx_self, P
   __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_n_s_float64) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_n_s_float32) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
   __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -2224,7 +2224,7 @@ static PyObject *__pyx_pf_7figtree_figtree(CYTHON_UNUSED PyObject *__pyx_self, P
 
   /* "figtree.pyx":31
  *     assert(epsilon > 0)
- *     cdef np.ndarray G = np.zeros((W, M), dtype='float64')
+ *     cdef np.ndarray G = np.zeros((W, M), dtype='float32')
  *     cdef int ret = c_figtree(d, N, M, W, <float*>X.data, h, <float*>Q.data,             # <<<<<<<<<<<<<<
  *                         <float*>Y.data, epsilon, <float*>G.data, evalMethod,
  *                         ifgtParamMethod, ifgtTruncMethod, verbose)
@@ -2286,9 +2286,9 @@ static PyObject *__pyx_pf_7figtree_figtree(CYTHON_UNUSED PyObject *__pyx_self, P
   /* "figtree.pyx":18
  * 
  * 
- * def figtree(np.ndarray[np.float64_t, ndim=2, mode='c'] X, float h,             # <<<<<<<<<<<<<<
- *             np.ndarray[np.float64_t, ndim=2, mode='c'] Q,
- *             np.ndarray[np.float64_t, ndim=2, mode='c'] Y,
+ * def figtree(np.ndarray[np.float32_t, ndim=2, mode='c'] X, float h,             # <<<<<<<<<<<<<<
+ *             np.ndarray[np.float32_t, ndim=2, mode='c'] Q,
+ *             np.ndarray[np.float32_t, ndim=2, mode='c'] Y,
  */
 
   /* function exit code */
@@ -2324,7 +2324,7 @@ static PyObject *__pyx_pf_7figtree_figtree(CYTHON_UNUSED PyObject *__pyx_self, P
 /* "figtree.pyx":39
  * 
  * 
- * def k_centers(np.ndarray[np.float64_t, ndim=2, mode='c'] X, int K):             # <<<<<<<<<<<<<<
+ * def k_centers(np.ndarray[np.float32_t, ndim=2, mode='c'] X, int K):             # <<<<<<<<<<<<<<
  *     """Wrapper for the K-center clustering function used by figtree.
  *        indexes, clusters, num_points, radii = k_centers(X, K)
  */
@@ -2453,7 +2453,7 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
   __pyx_pybuffernd_X.rcbuffer = &__pyx_pybuffer_X;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_X.rcbuffer->pybuffer, (PyObject*)__pyx_v_X, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 39, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_X.rcbuffer->pybuffer, (PyObject*)__pyx_v_X, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float32_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 39, __pyx_L1_error)
   }
   __pyx_pybuffernd_X.diminfo[0].strides = __pyx_pybuffernd_X.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_X.diminfo[0].shape = __pyx_pybuffernd_X.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_X.diminfo[1].strides = __pyx_pybuffernd_X.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_X.diminfo[1].shape = __pyx_pybuffernd_X.rcbuffer->pybuffer.shape[1];
 
@@ -2483,7 +2483,7 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
  *     cdef int K_out = 0
  *     cdef float rx = 0             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[np.int32_t, ndim=1] clusterIndex = np.zeros((N,), dtype='int32')
- *     cdef np.ndarray[np.float64_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float64')
+ *     cdef np.ndarray[np.float32_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float32')
  */
   __pyx_v_rx = 0.0;
 
@@ -2491,7 +2491,7 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
  *     cdef int K_out = 0
  *     cdef float rx = 0
  *     cdef np.ndarray[np.int32_t, ndim=1] clusterIndex = np.zeros((N,), dtype='int32')             # <<<<<<<<<<<<<<
- *     cdef np.ndarray[np.float64_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float64')
+ *     cdef np.ndarray[np.float32_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float32')
  *     cdef np.ndarray[np.int32_t, ndim=1] numPoints = np.zeros((K,), dtype='int32')
  */
   __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 58, __pyx_L1_error)
@@ -2536,9 +2536,9 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
   /* "figtree.pyx":59
  *     cdef float rx = 0
  *     cdef np.ndarray[np.int32_t, ndim=1] clusterIndex = np.zeros((N,), dtype='int32')
- *     cdef np.ndarray[np.float64_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float64')             # <<<<<<<<<<<<<<
+ *     cdef np.ndarray[np.float32_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float32')             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[np.int32_t, ndim=1] numPoints = np.zeros((K,), dtype='int32')
- *     cdef np.ndarray[np.float64_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float64')
+ *     cdef np.ndarray[np.float32_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float32')
  */
   __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
@@ -2564,7 +2564,7 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
   __pyx_t_4 = 0;
   __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_n_s_float64) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_n_s_float32) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
   __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -2574,7 +2574,7 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
   __pyx_t_8 = ((PyArrayObject *)__pyx_t_6);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_clusterCenters.rcbuffer->pybuffer, (PyObject*)__pyx_t_8, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_clusterCenters.rcbuffer->pybuffer, (PyObject*)__pyx_t_8, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float32_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_clusterCenters = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_clusterCenters.rcbuffer->pybuffer.buf = NULL;
       __PYX_ERR(0, 59, __pyx_L1_error)
     } else {__pyx_pybuffernd_clusterCenters.diminfo[0].strides = __pyx_pybuffernd_clusterCenters.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_clusterCenters.diminfo[0].shape = __pyx_pybuffernd_clusterCenters.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_clusterCenters.diminfo[1].strides = __pyx_pybuffernd_clusterCenters.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_clusterCenters.diminfo[1].shape = __pyx_pybuffernd_clusterCenters.rcbuffer->pybuffer.shape[1];
@@ -2586,9 +2586,9 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
 
   /* "figtree.pyx":60
  *     cdef np.ndarray[np.int32_t, ndim=1] clusterIndex = np.zeros((N,), dtype='int32')
- *     cdef np.ndarray[np.float64_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float64')
+ *     cdef np.ndarray[np.float32_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float32')
  *     cdef np.ndarray[np.int32_t, ndim=1] numPoints = np.zeros((K,), dtype='int32')             # <<<<<<<<<<<<<<
- *     cdef np.ndarray[np.float64_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float64')
+ *     cdef np.ndarray[np.float32_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float32')
  *     cdef int ret = c_k_centers(d, N, <float*>X.data, K, &K_out, &rx, <int*>clusterIndex.data,
  */
   __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 60, __pyx_L1_error)
@@ -2631,9 +2631,9 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
   __pyx_t_5 = 0;
 
   /* "figtree.pyx":61
- *     cdef np.ndarray[np.float64_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float64')
+ *     cdef np.ndarray[np.float32_t, ndim=2] clusterCenters = np.zeros((K, d), dtype='float32')
  *     cdef np.ndarray[np.int32_t, ndim=1] numPoints = np.zeros((K,), dtype='int32')
- *     cdef np.ndarray[np.float64_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float64')             # <<<<<<<<<<<<<<
+ *     cdef np.ndarray[np.float32_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float32')             # <<<<<<<<<<<<<<
  *     cdef int ret = c_k_centers(d, N, <float*>X.data, K, &K_out, &rx, <int*>clusterIndex.data,
  *                                <float*>clusterCenters.data, <int*>numPoints.data,
  */
@@ -2656,7 +2656,7 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
   __pyx_t_6 = 0;
   __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_n_s_float64) < 0) __PYX_ERR(0, 61, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_n_s_float32) < 0) __PYX_ERR(0, 61, __pyx_L1_error)
   __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -2666,7 +2666,7 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
   __pyx_t_10 = ((PyArrayObject *)__pyx_t_4);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_clusterRadii.rcbuffer->pybuffer, (PyObject*)__pyx_t_10, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_clusterRadii.rcbuffer->pybuffer, (PyObject*)__pyx_t_10, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float32_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_clusterRadii = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_clusterRadii.rcbuffer->pybuffer.buf = NULL;
       __PYX_ERR(0, 61, __pyx_L1_error)
     } else {__pyx_pybuffernd_clusterRadii.diminfo[0].strides = __pyx_pybuffernd_clusterRadii.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_clusterRadii.diminfo[0].shape = __pyx_pybuffernd_clusterRadii.rcbuffer->pybuffer.shape[0];
@@ -2678,7 +2678,7 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
 
   /* "figtree.pyx":62
  *     cdef np.ndarray[np.int32_t, ndim=1] numPoints = np.zeros((K,), dtype='int32')
- *     cdef np.ndarray[np.float64_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float64')
+ *     cdef np.ndarray[np.float32_t, ndim=1] clusterRadii = np.zeros((K,), dtype='float32')
  *     cdef int ret = c_k_centers(d, N, <float*>X.data, K, &K_out, &rx, <int*>clusterIndex.data,             # <<<<<<<<<<<<<<
  *                                <float*>clusterCenters.data, <int*>numPoints.data,
  *                                <float*>clusterRadii.data)
@@ -2777,7 +2777,7 @@ static PyObject *__pyx_pf_7figtree_2k_centers(CYTHON_UNUSED PyObject *__pyx_self
   /* "figtree.pyx":39
  * 
  * 
- * def k_centers(np.ndarray[np.float64_t, ndim=2, mode='c'] X, int K):             # <<<<<<<<<<<<<<
+ * def k_centers(np.ndarray[np.float32_t, ndim=2, mode='c'] X, int K):             # <<<<<<<<<<<<<<
  *     """Wrapper for the K-center clustering function used by figtree.
  *        indexes, clusters, num_points, radii = k_centers(X, K)
  */
@@ -5307,7 +5307,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_evalMethod, __pyx_k_evalMethod, sizeof(__pyx_k_evalMethod), 0, 0, 1, 1},
   {&__pyx_n_s_figtree, __pyx_k_figtree, sizeof(__pyx_k_figtree), 0, 0, 1, 1},
   {&__pyx_kp_s_figtree_pyx, __pyx_k_figtree_pyx, sizeof(__pyx_k_figtree_pyx), 0, 0, 1, 0},
-  {&__pyx_n_s_float64, __pyx_k_float64, sizeof(__pyx_k_float64), 0, 0, 1, 1},
+  {&__pyx_n_s_float32, __pyx_k_float32, sizeof(__pyx_k_float32), 0, 0, 1, 1},
   {&__pyx_n_s_h, __pyx_k_h, sizeof(__pyx_k_h), 0, 0, 1, 1},
   {&__pyx_n_s_ifgtParamMethod, __pyx_k_ifgtParamMethod, sizeof(__pyx_k_ifgtParamMethod), 0, 0, 1, 1},
   {&__pyx_n_s_ifgtTruncMethod, __pyx_k_ifgtTruncMethod, sizeof(__pyx_k_ifgtTruncMethod), 0, 0, 1, 1},
@@ -5449,9 +5449,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "figtree.pyx":18
  * 
  * 
- * def figtree(np.ndarray[np.float64_t, ndim=2, mode='c'] X, float h,             # <<<<<<<<<<<<<<
- *             np.ndarray[np.float64_t, ndim=2, mode='c'] Q,
- *             np.ndarray[np.float64_t, ndim=2, mode='c'] Y,
+ * def figtree(np.ndarray[np.float32_t, ndim=2, mode='c'] X, float h,             # <<<<<<<<<<<<<<
+ *             np.ndarray[np.float32_t, ndim=2, mode='c'] Q,
+ *             np.ndarray[np.float32_t, ndim=2, mode='c'] Y,
  */
   __pyx_tuple__10 = PyTuple_Pack(16, __pyx_n_s_X, __pyx_n_s_h, __pyx_n_s_Q, __pyx_n_s_Y, __pyx_n_s_epsilon, __pyx_n_s_evalMethod, __pyx_n_s_ifgtParamMethod, __pyx_n_s_ifgtTruncMethod, __pyx_n_s_verbose, __pyx_n_s_N, __pyx_n_s_d, __pyx_n_s_W, __pyx_n_s_M, __pyx_n_s_dY, __pyx_n_s_G, __pyx_n_s_ret); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 18, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
@@ -5461,7 +5461,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "figtree.pyx":39
  * 
  * 
- * def k_centers(np.ndarray[np.float64_t, ndim=2, mode='c'] X, int K):             # <<<<<<<<<<<<<<
+ * def k_centers(np.ndarray[np.float32_t, ndim=2, mode='c'] X, int K):             # <<<<<<<<<<<<<<
  *     """Wrapper for the K-center clustering function used by figtree.
  *        indexes, clusters, num_points, radii = k_centers(X, K)
  */
@@ -5789,9 +5789,9 @@ if (!__Pyx_RefNanny) {
   /* "figtree.pyx":18
  * 
  * 
- * def figtree(np.ndarray[np.float64_t, ndim=2, mode='c'] X, float h,             # <<<<<<<<<<<<<<
- *             np.ndarray[np.float64_t, ndim=2, mode='c'] Q,
- *             np.ndarray[np.float64_t, ndim=2, mode='c'] Y,
+ * def figtree(np.ndarray[np.float32_t, ndim=2, mode='c'] X, float h,             # <<<<<<<<<<<<<<
+ *             np.ndarray[np.float32_t, ndim=2, mode='c'] Q,
+ *             np.ndarray[np.float32_t, ndim=2, mode='c'] Y,
  */
   __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7figtree_1figtree, NULL, __pyx_n_s_figtree); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -5801,7 +5801,7 @@ if (!__Pyx_RefNanny) {
   /* "figtree.pyx":39
  * 
  * 
- * def k_centers(np.ndarray[np.float64_t, ndim=2, mode='c'] X, int K):             # <<<<<<<<<<<<<<
+ * def k_centers(np.ndarray[np.float32_t, ndim=2, mode='c'] X, int K):             # <<<<<<<<<<<<<<
  *     """Wrapper for the K-center clustering function used by figtree.
  *        indexes, clusters, num_points, radii = k_centers(X, K)
  */
